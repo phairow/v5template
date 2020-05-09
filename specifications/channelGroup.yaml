@@ -1,0 +1,204 @@
+openapi: 3.0.1
+info:
+  title: PubNub Channel Groups APIs
+  description: This is the place where you can find all PubNub Channel Groups Endpoint APIs
+  termsOfService: http://pubnub.com/terms/
+  contact:
+    email: support@pubnub.com
+  version: 0.0.1
+servers:
+- url: https://ps.pndsn.com
+tags:
+- name: ChannelGroups
+  description: For channel group related operations
+paths:
+  /v1/channel-registration/sub-key/{sub_key}/channel-group:
+    get:
+      tags:
+      - ChannelGroups
+      summary: Listing all registered channel groups
+      description: Get all channel groups for subscribe key
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+             schema:
+                 $ref: '#/components/schemas/GetAllChannelGroupsV1SuccessResponse'
+  /v1/channel-registration/sub-key/{sub_key}/channel-group/{group}:
+    get:
+      tags:
+      - ChannelGroups
+      summary: All channels of a channel group
+      description: This endpoint supports Listing all channels for a channel group //Adding Channels // New Channel Group
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/GroupPathParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/AddQueryParam'
+      - $ref: '#/components/parameters/RemoveQueryParam'      
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+             schema:
+                 $ref: '#/components/schemas/GetAllChannelsOfChannelGroupSuccessResponse'
+  /v1/channel-registration/sub-key/{sub_key}/channel-group/{group_name}/remove:
+    get:
+      tags:
+      - ChannelGroups
+      summary: Deleting a Channel Group
+      description: This endpoint is for deleting a Channel Group
+      parameters:  
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/GroupNamePathParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      responses:
+        '200':
+          description: Channel Group deleted
+          content:
+            application/json:
+             schema:
+                 $ref: '#/components/schemas/ChannelGroupOperationsDefaultSuccessResponse'      
+components:
+  parameters:
+    SubKeyPathParam:
+      name: sub_key
+      in: path
+      description: the subscriber key
+      required: true
+      schema:
+        type: string
+      example: mySubKey
+    UuidQueryParam:
+      name: uuid
+      in: query
+      description: A unique alphanumeric ID for identifying the client to the PubNub Presence System, as well as for PubNub Analytics.
+      schema:
+        type: string
+      required: true
+      example: db9c5e39-7c95-40f5-8d71-125765b6f561
+    GroupPathParam:
+      name: group
+      in: path
+      description: the group for which we need the list of channels
+      required: true
+      schema:
+        type: string
+      example: group1
+    AuthQueryParam:
+      name: auth
+      in: query
+      description: Provide authkey If the channel is protected by PAM, auth must be passed with a key which is authorized to publish to the channel.
+      required: false
+      schema:
+        type: string
+      example: authKey
+    AddQueryParam:
+      name: add
+      in: query
+      description: Name of a channel to be added to the channel group. You may add mulitple channels using a comma seperator (ch1,ch2,ch3). Required to add channel to a channel group
+      schema:
+        type: string
+      example: ch1
+    RemoveQueryParam:
+      name: remove
+      in: query
+      description: Name of a channel to be removed from the channel group. You may add mulitple channels using a comma seperator (ch1,ch2,ch3). Required to remove channel from a channel group
+      schema:
+        type: string
+      example: ch1 
+    GroupNamePathParam:
+      name: group_name
+      in: path
+      description: the group to be deleted
+      schema:
+        type: string
+      required: true
+      example: group1 
+
+  schemas:
+    GetAllChannelGroupsV1ResponsePayload:
+      type: object
+      properties:
+        sub_key:
+          type: string
+          example: subKey
+        groups:
+          type: array
+          items:
+            type: string
+          example:  [
+            "group1",
+            "group2",
+            "group3"
+        ]
+      example: {
+            "service": "channel-registry",
+            "status": "200",
+            "error": false,
+            "message": "OK"
+              }
+    GetAllChannelGroupsV1SuccessResponse:
+      type: object
+      properties:
+        service:
+          type: string
+          example: name of the service returning the data
+        status:
+          type: string
+          example: HTTP status code of the performed action
+        error:
+          type: string
+          example: returns the reason an error has occoured
+        payload:
+          $ref: '#/components/schemas/GetAllChannelGroupsV1ResponsePayload'
+    GetAllChannelsOfChannelGroupSuccessResponse:
+      type: object
+      properties:
+        service:
+          type: string
+          example: name of the service returning the data
+        status:
+          type: string
+          example: HTTP status code of the performed action
+        error:
+          type: string
+          example: returns the reason an error has occoured
+        payload:
+          type: object
+          properties:
+            group:
+              type: string
+              example: group_id
+            channels:
+              type: array
+              items:
+                type: string
+              example: [
+                          "channel1",
+                          "channel2",
+                          "channel3"
+                      ]
+    ChannelGroupOperationsDefaultSuccessResponse:
+      type: object
+      properties:
+        service:
+          type: string
+          example: "channel-registry"
+        status:
+          type: string
+          example: "200"
+        error:
+          type: boolean
+          example: false
+        message:
+          type: string
+          example: "OK"

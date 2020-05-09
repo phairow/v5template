@@ -1,0 +1,5 @@
+    <%= endpoint.titlePropertyName %>(...args) {
+        if (<%= endpoint.title %>.validate(...args)) {
+            return <%= endpoint.title %>.execute(...args);
+        }
+    }

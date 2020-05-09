@@ -1,0 +1,455 @@
+openapi: 3.0.1
+info:
+  title: PubNub Presence APIs
+  description: This is the place where you can find all PubNub Presence Endpoint APIs
+  termsOfService: http://pubnub.com/terms/
+  contact:
+    email: support@pubnub.com
+  version: 0.0.1
+servers:
+- url: https://ps.pndsn.com
+tags:
+- name: Presence
+  description: Presence is what enables us to say who (UUID) is on a where (channel), when, and how (state).
+paths:
+  /v2/presence/sub_key/{sub_key}/channel/{channel}/heartbeat: 
+    get:
+      tags:
+      - Presence
+      summary: Get presence information
+      description: Use this get api to fetch channel specific presence information
+      parameters: 
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/CallbackQueryParam'
+      - $ref: '#/components/parameters/HeartbeatQueryParam'
+      - $ref: '#/components/parameters/StateQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+             schema:
+                $ref: '#/components/schemas/GetPresenceSuccessResponse'
+                
+  /v2/presence/sub-key/{sub_key}/channel/{channel}/uuid/{uuid}/data:
+    get:
+      tags: 
+      - Presence
+      summary: Setting User State
+      description: Set state for a user for a channel(s) and/or channel-group(s).
+      parameters: 
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/UuidPathParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/StateQueryParam'
+      - $ref: '#/components/parameters/CallbackQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+             schema:
+                $ref: '#/components/schemas/SetUserStateSuccessResponse'
+       
+  /v2/presence/sub-key/{sub_key}/channel/{channel}/uuid:
+    get:
+      tags: 
+      - Presence
+      summary: Getting User State
+      description: Get state for a user for a channel(s) and/or channel-group(s).
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/CallbackQueryParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+             schema:
+                $ref: '#/components/schemas/GetUserStateSuccessResponse'
+
+  
+  /v2/presence/sub_key/{sub_key}/channel/{channel}/leave:
+    get:
+      tags: 
+      - Presence
+      summary: Announce Leave
+      description: Indicate to the PubNub Presence system that a device has left a channel(s).
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/CallbackQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+             schema:
+                $ref: '#/components/schemas/LeaveAnnounceSuccessResponse'
+    
+  /v2/presence/sub-key/{sub_key}/channel/{channel}:
+    get:
+      tags:
+      - Presence
+      summary: HereNow information
+      description: Retrieve UUID and State Information for subscribed devices on a specific channel.
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/DisableUuidsQueryParam'
+      - $ref: '#/components/parameters/StateQueryParam'  
+      - $ref: '#/components/parameters/CallbackQueryParam'   
+      - $ref: '#/components/parameters/UuidQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+             schema:
+                $ref: '#/components/schemas/HereNowSuccessResponse'
+
+  /v2/presence/sub-key/{sub_key}:
+    get:
+      tags:
+      - Presence
+      summary: Global Here Now
+      description: Retrieve UUID and State Information for subscribed devices on a all channels. This is exactly like Here Now, except without a channel path / channel group query string parameter.
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/DisableUuidsQueryParam'
+      - $ref: '#/components/parameters/StateQueryParam'  
+      - $ref: '#/components/parameters/CallbackQueryParam' 
+      - $ref: '#/components/parameters/UuidQueryParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+             schema:
+                $ref: '#/components/schemas/GlobalHereNowSuccessResponse'
+
+  /v2/presence/sub-key/{sub_key}/uuid/{uuid}:
+    get:
+      tags:
+      - Presence
+      summary: Where Now
+      description: Get list of channels user is present in.
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/UuidPathParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/CallbackQueryParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+             schema:
+                $ref: '#/components/schemas/WhereNowSuccessResponse'
+
+components:
+  parameters:
+    SubKeyPathParam:
+      name: sub_key
+      in: path
+      description: the subscriber key
+      required: true
+      schema:
+        type: string
+      example: mySubKey
+    ChannelPathParam:
+      name: channel
+      in: path
+      description: The channel name for which the new state will be applied. Verify that channels are comprised of valid characters. May be a single channel, or multiple channels, separated by comma.
+      required: true
+      schema:
+        type: string
+      example: ch1,ch2  
+    ChannelGroupQueryParam:
+      name: channel-group
+      in: query
+      description: Channel group name(s) to subscribe to. If subscribing to more than one channel group, use a comma separator between channel group names. You may subscribe to channels, channels & channel groups, or just channel groups.
+      required: false
+      schema:
+        type: string
+      example: cg1,cg2,cg3
+    AuthQueryParam:
+      name: auth
+      in: query
+      description: If the channel is protected by PAM, auth must be passed with a key which is authorized to publish to the channel.
+      schema:
+        type: string
+      required: false
+      example: authKey      
+    CallbackQueryParam:
+      name: callback
+      in: query
+      description: If provided, wraps the response in function (JSONP)
+      required: false
+      schema:
+        type: string
+      example: myFunction      
+    HeartbeatQueryParam:
+      name: heartbeat
+      in: query
+      description: Used to set the presence timeout period. It overrides the default value of 300 for Presence Timeout.
+      required: false
+      schema:
+        type: integer
+      example: 120
+    StateQueryParam:
+      name: state
+      in: query
+      description: When state is set, this value is an object with root keys associated with each channel you are setting state for. You must be subscribed to a channel to set state for it.
+      required: true
+      schema:
+        type: string
+      example: '%7B%22text%22%3A%22hey%22%7D'
+    UuidQueryParam:
+      name: uuid
+      in: query
+      description: A unique alphanumeric ID for identifying the client to the PubNub Presence System, as well as for PubNub Analytics.
+      schema:
+        type: string
+      required: true
+      example: db9c5e39-7c95-40f5-8d71-125765b6f561      
+    UuidPathParam:
+      name: uuid
+      in: path
+      description: A unique alphanumeric ID for identifying the client to the PubNub Presence System, as well as for PubNub Analytics.
+      required: true
+      schema:
+        type: string
+      example: 'db9c5e39-7c95-40f5-8d71-125765b6f561'
+    DisableUuidsQueryParam:
+      name: disable_uuids
+      in: query
+      description: If true or 1, or not provided, UUIDS, and accompanying state info, will not be returned, only occupancy numbers. If 0, or false, UUIDS, will be returned with occupancy numbers.
+      required: false
+      schema:
+        type: string
+      example: 0
+  schemas:
+    WhereNowSuccessResponse:
+      type: object
+      properties:
+       status:
+         type: integer
+       message:
+         type: string
+       payload:
+         type: object
+         properties:
+           channels:
+             type: array
+             items:
+               type: string
+       service:
+         type: string
+      example:
+              {
+                  "status": 200, 
+                  "message": "OK", 
+                  "payload": {
+                      "channels": [
+                          "my-channel"
+                      ]
+                  }, 
+                  "service": "Presence"
+              }
+    GlobalHereNowSuccessResponse:
+      type: object
+      properties:
+         status:
+           type: integer
+         message:
+           type: string
+         payload:
+           type: object
+           properties:
+             channels:
+              $ref: '#/components/schemas/HereNowGlobalChannels'
+             total_channels:
+               type: integer
+             total_occupancy:
+               type: integer
+         service:
+           type: string
+      example:
+        {
+          "status": 200,
+          "message": "OK",
+          "payload": {
+              "channels": {
+                  "81d8d989-b95f-443c-a726-04fac323b331": {
+                      "uuids": [
+                          "70fc1140-22b5-4abc-85b2-ff8c17b24d59"
+                      ],
+                      "occupancy": 1
+                  },
+                  "81b7a746-d153-49e2-ab70-3037a75cec7e": {
+                      "uuids": [
+                          "91363e7f-584b-49cc-822c-52c2c01e5928"
+                      ],
+                      "occupancy": 1
+                  },
+                  "c068d15e-772a-4bcd-aa27-f920b7a4eaa8": {
+                      "uuids": [
+                          "ccfac1dd-b3a5-4afd-9fd9-db11aeb65395"
+                      ],
+                      "occupancy": 1
+                  }
+              },
+              "total_channels": 3,
+              "total_occupancy": 3
+          },
+          "service": "Presence"
+        }
+    HereNowSuccessResponse:
+      type: object
+      properties:
+       status:
+         type: integer
+         example: 200
+       message:
+         type: string
+         example: OK
+       occupancy:
+         type: integer
+         example: 1
+       uuids:
+         type: array
+         items:
+           type: string
+       service:
+         type: string
+         example: Presence
+      example:
+       { 
+        "status": 200,
+        "message": "OK",  
+        "occupancy": 1,  
+        "uuids": ["pn-4152c98f-0b60-404c-9719-c42dbf8fc246"],
+        "service": "Presence"
+        }
+    LeaveAnnounceSuccessResponse:
+      type: object
+      properties:
+       status:
+         type: integer
+         example: 200
+       message:
+         type: string
+         example: OK
+       action:
+         type: string
+         example: leave
+       service:
+         type: string
+         example: Presence
+      example:
+         {  
+          "status": 200,
+          "message": "OK",
+          "action": "leave",
+          "service": "Presence"
+          }     
+    GetUserStateSuccessResponse:
+      type: object
+      properties:
+       service:
+         type: string
+         example: Presence
+       status:
+         type: integer
+         example: 200
+       error:
+         type: boolean
+         example: false
+       message:
+         type: string
+         example: OK
+       payload:
+         type: string
+         example: "{text:hey}"
+      example:
+         {
+              "service": "presence",
+              "status": 200,
+              "error": false,
+              "message": "OK",
+              "payload": "{text:hey}"
+         }
+    SetUserStateSuccessResponse:
+      type: object
+      properties:
+       service:
+         type: string
+         example: Presence
+       status:
+         type: integer
+         example: 200
+       error:
+         type: boolean
+         example: false
+       message:
+         type: string
+         example: OK
+       payload:
+         type: string
+         example: "{text:hey}"
+      example:
+         {
+              "service": "presence",
+              "status": 200,
+              "error": false,
+              "message": "OK",
+              "payload": "{text:hey}"
+         }
+    GetPresenceSuccessResponse:
+      type: object
+      properties:
+       status:
+         type: integer
+         example: 200
+       message:
+         type: string
+         example: OK
+       service:
+         type: string
+         example: Presence
+      example:
+         {  
+          "status": 200,
+          "message": "OK",  
+          "service": "Presence"
+          }
+    HereNowGlobalChannels:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/HereNowGlobalChannel'
+    HereNowGlobalChannel:
+      type: object
+      properties:
+        uuids:
+          type: array
+          items:
+            type: string
+        occupancy:
+          type: integer

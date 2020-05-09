@@ -1,0 +1,34 @@
+package com.pubnub.sdk.api;
+
+import com.pubnub.sdk.log.Logger;
+import com.pubnub.sdk.net.Networking;
+import com.pubnub.sdk.parse.Parser;
+
+<%
+  endpoints.forEach((endpoint) => {
+%><%- include('includes/importEndpoint', { endpoint }); %>
+<%
+  });
+%>
+public class Api {
+
+    protected Networking net;
+
+    protected Parser parse;
+
+    protected Logger log;
+
+    public Api(Networking net, Parser parse, Logger log) {
+        this.net = net;
+        this.parse = parse;
+        this.log = log;
+    }
+
+<%
+  endpoints.forEach((endpoint) => {
+%><%- include('includes/apiMethod', { endpoint }); %>
+
+<%
+  });  
+%>
+}

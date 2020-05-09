@@ -1,0 +1,393 @@
+openapi: 3.0.1
+info:
+  title: PubNub Message Actions APIs
+  description: This is the place where you can find all PubNub Object APIs
+  termsOfService: http://pubnub.com/terms/
+  contact:
+    email: support@pubnub.com
+  version: 0.0.1
+servers:
+- url: https://ps.pndsn.com
+tags:
+- name: Message Actions
+  description: APIs for sending and receiving actions on messages sent via PubNub. These actions can represent receipts, reactions or custom actions for messages.
+paths:
+
+  /v1/message-actions/{sub_key}/channel/{channel}:
+    get:
+      tags:
+      - Message Actions
+      summary: Fetch a list of actions, ordered by action timetoken.
+      description: Fetch a list of actions, ordered by action timetoken.
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/StartQueryParam'
+      - $ref: '#/components/parameters/EndQueryParam'
+      - $ref: '#/components/parameters/LimitQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'       
+      responses:
+        '200':
+          description: The actions were fetched.
+          content:
+            application/json:
+             schema:
+               $ref: '#/components/schemas/FetchActionsSuccessResponse'
+        '400':
+          description: The subscribe key is invalid.
+          content:
+            application/json:
+             schema:
+               $ref: '#/components/schemas/ErrorInvalidSubscribeKey'
+
+        '403':
+          description: The client isn't authorized to perform this operation.
+          content:
+            application/json:
+             schema:
+               $ref: '#/components/schemas/ErrorUnauthorizedClient'
+
+
+  /v1/message-actions/{sub_key}/channel/{channel}/message/{message_timetoken}:
+    post:
+      tags:
+      - Message Actions
+      summary: Add a Message Action
+      description: Allows users to post actions on a "parent message" by specifying the subkey, channel, and timetoken of the parent message.
+      requestBody:
+        description: JSON object with user properties.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddMessageActionsRequestBody'
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/MessageTimeTokenPathParam'
+      - $ref: '#/components/parameters/AuthQueryParam'   
+      - $ref: '#/components/parameters/UuidQueryParam'   
+      responses:
+        '200':
+          description: The message action was successfully added.
+          content:
+            application/json:
+             schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 200
+                data:
+                    $ref: '#/components/schemas/MessageActionData'        
+        '207':
+          description: The message action was stored but failed to publish.
+          content:
+            application/json:
+             schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 207
+                data:
+                    $ref: '#/components/schemas/MessageActionData'
+                error:
+                    $ref: '#/components/schemas/CommonErrorObject'
+        '400':
+          description: The post request contained invalid parameters.
+          content:
+            application/json:
+             schema:
+              $ref: '#/components/schemas/ErrorResponse400'
+        '403':
+          description: "The client isn't authorized to perform this operation. The authorization key you provided doesn't have the required permissions for this operation."
+          content:
+            application/json:
+             schema:
+              $ref: '#/components/schemas/ErrorUnauthorizedClient'
+        '409':
+          description: The action was already added
+          content:
+            application/json:
+             schema:
+              $ref: '#/components/schemas/ErrorResponse409'       
+
+  /v1/message-actions/{sub_key}/channel/{channel}/message/{message_timetoken}/action/{action_timetoken}:
+    delete:
+      tags:
+      - Message Actions
+      summary: Remove actions from a given message.
+      description: Allows users to remove their previously-posted message actions, by specifying the parent message, and the single timetoken of the action(s) they wish to delete.
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/MessageTimeTokenPathParam'
+      - $ref: '#/components/parameters/ActionTimeTokenPathParam'
+      - $ref: '#/components/parameters/AuthQueryParam'  
+      - $ref: '#/components/parameters/UuidQueryParam'
+      responses:
+        '200':
+          description: The action was removed.
+          content:
+            application/json:
+             schema:
+              $ref: '#/components/schemas/RemoveActionSuccessResponse'
+        '207':
+          description: The action was deleted but the action-deletion message was not published.
+          content:
+            application/json:
+             schema:
+              $ref: '#/components/schemas/CommonErrorObject'
+             example: {
+                        "status": 207,
+                        "error": {
+                          "source": "actions",
+                          "message": "Deleted but failed to publish removed events."
+                        }
+                      }
+        '400':
+          description: Wrong uuid specified for the given message action.
+          content:
+            application/json:
+             schema:
+              $ref: '#/components/schemas/CommonErrorObject'
+             example: {
+                        "status": 400,
+                        "error": {
+                          "source": "actions",
+                          "message": "Not deleting message action: wrong uuid specified"
+                        }
+                      }
+        '403':
+          description: The client isn't authorized to perform this operation.
+          content:
+            application/json:
+             schema:
+              $ref: '#/components/schemas/ErrorUnauthorizedClient'
+components:
+  parameters:
+    SubKeyPathParam:
+      name: sub_key
+      in: path
+      description: the subscriber key
+      required: true
+      schema:
+        type: string
+      example: mySubKey
+    ChannelPathParam:
+      name: channel
+      in: path
+      description: The channel name.
+      required: true
+      schema:
+        type: string
+      example: demo-animal-forest
+    StartQueryParam:
+      name: start
+      in: query
+      description: Action timetoken denoting the start of the range requested (return values will be less than start)
+      required: false
+      schema:
+        type: string
+      example: '15610547826970040'
+    EndQueryParam:
+      name: end
+      in: query
+      description: Action timetoken denoting the end of the range requested (return values will be greater than or equal to end)
+      required: false
+      schema:
+        type: string
+      example: '15610547826970040'
+    LimitQueryParam:
+      name: limit
+      in: query
+      description: Number of actions to return in response.
+      required: false
+      schema:
+        type: integer
+      example: 500 
+    AuthQueryParam:
+      name: auth
+      in: query
+      description: Authorization key with permissions to perform the request (if configured)
+      required: false
+      schema:
+        type: string
+      example: myAuth 
+    MessageTimeTokenPathParam:
+      name: message_timetoken
+      in: path
+      description: The publish timetoken of a parent message.
+      required: true
+      schema:
+        type: string
+      example: '15610547826970040'
+    UuidQueryParam:
+      name: uuid
+      in: query
+      description: A unique alphanumeric ID for identifying the client to the PubNub Presence System, as well as for PubNub Analytics.
+      required: false
+      schema:
+        type: string
+      example: db9c5e39-7c95-40f5-8d71-125765b6f561
+    ActionTimeTokenPathParam:
+      name: action_timetoken
+      in: path
+      description: The publish timetoken of the action.
+      required: true
+      schema:
+        type: string
+      example: '15610547826970040' 
+
+  schemas:
+    FetchActionsSuccessResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 200
+        data:
+          type: array
+          items:
+           $ref: '#/components/schemas/MessageActionData'
+        more:
+          $ref: '#/components/schemas/MessageActionResponseMore'
+    AddMessageActionsRequestBody:
+      type: object
+      properties:
+        type:
+          type: string
+          example: reaction
+        value:
+          type: string
+          example: smiley_face
+  
+    MessageActionData:
+      type: object
+      properties:
+        type:
+          type: string
+          example: reaction
+        value:
+          type: string
+          example: smiley_face
+        actionTimetoken:
+          type: string
+          example: '15610547826970050'
+        messageTimetoken:
+          type: string
+          example: '15610547826969050'
+        uuid:
+          type: string
+          example: 'terryterry69420'
+      
+    MessageActionResponseMore:
+      type: object
+      properties:
+        url:
+          type: string
+          example: "/v1/actions/sub-c-6ba5f838-6456-11e8-9307-eaaa55e2558c/channel/test_channel_1567187121_2_6_6?start=15610547826970050&end=15645905639093361&limit=2"
+        start:
+          type: string
+          example: '15610547826970050'
+        end:
+          type: string
+          example: '15645905639093361'
+        limit:
+          type: string
+          example: '2'
+    RemoveActionSuccessResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 200
+        data:
+          type: object
+          example: {}
+    ErrorResponse400:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 400
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Request payload contained invalid input.
+            source:
+              type: string
+              example: objects
+            details:
+              type: array
+              items:
+                $ref: '#/components/schemas/ErrorResponse400Details'
+    ErrorResponse400Details:
+      type: object
+      properties:
+        message:
+          type: string
+          example: User email must be a valid email address.
+        location:
+          type: string
+          example: user.email
+        locationType:
+          type: string
+          example: body
+    CommonErrorObject:
+      type: object
+      properties:
+        status:
+          type: integer
+        error:
+          type: object
+          properties:
+            message:
+             type: string
+            source:
+             type: string
+    ErrorResponse409:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 409
+        message:
+          type: string
+          example: Object with the requested identifier already exists.
+        source:
+          type: string
+          example: objects
+    ErrorInvalidSubscribeKey:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 400
+        error:
+          type: object
+          properties:
+            source:
+              type: string
+              example: actions
+            message:
+              type: string
+              example: Invalid Subkey
+    ErrorUnauthorizedClient:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 403
+        error:
+          type: object
+          properties:
+            source:
+              type: string
+              example: actions
+            message:
+              type: string
+              example: Supplied authorization key does not have the permissions required to perform this operation.

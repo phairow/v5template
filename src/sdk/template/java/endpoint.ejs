@@ -1,0 +1,34 @@
+package com.pubnub.sdk.api.endpoint;
+
+import com.pubnub.sdk.log.Logger;
+import com.pubnub.sdk.net.Networking;
+import com.pubnub.sdk.parse.Parser;
+
+public class <%= title %> {
+
+  protected Networking net;
+
+  protected Parser parse;
+
+  protected Logger log;
+
+  public <%= title %>(Networking net, Parser parse, Logger log) {
+    this.net = net;
+    this.parse = parse;
+    this.log = log;
+  }
+  
+  public static boolean validate(<%- include('includes/parameterList', { parameters }); %>) {
+<%
+      parameters.forEach((parameter) => {
+        %><%- include('includes/parameterValidate', { parameter }); %><%
+      });
+%>
+    return true;
+  }
+
+  public static void execute(<%- include('includes/parameterList', { parameters }); %>) {
+    // ...
+  }
+
+}

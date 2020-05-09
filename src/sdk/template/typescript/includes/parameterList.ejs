@@ -1,0 +1,13 @@
+<%
+  let first = true;
+  parameters.forEach((parameter) => {
+
+    if (!first) {
+      %>, <%
+    } else {
+      first = false;
+    }
+    
+    %><%= parameter.name %>: <%= parameter.schema.type %><%
+  });
+%>

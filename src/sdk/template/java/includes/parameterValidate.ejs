@@ -1,0 +1,17 @@
+<%
+  if (parameter.schema.minimum != null) {
+%>
+    if (<%= parameter.name %> < <%= parameter.schema.minimum %>) {
+      return false;
+    }
+<%
+  }
+
+  if (parameter.schema.maximum != null) {
+%>
+    if (<%= parameter.name %> > <%= parameter.schema.maximum %>) {
+      return false;
+    }
+<%
+  }
+%>

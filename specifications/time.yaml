@@ -1,0 +1,60 @@
+openapi: 3.0.1
+info:
+  title: PubNub Time API
+  description: PubNub Time Api
+  termsOfService: http://pubnub.com/terms/
+  contact:
+    email: support@pubnub.com
+  version: 0.0.1
+servers:
+- url: https://ps.pndsn.com
+tags:
+- name: Time
+  description: Manage one or more users
+paths:
+  /time/{callback}:
+    get:
+      tags:
+      - Time
+      summary: fetch time
+      description: Get current PubNub Time in the form of a Timetoken.
+      parameters:
+      - $ref: '#/components/parameters/CallbackPathParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      responses:
+        '200':
+          description: fetch time succeed
+          content:
+            application/json:
+             schema:
+              $ref: '#/components/schemas/TimeResponse'
+             examples:
+                WithoutJSONP:
+                 value: [
+                          14374273908474348
+                        ]
+                WithJSONP:
+                 value: moose([14374273908474349])
+components:
+  parameters:
+    CallbackPathParam:
+      name: callback
+      in: path
+      description: pass function name to wrap in JSONP or 0 to disable JSONP
+      required: true
+      schema:
+        type: string
+      example: 0
+    UuidQueryParam:
+      name: uuid
+      in: query
+      description: A unique alphanumeric ID for identifying the client to the PubNub Presence System, as well as for PubNub Analytics.
+      required: true
+      schema:
+        type: string
+      example: db9c5e39-7c95-40f5-8d71-125765b6f561
+  schemas:
+    TimeResponse:
+      type: array
+      items:
+       type: number

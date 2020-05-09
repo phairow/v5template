@@ -1,0 +1,26 @@
+import { PubNubLogger } from "../log/PubNubLogger";
+import { PubNubNetworking } from "../net/PubNubNetworking";
+import { PubNubParser } from "../parse/PubNubParser";
+
+<%
+  endpoints.forEach((endpoint) => {
+%><%- include('includes/importEndpoint', { endpoint }); %>
+<%
+  });
+%>
+class Api {
+
+  constructor(
+    public net: Networking,
+    public parse: Parser,
+    public log: Logger,
+  ) {}
+
+<%
+  endpoints.forEach((endpoint) => {
+%><%- include('includes/apiMethod', { endpoint }); %>
+
+<%
+  });
+%>
+}

@@ -1,0 +1,21 @@
+<%
+  endpoints.forEach((endpoint) => {
+%><%- include('includes/importEndpoint', { endpoint }); %>
+<%
+  });
+%>
+class Endpoints {
+
+    constructor(httpLib, serializationLib) {
+        this.httpLib = httpLib;
+        this.serializationLib = serializationLib;
+    }
+
+<%
+  endpoints.forEach((endpoint) => {
+%><%- include('includes/apiMethod', { endpoint }); %>
+
+<%
+  });  
+%>
+}

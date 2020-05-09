@@ -1,0 +1,33 @@
+<%
+  if (parameter.schema.type === 'integer') {
+%>
+    if (!Number.isInteger(<%= parameter.name %>)) {
+      return false;
+    }
+<%
+  }
+
+  if (parameter.schema.type === 'array') {
+%>
+    if (!Array.isArray(<%= parameter.name %>)) {
+      return false;
+    }
+<%
+  }
+
+  if (parameter.schema.type === 'string') {
+%>
+    if (typeof (<%= parameter.name %>) !== 'string') {
+      return false;
+    }
+<%
+  }
+
+  if (parameter.schema.type === 'boolean') {
+%>
+    if (typeof (<%= parameter.name %>) !== 'boolean') {
+      return false;
+    }
+<%
+  }
+%>

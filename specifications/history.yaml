@@ -1,0 +1,476 @@
+openapi: 3.0.1
+info:
+  title: PubNub History APIs
+  description: This is the place where you can find all PubNub History Endpoint APIs
+  termsOfService: http://pubnub.com/terms/
+  contact:
+    email: support@pubnub.com
+  version: 0.0.1
+servers:
+- url: https://ps.pndsn.com
+tags:
+- name: History
+  description: History information
+paths:
+  /v2/history/sub-key/{sub_key}/channel/{channel}:
+    get:
+      tags: 
+      - History
+      summary: Fetch message history api v2.
+      description: Use this api to fetch message histroy
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/StringTokenQueryParam'
+      - $ref: '#/components/parameters/CountQueryParam'
+      - $ref: '#/components/parameters/ReverseQueryParam'
+      - $ref: '#/components/parameters/StartQueryParam'
+      - $ref: '#/components/parameters/EndQueryParam'
+      - $ref: '#/components/parameters/IncludeTokenQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/IncludeMetadataQueryParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+             schema:
+                 $ref: '#/components/schemas/MessageHistorySuccessResponse'
+
+  /v3/history/sub-key/{sub_key}/channel/{channels}:
+    get:
+      tags: 
+      - History
+      summary: Fetch message history api v3.
+      description: Use this api to fetch batch of message histroy  
+      parameters: 
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelsPathParam'
+      - $ref: '#/components/parameters/MaxQueryParam'
+      - $ref: '#/components/parameters/ReverseQueryParam'
+      - $ref: '#/components/parameters/StartQueryParam'
+      - $ref: '#/components/parameters/EndQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/IncludeMetadataQueryParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+             schema:
+                 $ref: '#/components/schemas/MessageHistorySuccessResponse'
+
+  /v3/history-with-actions/sub-key/{sub_key}/channel/{channel}: 
+    get:
+      tags: 
+      - History
+      summary: History with actions
+      description: Show history messages within the given time range, along with their actions
+      parameters: 
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'    
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/StartQueryParam'
+      - $ref: '#/components/parameters/EndQueryParam'
+      - $ref: '#/components/parameters/MaxQueryParam'
+      - $ref: '#/components/parameters/IncludeMetadataQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+             schema:
+                 $ref: '#/components/schemas/HistoryWithActionsSuccessResponse'
+        '400':
+          description: The request was invalid.
+          content:
+            application/json:
+             schema:
+                 $ref: '#/components/schemas/ErrorInvalidRequest'
+
+  /v3/history/sub-key/{sub_key}/message-counts/{channels}:
+    get:
+      tags: 
+      - History
+      summary: MessageCounts
+      description: Get message counts for channels.
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelsPathParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/TimetokenQueryParam'
+      - $ref: '#/components/parameters/ChannelsTimetokenQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+             schema:
+                 $ref: '#/components/schemas/HistoryMessageCountV3Response'
+    delete:
+      tags:
+      - History
+      summary: Delete History
+      description: Use a REST DELETE method in this format to make the request to the PubNub service to delete a channel or subset of a channel.
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelsPathParam'          
+      - $ref: '#/components/parameters/StartQueryParam'
+      - $ref: '#/components/parameters/EndQueryParam'        
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+               schema:
+                 $ref: '#/components/schemas/DeleteSuccessResponse'
+          '400':
+            description: Parse error.
+            content:
+              application/json:
+               schema:
+                 $ref: '#/components/schemas/ParseError'
+
+          '403':
+            description: Do not have permission to delete
+            content:
+              application/json:
+               schema:
+                 $ref: '#/components/schemas/ErrorUnauthorizedClient'
+components:
+  parameters:
+    SubKeyPathParam:
+      name: sub_key
+      in: path
+      description: the subscriber key
+      required: true
+      schema:
+        type: string
+      example: mySubKey
+    ChannelPathParam:
+      name: channel
+      in: path
+      description: channel for which the history is requested
+      required: true
+      schema:
+        type: string
+      example: ch1
+    StringTokenQueryParam:
+      name: stringtoken
+      in: query
+      description: If false, 0, or not provided, the returned start and end Timetoken values will be returned as long ints. If 1, or true, the start and end Timetoken values will be returned as strings.
+      required: false
+      schema:
+        type: boolean
+      example: false
+    CountQueryParam:
+      name: count
+      in: query
+      description: The maximum number of messages to return per response. If the count parameter is not provided, the server will default to the maximum value of 100. When the count parameter is provided, you may request between 1 and 100 messages.
+      required: false
+      schema:
+        type: integer
+      example: 100
+    ReverseQueryParam:
+      name: reverse
+      in: query
+      description: Direction of time traversal. Default is false, which means timeline is traversed newest to oldest.
+      required: false
+      schema:
+        type: boolean
+      example: false
+    StartQueryParam:
+      name: start
+      in: query
+      description: If provided, lets you select a "start date", in Timetoken format. If not provided, it will default to current time. Page through results by providing a start OR end time token. Retrieve a slice of the time line by providing both a start AND end time token. start is ‘exclusive’ – that is, the first item returned will be the one immediately after the start Timetoken value.
+      required: false
+      schema:
+        type: number
+      example: 123323123123123
+    EndQueryParam:
+      name: end
+      in: query
+      description: If provided, lets you select an "end date", in Timetoken format. If not provided, it will provide up to the number of messages defined in the "count" parameter. Page through results by providing a start OR end time token. Retrieve a slice of the time line by providing both a start AND end time token. End is ‘exclusive’ – that is, if a message is associated exactly with the end Timetoken, it will be included in the result.
+      required: false
+      schema:
+        type: number
+      example: 123323123123123
+    IncludeTokenQueryParam:
+      name: include_token
+      in: query
+      description: pass true to recieve a timetoken with each history message. Defaults to false
+      required: false
+      schema:
+        type: boolean
+      example: false
+    AuthQueryParam:
+      name: auth
+      in: query
+      description: If the channel is protected by PAM, auth must be passed with a key which is authorized to read from the channel.
+      required: false
+      schema:
+        type: string
+      example: authKey
+    UuidQueryParam:
+      name: uuid
+      in: query
+      description: A unique alphanumeric ID for identifying the client to the PubNub Presence System, as well as for PubNub Analytics.
+      required: true
+      schema:
+        type: string
+      example: db9c5e39-7c95-40f5-8d71-125765b6f561
+    IncludeMetadataQueryParam:
+      name: include_meta
+      in: query
+      description: Set to true to include metadata with returned messages. This metadata is set using the meta parameter with the publish operation. Default is false.
+      required: false
+      schema:
+        type: boolean
+      example: true
+    ChannelsPathParam:
+      name: channels
+      in: path
+      description: comma separated channels for which the history is requested
+      required: true
+      schema:
+        type: string
+      example: ch1, ch2
+    MaxQueryParam:
+      name: max
+      in: query
+      description: The batch history is limited to 500 channels and only the last 25 messages per channel.
+      required: false
+      schema:
+        type: integer
+      example: 25
+    TimetokenQueryParam:
+      name: timetoken
+      in: query
+      description: A single timetoken to cover all channels passed-in on the request path. This parameter is incompatible with channelsTimetoken. Value must be greater than 0 (zero).
+      required: false
+      schema:
+        type: number
+    ChannelsTimetokenQueryParam:
+      name: channelsTimetoken
+      in: query
+      description: A comma-delimited list of timetokens, in order of the channels list, in the request path. If the list of timetokens is not the same length as the list of channels, a 400 bad request error will result. This parameter is incompatible with timetoken. Value must be greater than 0 (zero).
+      required: false
+      schema:
+        type: string
+      example: '15210190573608384,15211140747622125'
+
+  schemas:
+    stringArray:
+      type: array
+      items:
+        type: string
+    historyWithActionsChannels:
+     type: object
+     additionalProperties:
+       $ref: '#/components/schemas/historyValueArray'
+    historyValueArray:
+     type: array
+     items:
+       $ref: '#/components/schemas/historyValueArrayMessage'
+    historyValueArrayMessage:
+     type: object
+     properties:
+       message:
+         type: string
+       timetoken:
+         type: number
+       actions:
+         anyOf:
+           - $ref: '#/components/schemas/actionsWithReceipt'
+           - $ref: '#/components/schemas/actionsWithReaction'
+    actionsWithReceipt:
+      type: object
+      properties:
+       receipt:
+         $ref: '#/components/schemas/receiptInfo'
+    receiptInfo:
+      type: object
+      properties:
+       read:
+         type: array
+         items:
+           $ref: '#/components/schemas/actionInfo'
+    actionsWithReaction:
+      type: object
+      properties:
+       reaction:
+          $ref: '#/components/schemas/reactionInfo'
+    actionInfo:
+      type: object
+      properties:
+        uuid:
+          type: string
+        actionTimetoken:
+          type: number
+    reactionInfo:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/arrayOfActionInfo'
+    arrayOfActionInfo:
+      type: array
+      items:
+        $ref: '#/components/schemas/actionInfo'
+    historyWithActionsResponseMoreInfo:
+      type: object
+      properties:
+       url:
+        type: string
+       start:
+        type: string
+       limit:
+        type: integer
+    messageCountChannels:
+      type: object
+      additionalProperties:
+        type: number
+    MessageHistorySuccessResponse:
+      type: array
+      items:
+        oneOf:
+         - $ref: '#/components/schemas/stringArray'               
+         - type: integer
+      example: [["Pub1","Pub2","Pub3"],13406746729185766,13406746780720711]
+    HistoryWithActionsSuccessResponse:
+      type: object
+      properties:
+         status:
+           type: integer
+           example: 200
+         error:
+           type: boolean
+           example: false
+         error_message:
+           type: string
+         channels:
+          $ref: '#/components/schemas/historyWithActionsChannels'
+         more:
+          $ref: '#/components/schemas/historyWithActionsResponseMoreInfo'
+      example: {
+            "status": 200,
+            "error": false,
+            "error_message": "",
+            "channels": {
+              "demo-channel": [
+                {
+                  "message": "Hi",
+                  "timetoken": 15610547826970040,
+                  "actions": {
+                    "receipt": {
+                      "read": [
+                        {
+                          "uuid": "user-7",
+                          "actionTimetoken": 15610547826970044
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "message": "Hello",
+                  "timetoken": 15610547826970000,
+                  "actions": {
+                    "reaction": {
+                      "smiley_face": [
+                        {
+                          "uuid": "user-456",
+                          "actionTimetoken": 15610547826970050
+                        }
+                      ],
+                      "poop_pile": [
+                        {
+                          "uuid": "user-789",
+                          "actionTimetoken": 15610547826980050
+                        },
+                        {
+                          "uuid": "user-567",
+                          "actionTimetoken": 15610547826970000
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            "more": {
+              "url": "/v1/history-with-actions/s/channel/c?start=15610547826970000&limit=98",
+              "start": "15610547826970000",
+              "limit": 98
+            }
+          }
+    HistoryMessageCountV3Response:
+      type: object
+      properties:
+         status:
+           type: integer
+           example: 200
+         error:
+           type: boolean
+           example: false
+         channels:
+           $ref: '#/components/schemas/messageCountChannels'
+      example: {
+                  "status": 200,
+                  "error": false,
+                  "error_message": "",
+                  "channels": {
+                      "myChannel1": 33,
+                      "myChannel2": 0
+                  }
+              }
+    DeleteSuccessResponse:
+      type: object
+      properties:
+         status:
+           type: integer
+           example: 200
+         error:
+           type: boolean
+           example: false
+         error_message:
+           type: string
+           example: ""
+    ErrorInvalidRequest:
+      type: object
+      properties:
+       status:
+         type: integer
+         example: 400
+       error:
+         type: boolean
+         example: true
+       error_message:
+         type: string
+         example: 'Invalid Arguments: start'
+       channels:
+         type: object
+         example: {}
+    ParseError:
+      type: object
+      properties:
+         status:
+           type: integer
+           example: 400
+         error:
+           type: boolean
+           example: true
+         error_message:
+           type: string
+           example: Parse error
+    ErrorUnauthorizedClient:
+      type: object
+      properties:
+       status:
+         type: integer
+         example: 403
+       error:
+         type: boolean
+         example: true
+       error_message:
+         type: string
+         example: Do not have permission to delete

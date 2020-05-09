@@ -1,0 +1,37 @@
+<%
+  let first = true;
+  parameters.forEach((parameter) => {
+
+    if (!first) {
+      %>, <%
+    } else {
+      first = false;
+    }
+
+    let typeName;
+
+    switch (parameter.schema.type) {
+      case 'string':
+        typeName = 'String';
+        break;
+      case 'number':
+      case 'integer':
+        typeName = 'int';
+        break;
+      case 'boolean':
+        typeName = 'boolean';
+        break;
+      case 'array':
+        typeName = 'String[]';
+        break;
+      case 'object':
+        typeName = 'Object';
+        break;
+      default:
+        typeName = parameter.schema.type;
+        break;
+    }
+    
+    %><%= typeName %> <%= parameter.title %><%
+  });
+%>

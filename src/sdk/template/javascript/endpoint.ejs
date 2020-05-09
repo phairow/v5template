@@ -1,0 +1,21 @@
+class <%= title %> {
+
+  constructor(httpLib, serializationLib) {
+    this.httpLib = httpLib;
+    this.serializationLib = serializationLib;
+  }
+  
+  validate(<%- include('includes/parameterList', { parameters }); %>) {
+<%
+      parameters.forEach((parameter) => {
+        %><%- include('includes/parameterValidate', { parameter }); %><%
+      });
+%>
+    return true;
+  }
+
+  execute(<%- include('includes/parameterList', { parameters }); %>) {
+    // ...
+  }
+
+}

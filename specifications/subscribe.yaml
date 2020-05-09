@@ -1,0 +1,401 @@
+openapi: 3.0.1
+info:
+  title: PubNub Subscribe APIs
+  description: This is the place where you can find all PubNub Subscribe APIs
+  termsOfService: http://pubnub.com/terms/
+  contact:
+    email: support@pubnub.com
+  version: 0.0.1
+servers:
+- url: https://ps.pndsn.com
+tags:
+- name: Subscribe
+  description: Subscribing the channel
+paths:
+  /subscribe/{sub_key}/{channel}/{callback}/{timetoken}:
+    get:
+      tags:
+      - Subscribe
+      summary: Subscribe to channel v1 api
+      description: Subscribe to messages on channels and/or channel groups.
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/CallbackPathParam'
+      - $ref: '#/components/parameters/TimetokenPathParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/StateQueryParam'
+      - $ref: '#/components/parameters/HeartbeatQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam' 
+      responses:
+        '200':
+          description: Valid/Success Responses
+          content:
+            text/javascript:
+              schema:
+                $ref: '#/components/schemas/SubscribeResponse'
+              examples:
+                Normal messages:
+                  value: {
+                          "t": {
+                              "t": "15628652479932717",
+                              "r": 4
+                          },
+                          "m":[
+                              {
+                                  "a": "1",
+                                  "f": 514,
+                                  "i": "pn-0ca50551-4bc8-446e-8829-c70b704545fd",
+                                  "s": 1,
+                                  "p": {
+                                      "t": "15628652479933927",
+                                      "r": 4
+                                  },
+                                  "k": "demo",
+                                  "c": "my-channel",
+                                  "d": "my message",
+                                  "b": "my-channel"
+                              }
+                          ]
+                        }
+                SignalMessageResponse:
+                  value: {
+                            "t": {
+                                "t": "15653761881633527",
+                                "r": 1
+                            },
+                            "m": [
+                                {
+                                    "a": "5",
+                                    "f": 0,
+                                    "e": 1,
+                                    "i": "user-123",
+                                    "p": {
+                                        "t": "15653761881622292",
+                                        "r": 1
+                                    },
+                                    "k": "demo",
+                                    "c": "myChannel",
+                                    "d": "typing_on",
+                                    "b": "myChannelGroup"
+                                }
+                            ]
+                        }
+  /v2/subscribe/{sub_key}/{channel}/{callback}:
+    get:
+      tags: 
+        - Subscribe
+      summary: Subscribe to channel(s) or channel group
+      description: This resource allows a developer to Subscribe to PubNub.
+      parameters: 
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/CallbackPathParam'
+      - $ref: '#/components/parameters/TimetokenQueryParam'
+      - $ref: '#/components/parameters/RegionQueryParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/HeartbeatQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/FilterExpressionQueryParam' 
+      responses:
+        '200':
+          description: Successful response
+          content:
+            text/javascript:
+              schema:
+                $ref: '#/components/schemas/SubscribeResponse'
+              examples:
+                normalmessages:
+                  value: {
+                          "t": {
+                              "t": "15628652479932717",
+                              "r": 4
+                          },
+                          "m":[
+                              {
+                                  "a": "1",
+                                  "f": 514,
+                                  "i": "pn-0ca50551-4bc8-446e-8829-c70b704545fd",
+                                  "s": 1,
+                                  "p": {
+                                      "t": "15628652479933927",
+                                      "r": 4
+                                  },
+                                  "k": "demo",
+                                  "c": "my-channel",
+                                  "d": "my message",
+                                  "b": "my-channel"
+                              }
+                          ]
+                        }
+        '400':
+          description: Bad Request
+          content:
+            text/javascript:
+             schema:
+              $ref: '#/components/schemas/ErrorResponse400'
+        '403':
+          description: Unauthorized access
+          content:
+            text/javascript:
+             schema:
+              $ref: '#/components/schemas/ErrorResponse403'
+        '413':
+          description: The Signal POST body is larger than 30 bytes.
+          content:
+            text/javascript:
+             schema:
+              $ref: '#/components/schemas/ErrorResponse413'
+        '429':
+          description: Request rate limit exceeded.
+          content:
+            text/javascript:
+             schema:
+              $ref: '#/components/schemas/ErrorResponse429'
+components:
+  parameters:
+    SubKeyPathParam:
+      name: sub_key
+      in: path
+      description: The subscriber key.
+      required: true
+      schema:
+        type: string
+        example: sub-c-406fe670-ff0a-11e8-a860-92908bb92f21
+    ChannelPathParam:
+      name: channel
+      in: path
+      description: The channel name(s) you are subscribing to. Verify that channels are comprised of valid characters. You may subscribe to mulitple channels using a comma seperator. If subscribing to no channels (only channel groups), use a comma char (,) as a placeholder. You may subscribe to channels, channels & channel groups, or just channel groups.
+      required: true
+      schema: 
+        type: string
+      example: ch1
+    CallbackPathParam:
+      name: callback
+      in: path
+      description: JSONP callback name, or 0 if none.
+      required: true
+      schema:
+        type: string
+      examples:
+        myCallback:
+          value: 'myFunction'
+          summary: 'response will be wrapped in JSONP function'
+        zero:
+          value: 0
+          summary: 'for no JSONP'
+    TimetokenPathParam:
+      name: timetoken
+      in: path
+      description: 0 (zero) for the initial subscribe, or a valid timetoken if resuming / continuing / fast-forwarding from a previous subscribe flow.
+      schema:
+        type: string
+      required: true
+      examples:
+        nonZero:
+          value: 1231312313123
+          summary: A valid timetoken if resuming
+        zero:
+          value: 0
+          summary: 0 (zero) for the initial subscribe
+    ChannelGroupQueryParam:
+      name: channle-group
+      in: query
+      description: Channel group name(s) to subscribe to. If subscribing to more than one channel group, use a comma separator between channel group names. You may subscribe to channels, channels & channel groups, or just channel groups.
+      schema:
+        type: string
+      required: false
+      example: cg1,cg2,cg3
+    StateQueryParam:
+      name: state
+      in: query
+      description: When state is set, this value is an object with root keys associated with each channel you are setting state for. You must be subscribed to a channel to set state for it. (Refer to the get/set state sections)
+      schema:
+        type: string
+      required: false
+      example: '%7B%22text%22%3A%22hey%22%7D'      
+    HeartbeatQueryParam:
+      name: heartbeat
+      in: query
+      description: If heartbeat is set, send this parameter with the heartbeat value.
+      schema:
+        type: integer
+      required: false
+    AuthQueryParam:
+      name: auth
+      in: query
+      description: If the channel / channel group is protected by PAM, auth must be passed with a key which is authorized to read from the channel.
+      schema:
+        type: string
+      required: false
+      example: authKey
+    UuidQueryParam:
+      name: uuid
+      in: query
+      description: A unique alphanumeric ID for identifying the client to the PubNub Presence System, as well as for PubNub Analytics.
+      schema:
+        type: string
+      required: true
+      example: db9c5e39-7c95-40f5-8d71-125765b6f561
+    TimetokenQueryParam:
+      name: tt
+      in: query
+      description: 0 (zero) for the initial subscribe, or a valid timetoken if resuming / continuing / fast-forwarding from a previous subscribe flow.
+      required: true
+      schema:
+        type: string
+      example: '1231312313123'
+    RegionQueryParam:
+      name: tr
+      in: query
+      description: Region as returned from the initial call with tt=0.
+      required: false
+      schema:
+        type: string
+    FilterExpressionQueryParam:
+      name: filter-expr
+      in: query
+      description: Set filter expression for Subscribe message filtering.
+      required: false
+      schema:
+        type: string
+      example: uuid%20!%3D%20%27cvc1%27 
+        
+  schemas:
+    SubscribeResponse:
+      type: object
+      properties:
+        t:
+         $ref: '#/components/schemas/SubscribeResponseTimetoken'
+        m:
+         $ref: '#/components/schemas/SubscribeResponseMessage'
+    SubscribeResponseTimetoken:
+      type: object
+      properties:
+        t:
+         type: string
+         description: the timetoken
+         example: "15628652479932717"
+        r:
+         type: integer
+         example: 4
+    SubscribeResponseMessage:
+      type: array
+      items:
+        $ref: '#/components/schemas/SubscribeResponseMessageArrayItem'
+    SubscribeResponseMessageArrayItem:
+      type: object
+      properties:
+        a:
+         type: string
+         description: Shard
+         example: "1"
+        f:
+         type: integer
+         description: Flags
+         example: 514
+        e:
+         type: integer
+         description: Message Type (e.g. 1 is for Signal, 2 is for Objects messages, 3 is for MessageAction messages)
+         example: 1
+        i:
+         type: string
+         description: Issuing Client Id
+         example: "pn-0ca50551-4bc8-446e-8829-c70b704545fd"
+        s:
+         type: integer
+         example: 1
+        p:
+         $ref: '#/components/schemas/SubscribeResponsePublishTimetokenMetadata'
+        k:
+         type: string
+         description: Subscribe Key
+         example: "demo"
+        c:
+         type: string
+         description: Channel
+         example: "my-channel"
+        d:
+         type: string
+         description: The payload
+         example: "my message"
+        b:
+         type: string
+         description: Subscription match or the channel group
+         example: "my-channel"
+    SubscribeResponsePublishTimetokenMetadata:
+      type: object
+      description: Publish Timetoken Metadata
+      properties:
+        t:
+         type: string
+         example: "15628652479933927"
+        r:
+         type: integer
+         example: 4
+    signalResponsePayloadWithChannelArray:
+      type: object
+      properties:
+        channels:
+          type: array
+          items:
+            type: string
+          example: [ch1,ch2]
+    ErrorResponse400:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Invalid Subscribe Key"
+            error:
+              type: boolean
+              example: true
+            status:
+              type: integer
+              example: 400
+    ErrorResponse403:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Forbidden"
+            payload:
+              $ref: '#/components/schemas/signalResponsePayloadWithChannelArray'
+            error:
+              type: boolean
+              example: true
+            service:
+              type: string
+              example: "Access Manager"
+            status:
+              type: integer
+              example: 403
+    ErrorResponse413:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 413
+            service:
+              type: string
+              example: "Balancer"
+            error:
+              type: boolean
+              example: true
+            message:
+              type: string
+              example: "Request Entity Too Large"
+    ErrorResponse429:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 429
+            error:
+              type: boolean
+              example: true
+            message:
+              type: string
+              example: "Too many requests."
