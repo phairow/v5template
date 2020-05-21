@@ -1,3 +1,4 @@
+import { OpenAPIV3 } from 'openapi-types';
 import SdkGenerator from '../index';
 import { RenderTemplate } from '../index';
 import { SdkApiDefinition } from '../../definition/format/SdkApiDefinition';
@@ -12,9 +13,26 @@ export function process(generator: SdkGenerator, apis: SdkApiDefinition[], rende
 
   let sdkApi = apiConvert(apis);
 
-  renderTemplate('api', sdkApi, 'api', 'js');
+  renderTemplate.mustache('api', sdkApi, 'api', 'ts');
 
   sdkApi.endpoints.forEach((sdkEndpoint: SdkEndpoint) => {
-    renderTemplate('endpoint', endpointConvert(sdkEndpoint), sdkEndpoint.title, 'ts', 'endpoints');
+    renderTemplate.mustache('endpoint', endpointConvert(sdkEndpoint), sdkEndpoint.title, 'ts', 'endpoints');
   });
+
+  try {
+    sdkApi.parameters.forEach((parameter: OpenAPIV3.ParameterObject) => {
+      renderTemplate.mustache('parameter', parameter, parameter.name, 'ts', 'parameter');
+    });
+  } catch (e) {
+    console.log('parameters fail');
+  }
+  try {
+    sdkApi.schemas.forEach((schema: OpenAPIV3.SchemaObject) => {
+      if (schema.title) {
+        renderTemplate.ejs('schema', schema, schema.title || 'unknownschema', 'ts', 'schema');
+      }
+    });
+  } catch (e) {
+    console.log('schemas fail');
+  }
 }

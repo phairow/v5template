@@ -10,37 +10,29 @@ class AllChannelsOfAChannelGroupGet {
     this.serializationLib = serializationLib;
   }
 
-  
-  validate(sub_key: string, group: string, auth: string, uuid: string, add: string, remove: string) {
-
-    if (typeof (sub_key) !== 'string') {
-      return false;
-    }
-
-    if (typeof (group) !== 'string') {
-      return false;
-    }
-
-    if (typeof (auth) !== 'string') {
-      return false;
-    }
-
-    if (typeof (uuid) !== 'string') {
-      return false;
-    }
-
-    if (typeof (add) !== 'string') {
-      return false;
-    }
-
-    if (typeof (remove) !== 'string') {
-      return false;
-    }
-
+  validate(subKey: string, group: string, auth: string, uuid: string, add: string, remove: string) {
+            if (typeof (subKey) !== 'string') {
+              return false;
+            }
+            if (typeof (group) !== 'string') {
+              return false;
+            }
+            if (typeof (auth) !== 'string') {
+              return false;
+            }
+            if (typeof (uuid) !== 'string') {
+              return false;
+            }
+            if (typeof (add) !== 'string') {
+              return false;
+            }
+            if (typeof (remove) !== 'string') {
+              return false;
+            }
     return true;
   }
 
-  execute(sub_key: string, group: string, auth: string, uuid: string, add: string, remove: string) {
+  execute(subKey: string, group: string, auth: string, uuid: string, add: string, remove: string) {
     // ...
   }
 

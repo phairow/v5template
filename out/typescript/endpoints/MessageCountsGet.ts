@@ -10,29 +10,26 @@ class MessageCountsGet {
     this.serializationLib = serializationLib;
   }
 
-  
-  validate(sub_key: string, channels: string, auth: string, timetoken: number, channelsTimetoken: string) {
-
-    if (typeof (sub_key) !== 'string') {
-      return false;
-    }
-
-    if (typeof (channels) !== 'string') {
-      return false;
-    }
-
-    if (typeof (auth) !== 'string') {
-      return false;
-    }
-
-    if (typeof (channelsTimetoken) !== 'string') {
-      return false;
-    }
-
+  validate(subKey: string, channels: string, auth: string, timetoken: unknown, channelsTimetoken: string) {
+            if (typeof (subKey) !== 'string') {
+              return false;
+            }
+            if (typeof (channels) !== 'string') {
+              return false;
+            }
+            if (typeof (auth) !== 'string') {
+              return false;
+            }
+            if (typeof (timetoken) !== 'number') {
+              return false;
+            }
+            if (typeof (channelsTimetoken) !== 'string') {
+              return false;
+            }
     return true;
   }
 
-  execute(sub_key: string, channels: string, auth: string, timetoken: number, channelsTimetoken: string) {
+  execute(subKey: string, channels: string, auth: string, timetoken: unknown, channelsTimetoken: string) {
     // ...
   }
 

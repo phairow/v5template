@@ -1,0 +1,25 @@
+{{#isInteger}}
+    if (!Number.isInteger({{title}})) {
+      return false;
+    }
+{{/isInteger}}
+{{#isNumber}}
+    if (typeof ({{title}}) !== 'number') {
+      return false;
+    }
+{{/isNumber}}
+{{#isArray}}
+    if (!Array.isArray({{title}})) {
+      return false;
+    }
+{{/isArray}}
+{{#isString}}
+    if (typeof ({{title}}) !== 'string') {
+      return false;
+    }
+{{/isString}}
+{{#isBoolean}}
+    if (typeof ({{title}}) !== 'boolean') {
+      return false;
+    }
+{{/isBoolean}}

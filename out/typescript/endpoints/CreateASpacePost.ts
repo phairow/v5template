@@ -10,17 +10,14 @@ class CreateASpacePost {
     this.serializationLib = serializationLib;
   }
 
-  
-  validate(include: array) {
-
-    if (!Array.isArray(include)) {
-      return false;
-    }
-
+  validate(include: string[]) {
+            if (!Array.isArray(include)) {
+              return false;
+            }
     return true;
   }
 
-  execute(include: array) {
+  execute(include: string[]) {
     // ...
   }
 

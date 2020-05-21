@@ -1,0 +1,47 @@
+<% 
+    for (enumImport in enumImportsSet) {
+%>
+import { <%= enumImportsSet[enumImport] %> } from '../Enums/<%= enumImportsSet[enumImport] %>';<%
+    }
+    for (interfaceImport in interfaceImportsSet) {
+%>
+import { <%= interfaceImportsSet[interfaceImport] %> } from './<%= interfaceImportsSet[interfaceImport] %>';<%
+    }%>
+<%
+    if (baseType) { %>
+import { <%= baseType %> } from './<%= baseType %>';
+<% } %>
+export interface <%= title %><%= baseType ? ' extends ' + baseType : '' %> {<%
+var index = 0;
+Object.keys(properties).forEach((key) => {
+    var value = properties[key];
+    index++;
+%>
+    <%= key %>?: <%
+
+    if ('type' in value) {
+        if (value["type"] === "array") {
+            if ("type" in value["items"]) {
+                if ('format' in value && value['format'] === 'date-time') {
+                    %>Date;<%
+                } else {
+                    %><%= sanitizePrimitiveType(value["items"]["type"]) %>[];<%
+                }
+            } else if ('$ref' in value["items"]) {
+                %><%= referencedTypeName(value["items"]["$ref"]) %>[];<%
+            }
+        } else if ('format' in value && value['format'] === 'date-time') {
+            %>Date;<%
+        } else {
+            %><%= sanitizePrimitiveType(value["type"]) %>;<%
+        }
+    } else if ('$ref' in value) {
+        %><%= referencedTypeName(value["$ref"]) %>;<%
+    }
+
+    if (index < properties.length) {
+        %>,<%
+    }
+});
+%>
+}

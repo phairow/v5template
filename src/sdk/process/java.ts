@@ -12,9 +12,9 @@ export function process(generator: SdkGenerator, apis: SdkApiDefinition[], rende
 
   let sdkApi = apiConvert(apis);
 
-  renderTemplate('api', sdkApi, 'Api', 'java');
+  renderTemplate.ejs('api', sdkApi, 'Api', 'java');
 
   sdkApi.endpoints.forEach((sdkEndpoint: SdkEndpoint) => {
-    renderTemplate('endpoint', endpointConvert(sdkEndpoint), sdkEndpoint.title, 'java', 'endpoint');
+    renderTemplate.ejs('endpoint', endpointConvert(sdkEndpoint), sdkEndpoint.title, 'java', 'endpoint');
   });
 }

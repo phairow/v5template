@@ -1,4 +1,4 @@
-import { OpenAPI, OpenAPIV2, OpenAPIV3 } from 'openapi-types';
+import { OpenAPI, OpenAPIV3 } from 'openapi-types';
 import { SdkApiDefinition } from "../../format/SdkApiDefinition";
 import { SdkEndpoint } from "../../format/SdkEndpoint";
 import { SdkParameter } from "../../format/SdkParameter";
@@ -12,7 +12,8 @@ export async function openApiParser(generator: SdkGenerator, apiPath: string): P
   let parser = new SwaggerParser();
   let api = await parser.parse(apiPath);
   let sdkEndpoints: SdkEndpoint[] = [];
-  let schemas: object[] = [];
+  let schemas: OpenAPIV3.SchemaObject[] = [];
+  let parameters: OpenAPIV3.ParameterObject[] = [];
 
   try {
     sdkEndpoints = sdkEndpoints.concat(
@@ -24,18 +25,21 @@ export async function openApiParser(generator: SdkGenerator, apiPath: string): P
       .reduce(
         (
           allEndpoints: SdkEndpoint[],
-          endpointOperations: OpenAPIV2.PathsObject | OpenAPIV3.PathsObject
+          endpointOperations: OpenAPIV3.PathItemObject
         ) => {
 
           return allEndpoints.concat(
             // iterate the endpoint operations for each path
             Object.keys(endpointOperations)
+            // filter out parameters, not sure why it exists here, parser error?
+            .filter((operationKey: string) => operationKey !== 'parameters')
             // convert to sdk definition format
             .map((operationKey: string) => 
               convertOperationToSdkDefinitionFormat(
                 parser,
                 api,
                 schemas,
+                parameters,
                 operationKey,
                 endpointOperations,
               )
@@ -55,6 +59,7 @@ export async function openApiParser(generator: SdkGenerator, apiPath: string): P
 
   return new SdkApiDefinition(
     sdkEndpoints,
+    parameters,
     schemas,
   );
 }
@@ -62,36 +67,79 @@ export async function openApiParser(generator: SdkGenerator, apiPath: string): P
 function convertOperationToSdkDefinitionFormat(
   parser: SwaggerParser,
   api: OpenAPI.Document,
-  schemas: object[],
+  schemas: OpenAPIV3.SchemaObject[],
+  parameters: OpenAPIV3.ParameterObject[],
   operationKey: string,
-  endpointOperations: OpenAPIV2.PathsObject | OpenAPIV3.PathsObject
+  endpointOperations: OpenAPIV3.PathItemObject
 ): SdkEndpoint {
 
   let sdkParameters: SdkParameter[] = [];
+  let operation: OpenAPIV3.OperationObject  = (endpointOperations as any)[operationKey];
 
-  if (endpointOperations[operationKey].parameters) {
-    endpointOperations[operationKey].parameters.forEach((param: any) => {
-      let currentSdkParameter;
+  function getSchema(schemaIn: OpenAPIV3.ReferenceObject |  OpenAPIV3.SchemaObject | undefined, defaultTitle: string) {
+    let schemaOut: OpenAPIV3.SchemaObject;
 
-      if (param.$ref) {
-        let refParam = parser.$refs.get(param.$ref);
+    if (schemaIn) {
+      if ('$ref' in schemaIn) {
+        schemaOut = parser.$refs.get(schemaIn.$ref);
+
+        if (schemaOut) {
+          schemaOut.title = schemaOut.title || defaultTitle + 'RefSchema';
+        }
+      } else {
+        schemaOut = schemaIn;
+        schemaOut.title = schemaOut.title || defaultTitle + 'Schema';
+      }
+    } else {
+      schemaOut = { type: 'null', title: 'unknown' };
+    }
+
+    if (schemaOut.type === 'array') {
+      if ('$ref' in schemaOut.items) {
+        schemaOut.items = getSchema(schemaOut.items, 'items');
+      }
+    }
+
+    return schemaOut;
+  }
+
+  if (operation.parameters) {
+    operation.parameters.forEach((param: OpenAPIV3.ReferenceObject | OpenAPIV3.ParameterObject) => {
+      let currentSdkParameter: SdkParameter;
+
+      if ('$ref' in param) {
+        let refParam: OpenAPIV3.ParameterObject = parser.$refs.get(param.$ref);
         
-        schemas.push(refParam);
+        parameters.push(refParam);
 
-        currentSdkParameter = {
-          ...refParam,
-          title: StringUtil.lowerFirstChar(_.classify(refParam.name)),
-          location: refParam.in,
-        };
+        let schema = getSchema(refParam.schema,  getName(param.$ref));
+
+        schemas.push(schema || { type: 'null', title: 'unknown' });
+
+        currentSdkParameter = new SdkParameter(
+          StringUtil.lowerFirstChar(_.classify(refParam.name)),
+          refParam.name || 'noname',
+          refParam.in,
+          refParam.description || refParam.name || 'nodesc',
+          refParam.required || false,
+          schema,
+        );
       } else {
         
-        schemas.push(param);
+        parameters.push(param);
 
-        currentSdkParameter = {
-          ...param,
-          title: StringUtil.lowerFirstChar(_.classify(param.name)),
-          location: param.in
-        };
+        let schema = getSchema(param.schema, param.name);
+        
+        schemas.push(schema || { type: 'null', title: 'unknown' });
+
+        currentSdkParameter = new SdkParameter(
+          StringUtil.lowerFirstChar(_.classify(param.name)),
+          param.name || 'noname',
+          param.in,
+          param.description || param.name || 'nodesc',
+          param.required || false,
+          schema
+        );
       }
 
       sdkParameters.push(currentSdkParameter);
@@ -100,34 +148,39 @@ function convertOperationToSdkDefinitionFormat(
 
   let sdkResponse!: SdkResponse;
   let sdkErrors: SdkResponse[] = [];
+  let responses = operation.responses;
 
-  if (endpointOperations[operationKey].responses) {
-    Object.keys(endpointOperations[operationKey].responses).forEach((responseKey: string) => {
+  if (responses) {
+    Object.keys(responses).forEach((responseKey: string) => {
       let statusCode = parseInt(responseKey);
-      let response = endpointOperations[operationKey].responses[responseKey];
+      let response: OpenAPIV3.ReferenceObject | OpenAPIV3.ResponseObject | undefined = responses && responses[responseKey];
 
-      if (response.content) {
+      if (response && 'content' in response && response.content) {
         let textJavascript = response.content['text/javascript'];
         let contentType = textJavascript ? 'text/javascript' : 'application/json';  
 
         if (response.content[contentType]) {
           let responseContent = response.content[contentType];
           let currentSdkResponse: SdkResponse;
-          let currentSdkResponseSchema: object;
+          let currentSdkResponseSchema: OpenAPIV3.SchemaObject;
 
-          if (responseContent.$ref) {
-            let refResponse = parser.$refs.get(responseContent.$ref);
-            
-            currentSdkResponseSchema = { ...refResponse };
+          if (responseContent.schema) {
+            if ('$ref' in responseContent.schema) {
+              let refResponse = getSchema(responseContent.schema, getName(responseContent.schema.$ref));
+              currentSdkResponseSchema = { ...refResponse };
+            } else {
+              responseContent.schema.title = responseContent.schema.title || 'emptyresponsetitle';
+              currentSdkResponseSchema = { ...responseContent.schema };
+            }
+
+            schemas.push(currentSdkResponseSchema || { type: 'null', title: 'unknown' });  
           } else {
-            currentSdkResponseSchema = { ...responseContent };
+            currentSdkResponseSchema = { type: 'null', title: 'unknown' };
           }
 
-          schemas.push(currentSdkResponseSchema);
-          
           currentSdkResponse = {
             status: statusCode,
-            description: response,
+            description: response.description,
             contentType: contentType,
             schema: currentSdkResponseSchema
           };
@@ -147,10 +200,19 @@ function convertOperationToSdkDefinitionFormat(
     apiTitle: api.info.title || '',
     apiDescription: api.info.description || '',
     apiVersion: api.info.version,
-    title: _.classify(endpointOperations[operationKey].summary) + _.classify(operationKey) ,
-    description: endpointOperations[operationKey].description,
+    title: _.classify(operation.summary || '') + _.classify(operationKey) ,
+    description: operation.description || '',
     parameters: sdkParameters,
     response: sdkResponse,
     errors: sdkErrors,
   };
 }
+
+function getName(path: string): string {
+  let parts = path.split('/');
+  return parts[parts.length - 1];
+}
+
+// function resolveSchemas(path: string, schemas: OpenAPIV3.SchemaObject[]): OpenAPIV3.SchemaObject {
+
+// }

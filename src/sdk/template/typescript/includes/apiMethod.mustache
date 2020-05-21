@@ -1,0 +1,5 @@
+    {{titlePropertyName}}({{> includes/parameterList }}) {
+        if ({{title}}.validate({{> includes/parameterCallingList }})) {
+            return {{title}}.execute({{> includes/parameterCallingList }});
+        }
+    }       

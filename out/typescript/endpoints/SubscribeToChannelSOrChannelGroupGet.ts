@@ -10,53 +10,41 @@ class SubscribeToChannelSOrChannelGroupGet {
     this.serializationLib = serializationLib;
   }
 
-  
-  validate(sub_key: string, channel: string, callback: string, tt: string, tr: string, channle-group: string, heartbeat: integer, auth: string, uuid: string, filter-expr: string) {
-
-    if (typeof (sub_key) !== 'string') {
-      return false;
-    }
-
-    if (typeof (channel) !== 'string') {
-      return false;
-    }
-
-    if (typeof (callback) !== 'string') {
-      return false;
-    }
-
-    if (typeof (tt) !== 'string') {
-      return false;
-    }
-
-    if (typeof (tr) !== 'string') {
-      return false;
-    }
-
-    if (typeof (channle-group) !== 'string') {
-      return false;
-    }
-
-    if (!Number.isInteger(heartbeat)) {
-      return false;
-    }
-
-    if (typeof (auth) !== 'string') {
-      return false;
-    }
-
-    if (typeof (uuid) !== 'string') {
-      return false;
-    }
-
-    if (typeof (filter-expr) !== 'string') {
-      return false;
-    }
-
+  validate(subKey: string, channel: string, callback: string, tt: string, tr: string, channleGroup: string, heartbeat: number, auth: string, uuid: string, filterExpr: string) {
+            if (typeof (subKey) !== 'string') {
+              return false;
+            }
+            if (typeof (channel) !== 'string') {
+              return false;
+            }
+            if (typeof (callback) !== 'string') {
+              return false;
+            }
+            if (typeof (tt) !== 'string') {
+              return false;
+            }
+            if (typeof (tr) !== 'string') {
+              return false;
+            }
+            if (typeof (channleGroup) !== 'string') {
+              return false;
+            }
+            if (!Number.isInteger(heartbeat)) {
+              return false;
+            }
+            if (typeof (auth) !== 'string') {
+              return false;
+            }
+            if (typeof (uuid) !== 'string') {
+              return false;
+            }
+            if (typeof (filterExpr) !== 'string') {
+              return false;
+            }
     return true;
   }
 
-  execute(sub_key: string, channel: string, callback: string, tt: string, tr: string, channle-group: string, heartbeat: integer, auth: string, uuid: string, filter-expr: string) {
+  execute(subKey: string, channel: string, callback: string, tt: string, tr: string, channleGroup: string, heartbeat: number, auth: string, uuid: string, filterExpr: string) {
     // ...
   }
 

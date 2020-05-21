@@ -10,41 +10,32 @@ class GlobalHereNowGet {
     this.serializationLib = serializationLib;
   }
 
-  
-  validate(sub_key: string, channel-group: string, auth: string, disable_uuids: string, state: string, callback: string, uuid: string) {
-
-    if (typeof (sub_key) !== 'string') {
-      return false;
-    }
-
-    if (typeof (channel-group) !== 'string') {
-      return false;
-    }
-
-    if (typeof (auth) !== 'string') {
-      return false;
-    }
-
-    if (typeof (disable_uuids) !== 'string') {
-      return false;
-    }
-
-    if (typeof (state) !== 'string') {
-      return false;
-    }
-
-    if (typeof (callback) !== 'string') {
-      return false;
-    }
-
-    if (typeof (uuid) !== 'string') {
-      return false;
-    }
-
+  validate(subKey: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string) {
+            if (typeof (subKey) !== 'string') {
+              return false;
+            }
+            if (typeof (channelGroup) !== 'string') {
+              return false;
+            }
+            if (typeof (auth) !== 'string') {
+              return false;
+            }
+            if (typeof (disableUuids) !== 'string') {
+              return false;
+            }
+            if (typeof (state) !== 'string') {
+              return false;
+            }
+            if (typeof (callback) !== 'string') {
+              return false;
+            }
+            if (typeof (uuid) !== 'string') {
+              return false;
+            }
     return true;
   }
 
-  execute(sub_key: string, channel-group: string, auth: string, disable_uuids: string, state: string, callback: string, uuid: string) {
+  execute(subKey: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string) {
     // ...
   }
 

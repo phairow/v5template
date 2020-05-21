@@ -10,33 +10,26 @@ class GettingUserStateGet {
     this.serializationLib = serializationLib;
   }
 
-  
-  validate(sub_key: string, channel: string, channel-group: string, auth: string, callback: string) {
-
-    if (typeof (sub_key) !== 'string') {
-      return false;
-    }
-
-    if (typeof (channel) !== 'string') {
-      return false;
-    }
-
-    if (typeof (channel-group) !== 'string') {
-      return false;
-    }
-
-    if (typeof (auth) !== 'string') {
-      return false;
-    }
-
-    if (typeof (callback) !== 'string') {
-      return false;
-    }
-
+  validate(subKey: string, channel: string, channelGroup: string, auth: string, callback: string) {
+            if (typeof (subKey) !== 'string') {
+              return false;
+            }
+            if (typeof (channel) !== 'string') {
+              return false;
+            }
+            if (typeof (channelGroup) !== 'string') {
+              return false;
+            }
+            if (typeof (auth) !== 'string') {
+              return false;
+            }
+            if (typeof (callback) !== 'string') {
+              return false;
+            }
     return true;
   }
 
-  execute(sub_key: string, channel: string, channel-group: string, auth: string, callback: string) {
+  execute(subKey: string, channel: string, channelGroup: string, auth: string, callback: string) {
     // ...
   }
 

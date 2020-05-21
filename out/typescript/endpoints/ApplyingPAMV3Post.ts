@@ -10,25 +10,20 @@ class ApplyingPAMV3Post {
     this.serializationLib = serializationLib;
   }
 
-  
-  validate(sub_key: string, timestamp: integer, signature: string) {
-
-    if (typeof (sub_key) !== 'string') {
-      return false;
-    }
-
-    if (!Number.isInteger(timestamp)) {
-      return false;
-    }
-
-    if (typeof (signature) !== 'string') {
-      return false;
-    }
-
+  validate(subKey: string, timestamp: number, signature: string) {
+            if (typeof (subKey) !== 'string') {
+              return false;
+            }
+            if (!Number.isInteger(timestamp)) {
+              return false;
+            }
+            if (typeof (signature) !== 'string') {
+              return false;
+            }
     return true;
   }
 
-  execute(sub_key: string, timestamp: integer, signature: string) {
+  execute(subKey: string, timestamp: number, signature: string) {
     // ...
   }
 

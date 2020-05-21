@@ -1,5 +1,0 @@
-    <%= endpoint.titlePropertyName %>(<%- include('parameterList', { parameters: endpoint.parameters }); %>) {
-        if (<%= endpoint.title %>.validate(<%- include('parameterList', { parameters: endpoint.parameters }); %>)) {
-            return <%= endpoint.title %>.execute(<%- include('parameterList', { parameters: endpoint.parameters }); %>);
-        }
-    }       

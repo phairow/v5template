@@ -10,37 +10,29 @@ class FetchAListOfActionsOrderedByActionTimetokenGet {
     this.serializationLib = serializationLib;
   }
 
-  
-  validate(sub_key: string, channel: string, start: string, end: string, limit: integer, auth: string) {
-
-    if (typeof (sub_key) !== 'string') {
-      return false;
-    }
-
-    if (typeof (channel) !== 'string') {
-      return false;
-    }
-
-    if (typeof (start) !== 'string') {
-      return false;
-    }
-
-    if (typeof (end) !== 'string') {
-      return false;
-    }
-
-    if (!Number.isInteger(limit)) {
-      return false;
-    }
-
-    if (typeof (auth) !== 'string') {
-      return false;
-    }
-
+  validate(subKey: string, channel: string, start: string, end: string, limit: number, auth: string) {
+            if (typeof (subKey) !== 'string') {
+              return false;
+            }
+            if (typeof (channel) !== 'string') {
+              return false;
+            }
+            if (typeof (start) !== 'string') {
+              return false;
+            }
+            if (typeof (end) !== 'string') {
+              return false;
+            }
+            if (!Number.isInteger(limit)) {
+              return false;
+            }
+            if (typeof (auth) !== 'string') {
+              return false;
+            }
     return true;
   }
 
-  execute(sub_key: string, channel: string, start: string, end: string, limit: integer, auth: string) {
+  execute(subKey: string, channel: string, start: string, end: string, limit: number, auth: string) {
     // ...
   }
 

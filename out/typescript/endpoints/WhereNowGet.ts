@@ -10,29 +10,23 @@ class WhereNowGet {
     this.serializationLib = serializationLib;
   }
 
-  
-  validate(sub_key: string, uuid: string, auth: string, callback: string) {
-
-    if (typeof (sub_key) !== 'string') {
-      return false;
-    }
-
-    if (typeof (uuid) !== 'string') {
-      return false;
-    }
-
-    if (typeof (auth) !== 'string') {
-      return false;
-    }
-
-    if (typeof (callback) !== 'string') {
-      return false;
-    }
-
+  validate(subKey: string, uuid: string, auth: string, callback: string) {
+            if (typeof (subKey) !== 'string') {
+              return false;
+            }
+            if (typeof (uuid) !== 'string') {
+              return false;
+            }
+            if (typeof (auth) !== 'string') {
+              return false;
+            }
+            if (typeof (callback) !== 'string') {
+              return false;
+            }
     return true;
   }
 
-  execute(sub_key: string, uuid: string, auth: string, callback: string) {
+  execute(subKey: string, uuid: string, auth: string, callback: string) {
     // ...
   }
 

@@ -10,17 +10,13 @@ class FetchTimeGet {
     this.serializationLib = serializationLib;
   }
 
-  
   validate(callback: string, uuid: string) {
-
-    if (typeof (callback) !== 'string') {
-      return false;
-    }
-
-    if (typeof (uuid) !== 'string') {
-      return false;
-    }
-
+            if (typeof (callback) !== 'string') {
+              return false;
+            }
+            if (typeof (uuid) !== 'string') {
+              return false;
+            }
     return true;
   }
 

@@ -1,0 +1,24 @@
+import { PubNubLogger } from "../log/PubNubLogger";
+import { PubNubNetworking } from "../net/PubNubNetworking";
+import { PubNubParser } from "../parse/PubNubParser";
+
+class {{title}} {
+  private httpMethod: string = '{{httpMethod}}';
+
+  constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
+    this.httpLib = httpLib;
+    this.serializationLib = serializationLib;
+  }
+
+  validate({{> includes/parameterList }}) {
+{{#parameters}}
+        {{> includes/parameterValidate }}
+{{/parameters}}
+    return true;
+  }
+
+  execute({{> includes/parameterList }}) {
+    // ...
+  }
+
+}

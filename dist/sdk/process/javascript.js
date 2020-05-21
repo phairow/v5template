@@ -7,9 +7,9 @@ function process(generator, apis, renderTemplate) {
     // generator.log(generator.outputDir);
     // generator.log(generator.templateDir);
     let sdkApi = api_1.apiConvert(apis);
-    renderTemplate('api', sdkApi, 'api', 'js');
+    renderTemplate.ejs('api', sdkApi, 'api', 'js');
     sdkApi.endpoints.forEach((sdkEndpoint) => {
-        renderTemplate('endpoint', endpoint_1.endpointConvert(sdkEndpoint), sdkEndpoint.title, 'js', 'endpoints');
+        renderTemplate.ejs('endpoint', endpoint_1.endpointConvert(sdkEndpoint), sdkEndpoint.title, 'js', 'endpoints');
     });
 }
 exports.process = process;

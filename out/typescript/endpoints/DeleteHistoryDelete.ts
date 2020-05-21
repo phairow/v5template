@@ -10,21 +10,23 @@ class DeleteHistoryDelete {
     this.serializationLib = serializationLib;
   }
 
-  
-  validate(sub_key: string, channels: string, start: number, end: number) {
-
-    if (typeof (sub_key) !== 'string') {
-      return false;
-    }
-
-    if (typeof (channels) !== 'string') {
-      return false;
-    }
-
+  validate(subKey: string, channels: string, start: unknown, end: unknown) {
+            if (typeof (subKey) !== 'string') {
+              return false;
+            }
+            if (typeof (channels) !== 'string') {
+              return false;
+            }
+            if (typeof (start) !== 'number') {
+              return false;
+            }
+            if (typeof (end) !== 'number') {
+              return false;
+            }
     return true;
   }
 
-  execute(sub_key: string, channels: string, start: number, end: number) {
+  execute(subKey: string, channels: string, start: unknown, end: unknown) {
     // ...
   }
 

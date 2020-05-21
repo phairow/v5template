@@ -10,9 +10,7 @@ class DeleteASpaceDelete {
     this.serializationLib = serializationLib;
   }
 
-  
   validate() {
-
     return true;
   }
 

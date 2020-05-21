@@ -10,9 +10,7 @@ class DeleteAUserDelete {
     this.serializationLib = serializationLib;
   }
 
-  
   validate() {
-
     return true;
   }
 

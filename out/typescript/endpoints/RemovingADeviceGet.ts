@@ -10,29 +10,23 @@ class RemovingADeviceGet {
     this.serializationLib = serializationLib;
   }
 
-  
-  validate(sub_key: string, push_token: string, type: string, uuid: string) {
-
-    if (typeof (sub_key) !== 'string') {
-      return false;
-    }
-
-    if (typeof (push_token) !== 'string') {
-      return false;
-    }
-
-    if (typeof (type) !== 'string') {
-      return false;
-    }
-
-    if (typeof (uuid) !== 'string') {
-      return false;
-    }
-
+  validate(subKey: string, pushToken: string, type: string, uuid: string) {
+            if (typeof (subKey) !== 'string') {
+              return false;
+            }
+            if (typeof (pushToken) !== 'string') {
+              return false;
+            }
+            if (typeof (type) !== 'string') {
+              return false;
+            }
+            if (typeof (uuid) !== 'string') {
+              return false;
+            }
     return true;
   }
 
-  execute(sub_key: string, push_token: string, type: string, uuid: string) {
+  execute(subKey: string, pushToken: string, type: string, uuid: string) {
     // ...
   }
 

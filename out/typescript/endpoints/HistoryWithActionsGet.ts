@@ -10,33 +10,32 @@ class HistoryWithActionsGet {
     this.serializationLib = serializationLib;
   }
 
-  
-  validate(sub_key: string, channel: string, auth: string, start: number, end: number, max: integer, include_meta: boolean) {
-
-    if (typeof (sub_key) !== 'string') {
-      return false;
-    }
-
-    if (typeof (channel) !== 'string') {
-      return false;
-    }
-
-    if (typeof (auth) !== 'string') {
-      return false;
-    }
-
-    if (!Number.isInteger(max)) {
-      return false;
-    }
-
-    if (typeof (include_meta) !== 'boolean') {
-      return false;
-    }
-
+  validate(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean) {
+            if (typeof (subKey) !== 'string') {
+              return false;
+            }
+            if (typeof (channel) !== 'string') {
+              return false;
+            }
+            if (typeof (auth) !== 'string') {
+              return false;
+            }
+            if (typeof (start) !== 'number') {
+              return false;
+            }
+            if (typeof (end) !== 'number') {
+              return false;
+            }
+            if (!Number.isInteger(max)) {
+              return false;
+            }
+            if (typeof (includeMeta) !== 'boolean') {
+              return false;
+            }
     return true;
   }
 
-  execute(sub_key: string, channel: string, auth: string, start: number, end: number, max: integer, include_meta: boolean) {
+  execute(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean) {
     // ...
   }
 

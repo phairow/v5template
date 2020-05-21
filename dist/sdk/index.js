@@ -16,6 +16,7 @@ const Generator = require("yeoman-generator");
 const openApiParser_1 = require("../definition/parse/openapi/openApiParser");
 const path = require("path");
 const fs = require("fs");
+const Mustache = require("mustache");
 var Language;
 (function (Language) {
     Language["JavaScript"] = "javascript";
@@ -59,9 +60,27 @@ class SdkGenerator extends Generator {
             this.templateDir =
                 path.resolve(__dirname, '../../src/sdk/template/', this.selectedLanguage.toLowerCase()) + '/';
             let processor = yield Promise.resolve().then(() => require('./process/' + this.selectedLanguage.toLowerCase()));
-            let renderTemplate = (template, context, fileName, fileExtension, subDir) => {
-                let outFile = this.outputDir + (subDir ? subDir + '/' : '') + fileName + '.' + fileExtension;
-                this.fs.copyTpl(this.templatePath(this.templateDir + template + '.ejs'), this.destinationPath(outFile), context);
+            let mustacheContextMethods = {
+                comma: () => ', ',
+                comma_separated_list: () => (text, render) => render(text).replace(/,\s$/, ''),
+            };
+            let renderTemplate = {
+                ejs: (template, context, fileName, fileExtension, subDir) => {
+                    let outFile = this.outputDir + (subDir ? subDir + '/' : '') + fileName + '.' + fileExtension;
+                    this.fs.copyTpl(this.templatePath(this.templateDir + template + '.ejs'), this.destinationPath(outFile), context);
+                },
+                mustache: (template, context, fileName, fileExtension, subDir) => {
+                    try {
+                        let templateContext = Object.assign(Object.assign({}, mustacheContextMethods), context);
+                        let outFile = this.outputDir + (subDir ? subDir + '/' : '') + fileName + '.' + fileExtension;
+                        let templateString = fs.readFileSync(this.templateDir + template + '.mustache', 'utf8');
+                        let output = Mustache.render(templateString, templateContext, (partialName) => { return fs.readFileSync(this.templateDir + partialName + '.mustache', 'utf8'); });
+                        this.fs.write(outFile, output);
+                    }
+                    catch (e) {
+                        console.log(e);
+                    }
+                }
             };
             let apis = yield this._parseOpenapiSpecs();
             processor.process(this, apis, renderTemplate);

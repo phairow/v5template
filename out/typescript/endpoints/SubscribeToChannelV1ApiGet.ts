@@ -10,49 +10,38 @@ class SubscribeToChannelV1ApiGet {
     this.serializationLib = serializationLib;
   }
 
-  
-  validate(sub_key: string, channel: string, callback: string, timetoken: string, channle-group: string, state: string, heartbeat: integer, auth: string, uuid: string) {
-
-    if (typeof (sub_key) !== 'string') {
-      return false;
-    }
-
-    if (typeof (channel) !== 'string') {
-      return false;
-    }
-
-    if (typeof (callback) !== 'string') {
-      return false;
-    }
-
-    if (typeof (timetoken) !== 'string') {
-      return false;
-    }
-
-    if (typeof (channle-group) !== 'string') {
-      return false;
-    }
-
-    if (typeof (state) !== 'string') {
-      return false;
-    }
-
-    if (!Number.isInteger(heartbeat)) {
-      return false;
-    }
-
-    if (typeof (auth) !== 'string') {
-      return false;
-    }
-
-    if (typeof (uuid) !== 'string') {
-      return false;
-    }
-
+  validate(subKey: string, channel: string, callback: string, timetoken: string, channleGroup: string, state: string, heartbeat: number, auth: string, uuid: string) {
+            if (typeof (subKey) !== 'string') {
+              return false;
+            }
+            if (typeof (channel) !== 'string') {
+              return false;
+            }
+            if (typeof (callback) !== 'string') {
+              return false;
+            }
+            if (typeof (timetoken) !== 'string') {
+              return false;
+            }
+            if (typeof (channleGroup) !== 'string') {
+              return false;
+            }
+            if (typeof (state) !== 'string') {
+              return false;
+            }
+            if (!Number.isInteger(heartbeat)) {
+              return false;
+            }
+            if (typeof (auth) !== 'string') {
+              return false;
+            }
+            if (typeof (uuid) !== 'string') {
+              return false;
+            }
     return true;
   }
 
-  execute(sub_key: string, channel: string, callback: string, timetoken: string, channle-group: string, state: string, heartbeat: integer, auth: string, uuid: string) {
+  execute(subKey: string, channel: string, callback: string, timetoken: string, channleGroup: string, state: string, heartbeat: number, auth: string, uuid: string) {
     // ...
   }
 

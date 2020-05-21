@@ -10,41 +10,32 @@ class SendASignalToAChannelGet {
     this.serializationLib = serializationLib;
   }
 
-  
-  validate(pub_key: string, sub_key: string, channel: string, callback: string, payload: string, uuid: string, auth: string) {
-
-    if (typeof (pub_key) !== 'string') {
-      return false;
-    }
-
-    if (typeof (sub_key) !== 'string') {
-      return false;
-    }
-
-    if (typeof (channel) !== 'string') {
-      return false;
-    }
-
-    if (typeof (callback) !== 'string') {
-      return false;
-    }
-
-    if (typeof (payload) !== 'string') {
-      return false;
-    }
-
-    if (typeof (uuid) !== 'string') {
-      return false;
-    }
-
-    if (typeof (auth) !== 'string') {
-      return false;
-    }
-
+  validate(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string) {
+            if (typeof (pubKey) !== 'string') {
+              return false;
+            }
+            if (typeof (subKey) !== 'string') {
+              return false;
+            }
+            if (typeof (channel) !== 'string') {
+              return false;
+            }
+            if (typeof (callback) !== 'string') {
+              return false;
+            }
+            if (typeof (payload) !== 'string') {
+              return false;
+            }
+            if (typeof (uuid) !== 'string') {
+              return false;
+            }
+            if (typeof (auth) !== 'string') {
+              return false;
+            }
     return true;
   }
 
-  execute(pub_key: string, sub_key: string, channel: string, callback: string, payload: string, uuid: string, auth: string) {
+  execute(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string) {
     // ...
   }
 

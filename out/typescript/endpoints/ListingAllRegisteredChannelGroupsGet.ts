@@ -10,21 +10,17 @@ class ListingAllRegisteredChannelGroupsGet {
     this.serializationLib = serializationLib;
   }
 
-  
-  validate(sub_key: string, uuid: string) {
-
-    if (typeof (sub_key) !== 'string') {
-      return false;
-    }
-
-    if (typeof (uuid) !== 'string') {
-      return false;
-    }
-
+  validate(subKey: string, uuid: string) {
+            if (typeof (subKey) !== 'string') {
+              return false;
+            }
+            if (typeof (uuid) !== 'string') {
+              return false;
+            }
     return true;
   }
 
-  execute(sub_key: string, uuid: string) {
+  execute(subKey: string, uuid: string) {
     // ...
   }
 

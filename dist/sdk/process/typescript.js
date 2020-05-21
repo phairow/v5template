@@ -7,9 +7,27 @@ function process(generator, apis, renderTemplate) {
     // generator.log(generator.outputDir);
     // generator.log(generator.templateDir);
     let sdkApi = api_1.apiConvert(apis);
-    renderTemplate('api', sdkApi, 'api', 'js');
+    renderTemplate.mustache('api', sdkApi, 'api', 'ts');
     sdkApi.endpoints.forEach((sdkEndpoint) => {
-        renderTemplate('endpoint', endpoint_1.endpointConvert(sdkEndpoint), sdkEndpoint.title, 'ts', 'endpoints');
+        renderTemplate.mustache('endpoint', endpoint_1.endpointConvert(sdkEndpoint), sdkEndpoint.title, 'ts', 'endpoints');
     });
+    try {
+        sdkApi.parameters.forEach((parameter) => {
+            renderTemplate.mustache('parameter', parameter, parameter.name, 'ts', 'parameter');
+        });
+    }
+    catch (e) {
+        console.log('parameters fail');
+    }
+    try {
+        sdkApi.schemas.forEach((schema) => {
+            if (schema.title) {
+                renderTemplate.ejs('schema', schema, schema.title || 'unknownschema', 'ts', 'schema');
+            }
+        });
+    }
+    catch (e) {
+        console.log('schemas fail');
+    }
 }
 exports.process = process;

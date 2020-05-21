@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const SdkApiDefinition_1 = require("../../format/SdkApiDefinition");
+const SdkParameter_1 = require("../../format/SdkParameter");
 const _ = require("underscore.string");
 const SwaggerParser = require("swagger-parser");
 const string_1 = require("../../../util/string");
@@ -19,6 +20,7 @@ function openApiParser(generator, apiPath) {
         let api = yield parser.parse(apiPath);
         let sdkEndpoints = [];
         let schemas = [];
+        let parameters = [];
         try {
             sdkEndpoints = sdkEndpoints.concat(
             // iterate the path components
@@ -30,8 +32,10 @@ function openApiParser(generator, apiPath) {
                 return allEndpoints.concat(
                 // iterate the endpoint operations for each path
                 Object.keys(endpointOperations)
+                    // filter out parameters, not sure why it exists here, parser error?
+                    .filter((operationKey) => operationKey !== 'parameters')
                     // convert to sdk definition format
-                    .map((operationKey) => convertOperationToSdkDefinitionFormat(parser, api, schemas, operationKey, endpointOperations)));
+                    .map((operationKey) => convertOperationToSdkDefinitionFormat(parser, api, schemas, parameters, operationKey, endpointOperations)));
             }, [] // initial list of all endpoints for the reduce operation
             )
                 // exclude any endpoints that do not have a title
@@ -42,51 +46,87 @@ function openApiParser(generator, apiPath) {
             console.log('error getting operations', e);
             throw e;
         }
-        return new SdkApiDefinition_1.SdkApiDefinition(sdkEndpoints, schemas);
+        return new SdkApiDefinition_1.SdkApiDefinition(sdkEndpoints, parameters, schemas);
     });
 }
 exports.openApiParser = openApiParser;
-function convertOperationToSdkDefinitionFormat(parser, api, schemas, operationKey, endpointOperations) {
+function convertOperationToSdkDefinitionFormat(parser, api, schemas, parameters, operationKey, endpointOperations) {
     let sdkParameters = [];
-    if (endpointOperations[operationKey].parameters) {
-        endpointOperations[operationKey].parameters.forEach((param) => {
-            let currentSdkParameter;
-            if (param.$ref) {
-                let refParam = parser.$refs.get(param.$ref);
-                schemas.push(refParam);
-                currentSdkParameter = Object.assign(Object.assign({}, refParam), { title: string_1.StringUtil.lowerFirstChar(_.classify(refParam.name)), location: refParam.in });
+    let operation = endpointOperations[operationKey];
+    function getSchema(schemaIn, defaultTitle) {
+        let schemaOut;
+        if (schemaIn) {
+            if ('$ref' in schemaIn) {
+                schemaOut = parser.$refs.get(schemaIn.$ref);
+                if (schemaOut) {
+                    schemaOut.title = schemaOut.title || defaultTitle + 'RefSchema';
+                }
             }
             else {
-                schemas.push(param);
-                currentSdkParameter = Object.assign(Object.assign({}, param), { title: string_1.StringUtil.lowerFirstChar(_.classify(param.name)), location: param.in });
+                schemaOut = schemaIn;
+                schemaOut.title = schemaOut.title || defaultTitle + 'Schema';
+            }
+        }
+        else {
+            schemaOut = { type: 'null', title: 'unknown' };
+        }
+        if (schemaOut.type === 'array') {
+            if ('$ref' in schemaOut.items) {
+                schemaOut.items = getSchema(schemaOut.items, 'items');
+            }
+        }
+        return schemaOut;
+    }
+    if (operation.parameters) {
+        operation.parameters.forEach((param) => {
+            let currentSdkParameter;
+            if ('$ref' in param) {
+                let refParam = parser.$refs.get(param.$ref);
+                parameters.push(refParam);
+                let schema = getSchema(refParam.schema, getName(param.$ref));
+                schemas.push(schema || { type: 'null', title: 'unknown' });
+                currentSdkParameter = new SdkParameter_1.SdkParameter(string_1.StringUtil.lowerFirstChar(_.classify(refParam.name)), refParam.name || 'noname', refParam.in, refParam.description || refParam.name || 'nodesc', refParam.required || false, schema);
+            }
+            else {
+                parameters.push(param);
+                let schema = getSchema(param.schema, param.name);
+                schemas.push(schema || { type: 'null', title: 'unknown' });
+                currentSdkParameter = new SdkParameter_1.SdkParameter(string_1.StringUtil.lowerFirstChar(_.classify(param.name)), param.name || 'noname', param.in, param.description || param.name || 'nodesc', param.required || false, schema);
             }
             sdkParameters.push(currentSdkParameter);
         });
     }
     let sdkResponse;
     let sdkErrors = [];
-    if (endpointOperations[operationKey].responses) {
-        Object.keys(endpointOperations[operationKey].responses).forEach((responseKey) => {
+    let responses = operation.responses;
+    if (responses) {
+        Object.keys(responses).forEach((responseKey) => {
             let statusCode = parseInt(responseKey);
-            let response = endpointOperations[operationKey].responses[responseKey];
-            if (response.content) {
+            let response = responses && responses[responseKey];
+            if (response && 'content' in response && response.content) {
                 let textJavascript = response.content['text/javascript'];
                 let contentType = textJavascript ? 'text/javascript' : 'application/json';
                 if (response.content[contentType]) {
                     let responseContent = response.content[contentType];
                     let currentSdkResponse;
                     let currentSdkResponseSchema;
-                    if (responseContent.$ref) {
-                        let refResponse = parser.$refs.get(responseContent.$ref);
-                        currentSdkResponseSchema = Object.assign({}, refResponse);
+                    if (responseContent.schema) {
+                        if ('$ref' in responseContent.schema) {
+                            let refResponse = getSchema(responseContent.schema, getName(responseContent.schema.$ref));
+                            currentSdkResponseSchema = Object.assign({}, refResponse);
+                        }
+                        else {
+                            responseContent.schema.title = responseContent.schema.title || 'emptyresponsetitle';
+                            currentSdkResponseSchema = Object.assign({}, responseContent.schema);
+                        }
+                        schemas.push(currentSdkResponseSchema || { type: 'null', title: 'unknown' });
                     }
                     else {
-                        currentSdkResponseSchema = Object.assign({}, responseContent);
+                        currentSdkResponseSchema = { type: 'null', title: 'unknown' };
                     }
-                    schemas.push(currentSdkResponseSchema);
                     currentSdkResponse = {
                         status: statusCode,
-                        description: response,
+                        description: response.description,
                         contentType: contentType,
                         schema: currentSdkResponseSchema
                     };
@@ -105,10 +145,16 @@ function convertOperationToSdkDefinitionFormat(parser, api, schemas, operationKe
         apiTitle: api.info.title || '',
         apiDescription: api.info.description || '',
         apiVersion: api.info.version,
-        title: _.classify(endpointOperations[operationKey].summary) + _.classify(operationKey),
-        description: endpointOperations[operationKey].description,
+        title: _.classify(operation.summary || '') + _.classify(operationKey),
+        description: operation.description || '',
         parameters: sdkParameters,
         response: sdkResponse,
         errors: sdkErrors,
     };
 }
+function getName(path) {
+    let parts = path.split('/');
+    return parts[parts.length - 1];
+}
+// function resolveSchemas(path: string, schemas: OpenAPIV3.SchemaObject[]): OpenAPIV3.SchemaObject {
+// }

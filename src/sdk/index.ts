@@ -7,6 +7,7 @@ import * as SwaggerParser from 'swagger-parser';
 import { openApiParser } from "../definition/parse/openapi/openApiParser";
 import * as path from 'path';
 import * as fs from 'fs';
+import * as Mustache from 'mustache';
 import { SdkApiDefinition } from '../definition/format/SdkApiDefinition';
 
 enum Language {
@@ -24,7 +25,10 @@ enum Language {
   Rust = 'rust',
 }
 
-export type RenderTemplate = (template: string, context: object, fileName: string, extension: string, subDir?: string) => void;
+export type RenderTemplate = {
+  ejs: (template: string, context: object, fileName: string, extension: string, subDir?: string) => void;
+  mustache: (template: string, context: object, fileName: string, extension: string, subDir?: string) => void;
+}
 
 export default class SdkGenerator extends Generator {
   public selectedLanguage: Language = Language.JavaScript;
@@ -54,13 +58,32 @@ export default class SdkGenerator extends Generator {
 
     let processor = await import('./process/' + this.selectedLanguage.toLowerCase());
 
-    let renderTemplate: RenderTemplate = (template: string, context: object, fileName: string, fileExtension: string, subDir?: string) => {
-      let outFile = this.outputDir + (subDir ? subDir + '/' : '') + fileName + '.' + fileExtension;
-      this.fs.copyTpl(
-        this.templatePath(this.templateDir + template + '.ejs'),
-        this.destinationPath(outFile),
-        context,
-      );
+    let mustacheContextMethods = {
+      comma: () => ', ',
+      comma_separated_list: () => (text: string, render: Function) => render(text).replace(/,\s$/, ''),
+    };
+
+    let renderTemplate: RenderTemplate = {
+      ejs: (template: string, context: object, fileName: string, fileExtension: string, subDir?: string) => {
+        let outFile = this.outputDir + (subDir ? subDir + '/' : '') + fileName + '.' + fileExtension;
+        this.fs.copyTpl(
+          this.templatePath(this.templateDir + template + '.ejs'),
+          this.destinationPath(outFile),
+          context,
+        );
+      },
+      mustache: (template: string, context: object, fileName: string, fileExtension: string, subDir?: string) => {
+        try {
+          let templateContext = { ...mustacheContextMethods, ...context };
+
+          let outFile = this.outputDir + (subDir ? subDir + '/' : '') + fileName + '.' + fileExtension;
+          let templateString = fs.readFileSync(this.templateDir + template + '.mustache', 'utf8');
+          let output = Mustache.render(templateString, templateContext, (partialName) => { return fs.readFileSync(this.templateDir + partialName + '.mustache', 'utf8') });
+          this.fs.write(outFile, output);
+        } catch (e) {
+          console.log(e)
+        }
+      }
     }
     
     let apis = await this._parseOpenapiSpecs();

@@ -10,29 +10,23 @@ class DeletingAChannelGroupGet {
     this.serializationLib = serializationLib;
   }
 
-  
-  validate(sub_key: string, group_name: string, auth: string, uuid: string) {
-
-    if (typeof (sub_key) !== 'string') {
-      return false;
-    }
-
-    if (typeof (group_name) !== 'string') {
-      return false;
-    }
-
-    if (typeof (auth) !== 'string') {
-      return false;
-    }
-
-    if (typeof (uuid) !== 'string') {
-      return false;
-    }
-
+  validate(subKey: string, groupName: string, auth: string, uuid: string) {
+            if (typeof (subKey) !== 'string') {
+              return false;
+            }
+            if (typeof (groupName) !== 'string') {
+              return false;
+            }
+            if (typeof (auth) !== 'string') {
+              return false;
+            }
+            if (typeof (uuid) !== 'string') {
+              return false;
+            }
     return true;
   }
 
-  execute(sub_key: string, group_name: string, auth: string, uuid: string) {
+  execute(subKey: string, groupName: string, auth: string, uuid: string) {
     // ...
   }
 

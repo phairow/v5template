@@ -15,8 +15,8 @@
   "author": "Rai Phairow",
   "license": "MIT",
   "dependencies": {
-    "@types/underscore.string": "0.0.38",
     "minimist": "^1.2.0",
+    "mustache": "^4.0.1",
     "swagger-parser": "^8.0.4",
     "underscore.string": "^3.3.5",
     "yeoman-environment": "^2.7.0",
@@ -24,6 +24,8 @@
   },
   "devDependencies": {
     "@types/minimist": "^1.2.0",
+    "@types/mustache": "^4.0.1",
+    "@types/underscore.string": "0.0.38",
     "@types/yeoman-environment": "^2.3.2",
     "@types/yeoman-generator": "^3.1.4",
     "prettier": "^1.19.1",

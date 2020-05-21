@@ -16,7 +16,10 @@ declare enum Language {
     PHP = "php",
     Rust = "rust"
 }
-export declare type RenderTemplate = (template: string, context: object, fileName: string, extension: string, subDir?: string) => void;
+export declare type RenderTemplate = {
+    ejs: (template: string, context: object, fileName: string, extension: string, subDir?: string) => void;
+    mustache: (template: string, context: object, fileName: string, extension: string, subDir?: string) => void;
+};
 export default class SdkGenerator extends Generator {
     selectedLanguage: Language;
     destinationDirectory: string;
