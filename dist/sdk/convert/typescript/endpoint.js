@@ -1,7 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const SdkEndpoint_1 = require("../../../definition/format/SdkEndpoint");
 const string_1 = require("../../../util/string");
+const mustache_1 = require("../../../util/mustache");
+class EndpointTypescript extends SdkEndpoint_1.SdkEndpoint {
+    constructor(endpoint, titlePropertyName) {
+        super(endpoint.httpMethod, endpoint.apiTitle, endpoint.apiDescription, endpoint.apiVersion, endpoint.title, endpoint.description, endpoint.parameters, endpoint.response, endpoint.errors);
+        this.titlePropertyName = titlePropertyName;
+    }
+    comma() {
+        return mustache_1.comma();
+    }
+    comma_separated_list() {
+        return mustache_1.comma_separated_list();
+    }
+}
+exports.EndpointTypescript = EndpointTypescript;
 function endpointConvert(endpoint) {
-    return Object.assign(Object.assign({}, endpoint), { titlePropertyName: string_1.StringUtil.lowerFirstChar(endpoint.title) });
+    return new EndpointTypescript(endpoint, string_1.StringUtil.lowerFirstChar(endpoint.title));
 }
 exports.endpointConvert = endpointConvert;

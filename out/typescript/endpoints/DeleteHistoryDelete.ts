@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class DeleteHistoryDelete {
+export class DeleteHistoryDelete {
   private httpMethod: string = 'delete';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class DeleteHistoryDelete {
     this.serializationLib = serializationLib;
   }
 
-  validate(subKey: string, channels: string, start: unknown, end: unknown) {
+  static validate(subKey: string, channels: string, start: unknown, end: unknown) {
             if (typeof (subKey) !== 'string') {
               return false;
             }
@@ -26,7 +26,7 @@ class DeleteHistoryDelete {
     return true;
   }
 
-  execute(subKey: string, channels: string, start: unknown, end: unknown) {
+  static execute(subKey: string, channels: string, start: unknown, end: unknown) {
     // ...
   }
 

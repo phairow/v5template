@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class SendASignalToAChannelGet {
+export class SendASignalToAChannelGet {
   private httpMethod: string = 'get';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class SendASignalToAChannelGet {
     this.serializationLib = serializationLib;
   }
 
-  validate(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string) {
+  static validate(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string) {
             if (typeof (pubKey) !== 'string') {
               return false;
             }
@@ -35,7 +35,7 @@ class SendASignalToAChannelGet {
     return true;
   }
 
-  execute(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string) {
+  static execute(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string) {
     // ...
   }
 

@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class FetchMessageHistoryApiV3Get {
+export class FetchMessageHistoryApiV3Get {
   private httpMethod: string = 'get';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class FetchMessageHistoryApiV3Get {
     this.serializationLib = serializationLib;
   }
 
-  validate(subKey: string, channels: string, max: number, reverse: boolean, start: unknown, end: unknown, auth: string, includeMeta: boolean) {
+  static validate(subKey: string, channels: string, max: number, reverse: boolean, start: unknown, end: unknown, auth: string, includeMeta: boolean) {
             if (typeof (subKey) !== 'string') {
               return false;
             }
@@ -38,7 +38,7 @@ class FetchMessageHistoryApiV3Get {
     return true;
   }
 
-  execute(subKey: string, channels: string, max: number, reverse: boolean, start: unknown, end: unknown, auth: string, includeMeta: boolean) {
+  static execute(subKey: string, channels: string, max: number, reverse: boolean, start: unknown, end: unknown, auth: string, includeMeta: boolean) {
     // ...
   }
 

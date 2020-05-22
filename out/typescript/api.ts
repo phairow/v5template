@@ -1,6 +1,7 @@
 import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
+
 import { ListingAllRegisteredChannelGroupsGet } from './endpoints/ListingAllRegisteredChannelGroupsGet';
 import { AllChannelsOfAChannelGroupGet } from './endpoints/AllChannelsOfAChannelGroupGet';
 import { DeletingAChannelGroupGet } from './endpoints/DeletingAChannelGroupGet';
@@ -46,6 +47,8 @@ import { RemovingADeviceGet } from './endpoints/RemovingADeviceGet';
 import { SubscribeToChannelV1ApiGet } from './endpoints/SubscribeToChannelV1ApiGet';
 import { SubscribeToChannelSOrChannelGroupGet } from './endpoints/SubscribeToChannelSOrChannelGroupGet';
 import { FetchTimeGet } from './endpoints/FetchTimeGet';
+import { MetadataQueryParamSchema } from './schemas/MetadataQueryParamSchema';
+
 
 class Api {
 

@@ -60,10 +60,6 @@ class SdkGenerator extends Generator {
             this.templateDir =
                 path.resolve(__dirname, '../../src/sdk/template/', this.selectedLanguage.toLowerCase()) + '/';
             let processor = yield Promise.resolve().then(() => require('./process/' + this.selectedLanguage.toLowerCase()));
-            let mustacheContextMethods = {
-                comma: () => ', ',
-                comma_separated_list: () => (text, render) => render(text).replace(/,\s$/, ''),
-            };
             let renderTemplate = {
                 ejs: (template, context, fileName, fileExtension, subDir) => {
                     let outFile = this.outputDir + (subDir ? subDir + '/' : '') + fileName + '.' + fileExtension;
@@ -71,10 +67,9 @@ class SdkGenerator extends Generator {
                 },
                 mustache: (template, context, fileName, fileExtension, subDir) => {
                     try {
-                        let templateContext = Object.assign(Object.assign({}, mustacheContextMethods), context);
                         let outFile = this.outputDir + (subDir ? subDir + '/' : '') + fileName + '.' + fileExtension;
                         let templateString = fs.readFileSync(this.templateDir + template + '.mustache', 'utf8');
-                        let output = Mustache.render(templateString, templateContext, (partialName) => { return fs.readFileSync(this.templateDir + partialName + '.mustache', 'utf8'); });
+                        let output = Mustache.render(templateString, context, (partialName) => { return fs.readFileSync(this.templateDir + partialName + '.mustache', 'utf8'); });
                         this.fs.write(outFile, output);
                     }
                     catch (e) {

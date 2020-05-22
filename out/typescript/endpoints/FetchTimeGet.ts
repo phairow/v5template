@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class FetchTimeGet {
+export class FetchTimeGet {
   private httpMethod: string = 'get';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class FetchTimeGet {
     this.serializationLib = serializationLib;
   }
 
-  validate(callback: string, uuid: string) {
+  static validate(callback: string, uuid: string) {
             if (typeof (callback) !== 'string') {
               return false;
             }
@@ -20,7 +20,7 @@ class FetchTimeGet {
     return true;
   }
 
-  execute(callback: string, uuid: string) {
+  static execute(callback: string, uuid: string) {
     // ...
   }
 

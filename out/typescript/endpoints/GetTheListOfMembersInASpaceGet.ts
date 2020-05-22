@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class GetTheListOfMembersInASpaceGet {
+export class GetTheListOfMembersInASpaceGet {
   private httpMethod: string = 'get';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class GetTheListOfMembersInASpaceGet {
     this.serializationLib = serializationLib;
   }
 
-  validate(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
+  static validate(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
             if (!Array.isArray(include)) {
               return false;
             }
@@ -35,7 +35,7 @@ class GetTheListOfMembersInASpaceGet {
     return true;
   }
 
-  execute(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
+  static execute(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
     // ...
   }
 

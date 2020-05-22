@@ -58,11 +58,6 @@ export default class SdkGenerator extends Generator {
 
     let processor = await import('./process/' + this.selectedLanguage.toLowerCase());
 
-    let mustacheContextMethods = {
-      comma: () => ', ',
-      comma_separated_list: () => (text: string, render: Function) => render(text).replace(/,\s$/, ''),
-    };
-
     let renderTemplate: RenderTemplate = {
       ejs: (template: string, context: object, fileName: string, fileExtension: string, subDir?: string) => {
         let outFile = this.outputDir + (subDir ? subDir + '/' : '') + fileName + '.' + fileExtension;
@@ -74,11 +69,9 @@ export default class SdkGenerator extends Generator {
       },
       mustache: (template: string, context: object, fileName: string, fileExtension: string, subDir?: string) => {
         try {
-          let templateContext = { ...mustacheContextMethods, ...context };
-
           let outFile = this.outputDir + (subDir ? subDir + '/' : '') + fileName + '.' + fileExtension;
           let templateString = fs.readFileSync(this.templateDir + template + '.mustache', 'utf8');
-          let output = Mustache.render(templateString, templateContext, (partialName) => { return fs.readFileSync(this.templateDir + partialName + '.mustache', 'utf8') });
+          let output = Mustache.render(templateString, context, (partialName) => { return fs.readFileSync(this.templateDir + partialName + '.mustache', 'utf8') });
           this.fs.write(outFile, output);
         } catch (e) {
           console.log(e)

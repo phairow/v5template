@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class ManagingDeviceRegistrationsAPNSHTTP2Get {
+export class ManagingDeviceRegistrationsAPNSHTTP2Get {
   private httpMethod: string = 'get';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class ManagingDeviceRegistrationsAPNSHTTP2Get {
     this.serializationLib = serializationLib;
   }
 
-  validate(subKey: string, deviceApns2: string, uuid: string, auth: string, list: string, add: string, remove: string, environment: string, topic: string) {
+  static validate(subKey: string, deviceApns2: string, uuid: string, auth: string, list: string, add: string, remove: string, environment: string, topic: string) {
             if (typeof (subKey) !== 'string') {
               return false;
             }
@@ -41,7 +41,7 @@ class ManagingDeviceRegistrationsAPNSHTTP2Get {
     return true;
   }
 
-  execute(subKey: string, deviceApns2: string, uuid: string, auth: string, list: string, add: string, remove: string, environment: string, topic: string) {
+  static execute(subKey: string, deviceApns2: string, uuid: string, auth: string, list: string, add: string, remove: string, environment: string, topic: string) {
     // ...
   }
 

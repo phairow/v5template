@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class WhereNowGet {
+export class WhereNowGet {
   private httpMethod: string = 'get';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class WhereNowGet {
     this.serializationLib = serializationLib;
   }
 
-  validate(subKey: string, uuid: string, auth: string, callback: string) {
+  static validate(subKey: string, uuid: string, auth: string, callback: string) {
             if (typeof (subKey) !== 'string') {
               return false;
             }
@@ -26,7 +26,7 @@ class WhereNowGet {
     return true;
   }
 
-  execute(subKey: string, uuid: string, auth: string, callback: string) {
+  static execute(subKey: string, uuid: string, auth: string, callback: string) {
     // ...
   }
 

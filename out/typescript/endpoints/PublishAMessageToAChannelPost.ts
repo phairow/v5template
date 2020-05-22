@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class PublishAMessageToAChannelPost {
+export class PublishAMessageToAChannelPost {
   private httpMethod: string = 'post';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class PublishAMessageToAChannelPost {
     this.serializationLib = serializationLib;
   }
 
-  validate(pubKey: string, subKey: string, channel: string, callback: string, store: number, auth: string, meta: MetadataQueryParamSchema, uuid: string, ttl: number) {
+  static validate(pubKey: string, subKey: string, channel: string, callback: string, store: number, auth: string, meta: MetadataQueryParamSchema, uuid: string, ttl: number) {
             if (typeof (pubKey) !== 'string') {
               return false;
             }
@@ -38,7 +38,7 @@ class PublishAMessageToAChannelPost {
     return true;
   }
 
-  execute(pubKey: string, subKey: string, channel: string, callback: string, store: number, auth: string, meta: MetadataQueryParamSchema, uuid: string, ttl: number) {
+  static execute(pubKey: string, subKey: string, channel: string, callback: string, store: number, auth: string, meta: MetadataQueryParamSchema, uuid: string, ttl: number) {
     // ...
   }
 

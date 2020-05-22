@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class ApplyingPAMV3Post {
+export class ApplyingPAMV3Post {
   private httpMethod: string = 'post';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class ApplyingPAMV3Post {
     this.serializationLib = serializationLib;
   }
 
-  validate(subKey: string, timestamp: number, signature: string) {
+  static validate(subKey: string, timestamp: number, signature: string) {
             if (typeof (subKey) !== 'string') {
               return false;
             }
@@ -23,7 +23,7 @@ class ApplyingPAMV3Post {
     return true;
   }
 
-  execute(subKey: string, timestamp: number, signature: string) {
+  static execute(subKey: string, timestamp: number, signature: string) {
     // ...
   }
 

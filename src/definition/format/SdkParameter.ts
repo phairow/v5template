@@ -1,4 +1,5 @@
 import { OpenAPIV3 } from 'openapi-types';
+import { SchemaUtil } from '../../util/schema';
 
 export class SdkParameter {
   constructor(
@@ -11,62 +12,34 @@ export class SdkParameter {
   ) {}
 
   isNumber(): boolean {
-    return this.schema && this.schema.type === 'number';
+    return SchemaUtil.isNumber(this.schema);
   }
 
   isInteger(): boolean {
-    return this.schema && this.schema.type === 'integer';
+    return SchemaUtil.isInteger(this.schema);
   }
 
   isArray(): boolean {
-    return this.schema && this.schema.type === 'array';
+    return SchemaUtil.isArray(this.schema);
   }
 
   isString(): boolean {
-    return this.schema && this.schema.type === 'string';
+    return SchemaUtil.isString(this.schema);
   }
 
   isBoolean(): boolean {
-    return this.schema && this.schema.type === 'boolean';
+    return SchemaUtil.isBoolean(this.schema);
   }
 
   isObject(): boolean {
-    return this.schema && this.schema.type === 'object';
+    return SchemaUtil.isObject(this.schema);
   }
 
   schemaName(): string {
-    return this.isObject() && this.schema && this.schema.title || 'unknown_schema';
+    return SchemaUtil.schemaName(this.schema);
   }
 
   schemaType(): string {
-    if (this.isInteger()) {
-      return 'number';
-    }
-
-    if (this.isArray()) {
-      let result = '[]';
-
-      if( 'items' in this.schema) {
-        if ('type' in this.schema.items) {
-            result = this.schema.items.type + '[]';
-        }
-      }
-
-      return result;
-    }
-
-    if (this.isString()) {
-      return 'string';
-    }
-
-    if (this.isBoolean()) {
-      return 'boolean';
-    }
-
-    if (this.isObject()) {
-      return this.schemaName();
-    }
-
-    return 'unknown';
+    return SchemaUtil.schemaType(this.schema);
   }
 }

@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class MessageCountsGet {
+export class MessageCountsGet {
   private httpMethod: string = 'get';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class MessageCountsGet {
     this.serializationLib = serializationLib;
   }
 
-  validate(subKey: string, channels: string, auth: string, timetoken: unknown, channelsTimetoken: string) {
+  static validate(subKey: string, channels: string, auth: string, timetoken: unknown, channelsTimetoken: string) {
             if (typeof (subKey) !== 'string') {
               return false;
             }
@@ -29,7 +29,7 @@ class MessageCountsGet {
     return true;
   }
 
-  execute(subKey: string, channels: string, auth: string, timetoken: unknown, channelsTimetoken: string) {
+  static execute(subKey: string, channels: string, auth: string, timetoken: unknown, channelsTimetoken: string) {
     // ...
   }
 

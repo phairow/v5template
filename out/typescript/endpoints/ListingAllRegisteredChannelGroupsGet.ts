@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class ListingAllRegisteredChannelGroupsGet {
+export class ListingAllRegisteredChannelGroupsGet {
   private httpMethod: string = 'get';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class ListingAllRegisteredChannelGroupsGet {
     this.serializationLib = serializationLib;
   }
 
-  validate(subKey: string, uuid: string) {
+  static validate(subKey: string, uuid: string) {
             if (typeof (subKey) !== 'string') {
               return false;
             }
@@ -20,7 +20,7 @@ class ListingAllRegisteredChannelGroupsGet {
     return true;
   }
 
-  execute(subKey: string, uuid: string) {
+  static execute(subKey: string, uuid: string) {
     // ...
   }
 

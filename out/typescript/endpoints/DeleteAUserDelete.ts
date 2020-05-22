@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class DeleteAUserDelete {
+export class DeleteAUserDelete {
   private httpMethod: string = 'delete';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,11 +10,11 @@ class DeleteAUserDelete {
     this.serializationLib = serializationLib;
   }
 
-  validate() {
+  static validate() {
     return true;
   }
 
-  execute() {
+  static execute() {
     // ...
   }
 

@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class AnnounceLeaveGet {
+export class AnnounceLeaveGet {
   private httpMethod: string = 'get';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class AnnounceLeaveGet {
     this.serializationLib = serializationLib;
   }
 
-  validate(subKey: string, channel: string, channelGroup: string, auth: string, callback: string, uuid: string) {
+  static validate(subKey: string, channel: string, channelGroup: string, auth: string, callback: string, uuid: string) {
             if (typeof (subKey) !== 'string') {
               return false;
             }
@@ -32,7 +32,7 @@ class AnnounceLeaveGet {
     return true;
   }
 
-  execute(subKey: string, channel: string, channelGroup: string, auth: string, callback: string, uuid: string) {
+  static execute(subKey: string, channel: string, channelGroup: string, auth: string, callback: string, uuid: string) {
     // ...
   }
 

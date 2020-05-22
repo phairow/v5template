@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class FetchAListOfActionsOrderedByActionTimetokenGet {
+export class FetchAListOfActionsOrderedByActionTimetokenGet {
   private httpMethod: string = 'get';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class FetchAListOfActionsOrderedByActionTimetokenGet {
     this.serializationLib = serializationLib;
   }
 
-  validate(subKey: string, channel: string, start: string, end: string, limit: number, auth: string) {
+  static validate(subKey: string, channel: string, start: string, end: string, limit: number, auth: string) {
             if (typeof (subKey) !== 'string') {
               return false;
             }
@@ -32,7 +32,7 @@ class FetchAListOfActionsOrderedByActionTimetokenGet {
     return true;
   }
 
-  execute(subKey: string, channel: string, start: string, end: string, limit: number, auth: string) {
+  static execute(subKey: string, channel: string, start: string, end: string, limit: number, auth: string) {
     // ...
   }
 

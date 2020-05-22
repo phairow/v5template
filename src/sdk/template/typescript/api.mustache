@@ -1,10 +1,12 @@
 import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
+{{foo}}
 {{#endpoints}}
 {{> includes/importEndpoint}}
 
 {{/endpoints}}
+{{> includes/importMethodParamTypes}}
 
 class Api {
 

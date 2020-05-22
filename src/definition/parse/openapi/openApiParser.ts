@@ -57,11 +57,11 @@ export async function openApiParser(generator: SdkGenerator, apiPath: string): P
     throw e;
   }
 
-  return new SdkApiDefinition(
-    sdkEndpoints,
+  return {
+    endpoints: sdkEndpoints,
     parameters,
     schemas,
-  );
+  };
 }
 
 function convertOperationToSdkDefinitionFormat(
@@ -195,17 +195,17 @@ function convertOperationToSdkDefinitionFormat(
     });
   }
   
-  return {
-    httpMethod: operationKey,
-    apiTitle: api.info.title || '',
-    apiDescription: api.info.description || '',
-    apiVersion: api.info.version,
-    title: _.classify(operation.summary || '') + _.classify(operationKey) ,
-    description: operation.description || '',
-    parameters: sdkParameters,
-    response: sdkResponse,
-    errors: sdkErrors,
-  };
+  return new SdkEndpoint(
+    operationKey,
+    api.info.title || '',
+    api.info.description || '',
+    api.info.version,
+    _.classify(operation.summary || '') + _.classify(operationKey) ,
+    operation.description || '',
+    sdkParameters,
+    sdkResponse,
+    sdkErrors,
+  );
 }
 
 function getName(path: string): string {

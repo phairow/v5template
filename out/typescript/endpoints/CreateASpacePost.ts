@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class CreateASpacePost {
+export class CreateASpacePost {
   private httpMethod: string = 'post';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,14 +10,14 @@ class CreateASpacePost {
     this.serializationLib = serializationLib;
   }
 
-  validate(include: string[]) {
+  static validate(include: string[]) {
             if (!Array.isArray(include)) {
               return false;
             }
     return true;
   }
 
-  execute(include: string[]) {
+  static execute(include: string[]) {
     // ...
   }
 

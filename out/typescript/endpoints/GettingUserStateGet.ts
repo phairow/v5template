@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class GettingUserStateGet {
+export class GettingUserStateGet {
   private httpMethod: string = 'get';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class GettingUserStateGet {
     this.serializationLib = serializationLib;
   }
 
-  validate(subKey: string, channel: string, channelGroup: string, auth: string, callback: string) {
+  static validate(subKey: string, channel: string, channelGroup: string, auth: string, callback: string) {
             if (typeof (subKey) !== 'string') {
               return false;
             }
@@ -29,7 +29,7 @@ class GettingUserStateGet {
     return true;
   }
 
-  execute(subKey: string, channel: string, channelGroup: string, auth: string, callback: string) {
+  static execute(subKey: string, channel: string, channelGroup: string, auth: string, callback: string) {
     // ...
   }
 

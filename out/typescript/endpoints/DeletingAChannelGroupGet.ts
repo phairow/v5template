@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class DeletingAChannelGroupGet {
+export class DeletingAChannelGroupGet {
   private httpMethod: string = 'get';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class DeletingAChannelGroupGet {
     this.serializationLib = serializationLib;
   }
 
-  validate(subKey: string, groupName: string, auth: string, uuid: string) {
+  static validate(subKey: string, groupName: string, auth: string, uuid: string) {
             if (typeof (subKey) !== 'string') {
               return false;
             }
@@ -26,7 +26,7 @@ class DeletingAChannelGroupGet {
     return true;
   }
 
-  execute(subKey: string, groupName: string, auth: string, uuid: string) {
+  static execute(subKey: string, groupName: string, auth: string, uuid: string) {
     // ...
   }
 

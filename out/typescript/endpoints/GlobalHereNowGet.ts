@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class GlobalHereNowGet {
+export class GlobalHereNowGet {
   private httpMethod: string = 'get';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class GlobalHereNowGet {
     this.serializationLib = serializationLib;
   }
 
-  validate(subKey: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string) {
+  static validate(subKey: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string) {
             if (typeof (subKey) !== 'string') {
               return false;
             }
@@ -35,7 +35,7 @@ class GlobalHereNowGet {
     return true;
   }
 
-  execute(subKey: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string) {
+  static execute(subKey: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string) {
     // ...
   }
 

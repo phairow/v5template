@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const SdkApiDefinition_1 = require("../../format/SdkApiDefinition");
+const SdkEndpoint_1 = require("../../format/SdkEndpoint");
 const SdkParameter_1 = require("../../format/SdkParameter");
 const _ = require("underscore.string");
 const SwaggerParser = require("swagger-parser");
@@ -46,7 +46,11 @@ function openApiParser(generator, apiPath) {
             console.log('error getting operations', e);
             throw e;
         }
-        return new SdkApiDefinition_1.SdkApiDefinition(sdkEndpoints, parameters, schemas);
+        return {
+            endpoints: sdkEndpoints,
+            parameters,
+            schemas,
+        };
     });
 }
 exports.openApiParser = openApiParser;
@@ -140,17 +144,7 @@ function convertOperationToSdkDefinitionFormat(parser, api, schemas, parameters,
             }
         });
     }
-    return {
-        httpMethod: operationKey,
-        apiTitle: api.info.title || '',
-        apiDescription: api.info.description || '',
-        apiVersion: api.info.version,
-        title: _.classify(operation.summary || '') + _.classify(operationKey),
-        description: operation.description || '',
-        parameters: sdkParameters,
-        response: sdkResponse,
-        errors: sdkErrors,
-    };
+    return new SdkEndpoint_1.SdkEndpoint(operationKey, api.info.title || '', api.info.description || '', api.info.version, _.classify(operation.summary || '') + _.classify(operationKey), operation.description || '', sdkParameters, sdkResponse, sdkErrors);
 }
 function getName(path) {
     let parts = path.split('/');

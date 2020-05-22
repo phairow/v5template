@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class ListingAddingRemovingRegistrationsForDeviceGet {
+export class ListingAddingRemovingRegistrationsForDeviceGet {
   private httpMethod: string = 'get';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class ListingAddingRemovingRegistrationsForDeviceGet {
     this.serializationLib = serializationLib;
   }
 
-  validate(subKey: string, pushToken: string, type: string, uuid: string) {
+  static validate(subKey: string, pushToken: string, type: string, uuid: string) {
             if (typeof (subKey) !== 'string') {
               return false;
             }
@@ -26,7 +26,7 @@ class ListingAddingRemovingRegistrationsForDeviceGet {
     return true;
   }
 
-  execute(subKey: string, pushToken: string, type: string, uuid: string) {
+  static execute(subKey: string, pushToken: string, type: string, uuid: string) {
     // ...
   }
 

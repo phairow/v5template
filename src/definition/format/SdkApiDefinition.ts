@@ -1,10 +1,8 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { SdkEndpoint } from "./SdkEndpoint";
 
-export class SdkApiDefinition {
-  constructor(
-    public endpoints: SdkEndpoint[],
-    public parameters: OpenAPIV3.ParameterObject[],
-    public schemas: OpenAPIV3.SchemaObject[],
-  ) {};
+export interface SdkApiDefinition {
+  endpoints: SdkEndpoint[];
+  parameters: OpenAPIV3.ParameterObject[];
+  schemas: OpenAPIV3.SchemaObject[];
 }

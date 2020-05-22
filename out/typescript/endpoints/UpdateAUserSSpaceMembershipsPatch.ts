@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class UpdateAUserSSpaceMembershipsPatch {
+export class UpdateAUserSSpaceMembershipsPatch {
   private httpMethod: string = 'patch';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class UpdateAUserSSpaceMembershipsPatch {
     this.serializationLib = serializationLib;
   }
 
-  validate(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
+  static validate(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
             if (!Array.isArray(include)) {
               return false;
             }
@@ -35,7 +35,7 @@ class UpdateAUserSSpaceMembershipsPatch {
     return true;
   }
 
-  execute(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
+  static execute(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
     // ...
   }
 

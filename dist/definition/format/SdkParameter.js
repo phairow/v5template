@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const schema_1 = require("../../util/schema");
 class SdkParameter {
     constructor(title, name, location, description, required, schema) {
         this.title = title;
@@ -10,49 +11,28 @@ class SdkParameter {
         this.schema = schema;
     }
     isNumber() {
-        return this.schema && this.schema.type === 'number';
+        return schema_1.SchemaUtil.isNumber(this.schema);
     }
     isInteger() {
-        return this.schema && this.schema.type === 'integer';
+        return schema_1.SchemaUtil.isInteger(this.schema);
     }
     isArray() {
-        return this.schema && this.schema.type === 'array';
+        return schema_1.SchemaUtil.isArray(this.schema);
     }
     isString() {
-        return this.schema && this.schema.type === 'string';
+        return schema_1.SchemaUtil.isString(this.schema);
     }
     isBoolean() {
-        return this.schema && this.schema.type === 'boolean';
+        return schema_1.SchemaUtil.isBoolean(this.schema);
     }
     isObject() {
-        return this.schema && this.schema.type === 'object';
+        return schema_1.SchemaUtil.isObject(this.schema);
     }
     schemaName() {
-        return this.isObject() && this.schema && this.schema.title || 'unknown_schema';
+        return schema_1.SchemaUtil.schemaName(this.schema);
     }
     schemaType() {
-        if (this.isInteger()) {
-            return 'number';
-        }
-        if (this.isArray()) {
-            let result = '[]';
-            if ('items' in this.schema) {
-                if ('type' in this.schema.items) {
-                    result = this.schema.items.type + '[]';
-                }
-            }
-            return result;
-        }
-        if (this.isString()) {
-            return 'string';
-        }
-        if (this.isBoolean()) {
-            return 'boolean';
-        }
-        if (this.isObject()) {
-            return this.schemaName();
-        }
-        return 'unknown';
+        return schema_1.SchemaUtil.schemaType(this.schema);
     }
 }
 exports.SdkParameter = SdkParameter;

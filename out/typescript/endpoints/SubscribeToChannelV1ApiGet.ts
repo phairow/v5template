@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class SubscribeToChannelV1ApiGet {
+export class SubscribeToChannelV1ApiGet {
   private httpMethod: string = 'get';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class SubscribeToChannelV1ApiGet {
     this.serializationLib = serializationLib;
   }
 
-  validate(subKey: string, channel: string, callback: string, timetoken: string, channleGroup: string, state: string, heartbeat: number, auth: string, uuid: string) {
+  static validate(subKey: string, channel: string, callback: string, timetoken: string, channleGroup: string, state: string, heartbeat: number, auth: string, uuid: string) {
             if (typeof (subKey) !== 'string') {
               return false;
             }
@@ -41,7 +41,7 @@ class SubscribeToChannelV1ApiGet {
     return true;
   }
 
-  execute(subKey: string, channel: string, callback: string, timetoken: string, channleGroup: string, state: string, heartbeat: number, auth: string, uuid: string) {
+  static execute(subKey: string, channel: string, callback: string, timetoken: string, channleGroup: string, state: string, heartbeat: number, auth: string, uuid: string) {
     // ...
   }
 

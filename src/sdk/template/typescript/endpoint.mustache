@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class {{title}} {
+export class {{title}} {
   private httpMethod: string = '{{httpMethod}}';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,14 +10,14 @@ class {{title}} {
     this.serializationLib = serializationLib;
   }
 
-  validate({{> includes/parameterList }}) {
+  static validate({{> includes/parameterList }}) {
 {{#parameters}}
         {{> includes/parameterValidate }}
 {{/parameters}}
     return true;
   }
 
-  execute({{> includes/parameterList }}) {
+  static execute({{> includes/parameterList }}) {
     // ...
   }
 

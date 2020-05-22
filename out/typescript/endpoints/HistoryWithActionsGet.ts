@@ -2,7 +2,7 @@ import { PubNubLogger } from "../log/PubNubLogger";
 import { PubNubNetworking } from "../net/PubNubNetworking";
 import { PubNubParser } from "../parse/PubNubParser";
 
-class HistoryWithActionsGet {
+export class HistoryWithActionsGet {
   private httpMethod: string = 'get';
 
   constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
@@ -10,7 +10,7 @@ class HistoryWithActionsGet {
     this.serializationLib = serializationLib;
   }
 
-  validate(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean) {
+  static validate(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean) {
             if (typeof (subKey) !== 'string') {
               return false;
             }
@@ -35,7 +35,7 @@ class HistoryWithActionsGet {
     return true;
   }
 
-  execute(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean) {
+  static execute(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean) {
     // ...
   }
 
