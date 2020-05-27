@@ -1,14 +1,13 @@
-import { PubNubLogger } from "../log/PubNubLogger";
-import { PubNubNetworking } from "../net/PubNubNetworking";
-import { PubNubParser } from "../parse/PubNubParser";
-{{foo}}
+import { Logger } from "../log/Logger";
+import { Networking } from "../net/Networking";
+import { Parser } from "../parse/Parser";
 {{#endpoints}}
 {{> includes/importEndpoint}}
 
 {{/endpoints}}
-{{> includes/importMethodParamTypes}}
+{{> includes/importApiMethodParamTypes}}
 
-class Api {
+export class Api {
 
   constructor(
     public net: Networking,

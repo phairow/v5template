@@ -1,8 +1,8 @@
-import { PubNubLogger } from "../log/PubNubLogger";
-import { PubNubNetworking } from "../net/PubNubNetworking";
-import { PubNubParser } from "../parse/PubNubParser";
+import { Logger } from "../../log/Logger";
+import { Networking } from "../../net/Networking";
+import { Parser } from "../../parse/Parser";
 
-class SpaceResponseRefSchema {
+export class SpaceResponseRefSchema {
 
 
 }

@@ -1,8 +1,8 @@
-import { PubNubLogger } from "../log/PubNubLogger";
-import { PubNubNetworking } from "../net/PubNubNetworking";
-import { PubNubParser } from "../parse/PubNubParser";
+import { Logger } from "../../log/Logger";
+import { Networking } from "../../net/Networking";
+import { Parser } from "../../parse/Parser";
 
-class Error403PAMv3ResponseRefSchema {
+export class Error403PAMv3ResponseRefSchema {
 
 
 }

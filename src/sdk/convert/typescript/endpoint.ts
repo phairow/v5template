@@ -33,6 +33,17 @@ export class EndpointTypescript extends SdkEndpoint {
     return comma_separated_list();
   }
 
+  paramTypes(): string[] {
+    let types: { [key: string ]: boolean } = {};
+
+    for (const parameter of this.parameters) {
+      if (parameter.isObject()) {
+        types[parameter.schemaName()] = true;
+      }
+    }
+
+    return Object.keys(types);
+  }
 }
 
 export function endpointConvert(endpoint: SdkEndpoint) {

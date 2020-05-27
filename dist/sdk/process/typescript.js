@@ -7,18 +7,17 @@ function process(generator, apis, renderTemplate) {
     // generator.log(generator.outputDir);
     // generator.log(generator.templateDir);
     let sdkApi = api_1.apiConvert(apis);
-    renderTemplate.mustache('api', sdkApi, 'api', 'ts');
+    renderTemplate.mustache('api', sdkApi, 'Api', 'ts');
     sdkApi.endpoints.forEach((sdkEndpoint) => {
-        renderTemplate.mustache('endpoint', endpoint_1.endpointConvert(sdkEndpoint), sdkEndpoint.title, 'ts', 'endpoints');
+        renderTemplate.mustache('endpoint', endpoint_1.endpointConvert(sdkEndpoint), sdkEndpoint.title, 'ts', 'endpoint');
     });
-    try {
-        sdkApi.parameters.forEach((parameter) => {
-            renderTemplate.mustache('parameter', parameter, parameter.name, 'ts', 'parameter');
-        });
-    }
-    catch (e) {
-        console.log('parameters fail');
-    }
+    // try {
+    //   sdkApi.parameters.forEach((parameter: OpenAPIV3.ParameterObject) => {
+    //     renderTemplate.mustache('parameter', parameter, parameter.name, 'ts', 'parameter');
+    //   });
+    // } catch (e) {
+    //   console.log('parameters fail');
+    // }
     try {
         sdkApi.schemas.forEach((schema) => {
             if (schema.title) {

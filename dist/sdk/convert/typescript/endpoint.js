@@ -14,6 +14,15 @@ class EndpointTypescript extends SdkEndpoint_1.SdkEndpoint {
     comma_separated_list() {
         return mustache_1.comma_separated_list();
     }
+    paramTypes() {
+        let types = {};
+        for (const parameter of this.parameters) {
+            if (parameter.isObject()) {
+                types[parameter.schemaName()] = true;
+            }
+        }
+        return Object.keys(types);
+    }
 }
 exports.EndpointTypescript = EndpointTypescript;
 function endpointConvert(endpoint) {

@@ -4,5 +4,6 @@ export declare class EndpointTypescript extends SdkEndpoint {
     constructor(endpoint: SdkEndpoint, titlePropertyName: string);
     comma(): string;
     comma_separated_list(): (text: string, render: Function) => string;
+    paramTypes(): string[];
 }
 export declare function endpointConvert(endpoint: SdkEndpoint): EndpointTypescript;

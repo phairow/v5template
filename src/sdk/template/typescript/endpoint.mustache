@@ -1,18 +1,22 @@
-import { PubNubLogger } from "../log/PubNubLogger";
-import { PubNubNetworking } from "../net/PubNubNetworking";
-import { PubNubParser } from "../parse/PubNubParser";
+import { Logger } from "../../log/Logger";
+import { Networking } from "../../net/Networking";
+import { Parser } from "../../parse/Parser";
+{{> includes/importEndpointMethodParamTypes}}
 
 export class {{title}} {
   private httpMethod: string = '{{httpMethod}}';
 
-  constructor(private httpLib: PubNubNetworking, private serializationLib: PubNubParser) {
-    this.httpLib = httpLib;
-    this.serializationLib = serializationLib;
-  }
+  constructor(
+    public net: Networking,
+    public parse: Parser,
+    public log: Logger,
+  ) {}
 
   static validate({{> includes/parameterList }}) {
+
 {{#parameters}}
-        {{> includes/parameterValidate }}
+{{> includes/parameterValidate }}
+
 {{/parameters}}
     return true;
   }
