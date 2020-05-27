@@ -11,7 +11,7 @@ export class HistoryWithActionsGet {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean) {
+  static validate(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean, signature: string, timestamp: number) {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -41,10 +41,18 @@ export class HistoryWithActionsGet {
       return false;
     }
 
+    if (typeof (signature) !== 'string') {
+      return false;
+    }
+
+    if (!Number.isInteger(timestamp)) {
+      return false;
+    }
+
     return true;
   }
 
-  static execute(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean) {
+  static execute(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean, signature: string, timestamp: number) {
     // ...
   }
 

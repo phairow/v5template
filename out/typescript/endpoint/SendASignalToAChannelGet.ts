@@ -11,7 +11,7 @@ export class SendASignalToAChannelGet {
     public log: Logger,
   ) {}
 
-  static validate(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string) {
+  static validate(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string, signature: string, timestamp: number) {
 
     if (typeof (pubKey) !== 'string') {
       return false;
@@ -41,10 +41,18 @@ export class SendASignalToAChannelGet {
       return false;
     }
 
+    if (typeof (signature) !== 'string') {
+      return false;
+    }
+
+    if (!Number.isInteger(timestamp)) {
+      return false;
+    }
+
     return true;
   }
 
-  static execute(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string) {
+  static execute(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string, signature: string, timestamp: number) {
     // ...
   }
 

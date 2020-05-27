@@ -1,0 +1,371 @@
+openapi: 3.0.1
+info:
+  title: PubNub History APIs
+  description: PubNub history APIs for message history.
+  contact:
+    name: PubNub Support
+    url: https://www.pubnub.com/support
+    email: support@pubnub.com
+  termsOfService: https://www.pubnub.com/terms-and-conditions/
+  version: 1.0.0
+servers:
+  - url: https://ps.pndsn.com
+tags:
+- name: History
+  description: History information
+paths:
+  /v2/history/sub-key/{sub_key}/channel/{channel}:
+    get:
+      tags: 
+      - History
+      summary: Fetch message history api v2.
+      description: >
+        Use this api to fetch message histroy
+        This call returns a three element array:
+        * Array Element 0 – Array – Contains an array of JSON messages. 
+          Array will be between 0 and 100 in length, based on the count parameter (default 100) used at request time, 
+          and the number of valid messages available for the given time-slice.
+        * Array Element 1 – Int – Start Timetoken of returned results,
+        * Array Element 2 – Int – End Timetoken of returned results,
+
+        * In the event of an error, you will receive a non-200 HTTP status code. 
+          Depending on the error, you may or may not have a parseable array returned.
+
+      operationId: fetchMessageHistory
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/StringTokenQueryParam'
+      - $ref: '#/components/parameters/CountQueryParam'
+      - $ref: '#/components/parameters/ReverseQueryParam'
+      - $ref: '#/components/parameters/StartQueryParam'
+      - $ref: '#/components/parameters/EndQueryParam'
+      - $ref: '#/components/parameters/IncludeTokenQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/IncludeMetadataQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+            '200':
+              description: Success.
+              content:
+                'application/json':
+                  schema:
+                    $ref: '../responses.yaml#/MessageHistoryResponse'
+            '400':
+              description: Invalid request.
+              content:
+                application/json:
+                  schema:
+                    $ref: '../responses.yaml#/MessageHistoryResponse'
+            '403':
+              description: Do not have permission
+              content:
+                application/json:
+                  schema:
+                    $ref: '../responses.yaml#/MessageHistoryResponse'
+
+  /v3/history/sub-key/{sub_key}/channel/{channels}:
+    get:
+      tags: 
+      - History
+      summary: Fetch message history api v3 (Batch History).
+      operationId: fetchMessageHistoryV3
+      description: Use this api to fetch batch of message histroy  
+      parameters: 
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelsPathParam'
+      - $ref: '#/components/parameters/MaxQueryParam'
+      - $ref: '#/components/parameters/ReverseQueryParam'
+      - $ref: '#/components/parameters/StartQueryParam'
+      - $ref: '#/components/parameters/EndQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/IncludeMetadataQueryParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+             schema:
+                 $ref: '../responses.yaml#/MessageHistoryResponse'
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: '../responses.yaml#/MessageHistoryResponse'
+
+        '403':
+          description: Do not have permission
+          content:
+            application/json:
+              schema:
+                $ref: '../responses.yaml#/MessageHistoryResponse'
+    delete:
+      tags:
+      - History
+      summary: Delete History
+      operationId: deleteHistory
+      description: > 
+        Use a REST DELETE method in this format to make the request to the PubNub service to delete a channel or subset of a channel.
+        ** Notes **
+        * If neither start nor end is given, we delete all messages for that channel.
+        * If start is given and no end, we delete from the start time and all messages before that time. 
+          Start time is not inclusive, as in message with timestamp start will not be deleted.
+        * If end is given and no start, we delete all messages from the current time till the end time. 
+          End time is inclusive, as in message with timestamp end will be deleted.
+        * If start and end are given, we delete all messages from the start time till the end time. 
+          Start time is inclusive and the end time is not included.
+        * If auth is enabled for subkey, the request needs to have signature.
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelsPathParam'          
+      - $ref: '#/components/parameters/StartQueryParam'
+      - $ref: '#/components/parameters/EndQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+               schema:
+                 $ref: '../responses.yaml#/HistoryDeleteSuccessResponse'
+          '400':
+            description: Parse error.
+            content:
+              application/json:
+               schema:
+                 $ref: '../responses.yaml#/HistoryParseError'
+
+          '403':
+            description: Do not have permission to delete
+            content:
+              application/json:
+               schema:
+                 $ref: '../responses.yaml#/HistoryErrorUnauthorizedClient'
+  /v3/history-with-actions/sub-key/{sub_key}/channel/{channel}: 
+    get:
+      tags: 
+      - History
+      summary: History with actions
+      operationId: fetchMessageHistoryWithAction
+      description: > 
+        Show history messages within the given time range, along with their actions
+
+        * The response is a list of messages, ordered by ascending timetoken, 
+          wherein some of the message objects may by augmented with actions.
+        * The actions for a given message are organized first by type, then by value. 
+          For a given (type, value) pair, all the unique UUIDs who posted that action will be shown, 
+          along with the timetoken when the post occurred.
+        * The server may truncate the number of messages in the response, due to internal limits on the number of queries which can be performed per request. 
+          However, the server will always give "complete" messages, in the sense that the messages returned here will always have all their actions. 
+          If truncation of the original query occurs, a "more" link will be provided. This indicates that internal limiting has occurred, 
+          and the more link itself can be used to continue fetching the originally requested range of messages.
+      parameters: 
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'    
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/StartQueryParam'
+      - $ref: '#/components/parameters/EndQueryParam'
+      - $ref: '#/components/parameters/MaxQueryParam'
+      - $ref: '#/components/parameters/IncludeMetadataQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+             schema:
+                 $ref: '../responses.yaml#/HistoryWithActionsSuccessResponse'
+        '400':
+          description: The request was invalid.
+          content:
+            application/json:
+             schema:
+                 $ref: '../responses.yaml#/HistoryErrorInvalidRequest'
+
+  /v3/history/sub-key/{sub_key}/message-counts/{channels}:
+    get:
+      tags: 
+      - History
+      summary: MessageCounts
+      description: > 
+        Get message counts for channels.
+
+        * Returns a list of channels with associated message counts over the given time period. 
+          Channels without messages have a count of 0. Channels with 10,000 messages or more have a count of 10000.
+      operationId: getMessageCounts
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelsPathParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/TimetokenQueryParam'
+      - $ref: '#/components/parameters/ChannelsTimetokenQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: '../responses.yaml#/HistoryMessageCountV3Response'
+          '400':
+            description: The request was invalid.
+            content:
+              application/json:
+                schema:
+                  $ref: '../responses.yaml#/HistoryErrorInvalidRequest'
+          '403':
+            description: Do not have permission
+            content:
+              application/json:
+               schema:
+                 $ref: '../responses.yaml#/HistoryErrorUnauthorizedClient'
+
+components:
+  parameters:
+    SubKeyPathParam:
+      name: sub_key
+      in: path
+      description: the subscriber key
+      required: true
+      schema:
+        type: string
+      example: mySubKey
+    ChannelPathParam:
+      name: channel
+      in: path
+      description: channel for which the history is requested
+      required: true
+      schema:
+        type: string
+      example: ch1
+    StringTokenQueryParam:
+      name: stringtoken
+      in: query
+      description: If false, 0, or not provided, the returned start and end Timetoken values will be returned as long ints. If 1, or true, the start and end Timetoken values will be returned as strings.
+      required: false
+      schema:
+        type: boolean
+      example: false
+    CountQueryParam:
+      name: count
+      in: query
+      description: The maximum number of messages to return per response. If the count parameter is not provided, the server will default to the maximum value of 100. When the count parameter is provided, you may request between 1 and 100 messages.
+      required: false
+      schema:
+        type: integer
+      example: 100
+    ReverseQueryParam:
+      name: reverse
+      in: query
+      description: Direction of time traversal. Default is false, which means timeline is traversed newest to oldest.
+      required: false
+      schema:
+        type: boolean
+      example: false
+    StartQueryParam:
+      name: start
+      in: query
+      description: If provided, lets you select a "start date", in Timetoken format. If not provided, it will default to current time. Page through results by providing a start OR end time token. Retrieve a slice of the time line by providing both a start AND end time token. start is ‘exclusive’ – that is, the first item returned will be the one immediately after the start Timetoken value.
+      required: false
+      schema:
+        type: number
+      example: 123323123123123
+    EndQueryParam:
+      name: end
+      in: query
+      description: If provided, lets you select an "end date", in Timetoken format. If not provided, it will provide up to the number of messages defined in the "count" parameter. Page through results by providing a start OR end time token. Retrieve a slice of the time line by providing both a start AND end time token. End is ‘exclusive’ – that is, if a message is associated exactly with the end Timetoken, it will be included in the result.
+      required: false
+      schema:
+        type: number
+      example: 123323123123123
+    IncludeTokenQueryParam:
+      name: include_token
+      in: query
+      description: pass true to recieve a timetoken with each history message. Defaults to false
+      required: false
+      schema:
+        type: boolean
+      example: false
+    AuthQueryParam:
+      name: auth
+      in: query
+      description: If the channel is protected by PAM, auth must be passed with a key which is authorized to read from the channel.
+      required: false
+      schema:
+        type: string
+      example: authKey
+    UuidQueryParam:
+      name: uuid
+      in: query
+      description: A unique alphanumeric ID for identifying the client to the PubNub Presence System, as well as for PubNub Analytics.
+      required: true
+      schema:
+        type: string
+      example: db9c5e39-7c95-40f5-8d71-125765b6f561
+    IncludeMetadataQueryParam:
+      name: include_meta
+      in: query
+      description: Set to true to include metadata with returned messages. This metadata is set using the meta parameter with the publish operation. Default is false.
+      required: false
+      schema:
+        type: boolean
+      example: true
+    ChannelsPathParam:
+      name: channels
+      in: path
+      description: comma separated channels for which the history is requested
+      required: true
+      schema:
+        type: string
+      example: ch1, ch2
+    MaxQueryParam:
+      name: max
+      in: query
+      description: The batch history is limited to 500 channels and only the last 25 messages per channel.
+      required: false
+      schema:
+        type: integer
+      example: 25
+    TimetokenQueryParam:
+      name: timetoken
+      in: query
+      description: A single timetoken to cover all channels passed-in on the request path. This parameter is incompatible with channelsTimetoken. Value must be greater than 0 (zero).
+      required: false
+      schema:
+        type: number
+    ChannelsTimetokenQueryParam:
+      name: channelsTimetoken
+      in: query
+      description: A comma-delimited list of timetokens, in order of the channels list, in the request path. If the list of timetokens is not the same length as the list of channels, a 400 bad request error will result. This parameter is incompatible with timetoken. Value must be greater than 0 (zero).
+      required: false
+      schema:
+        type: string
+      example: '15210190573608384,15211140747622125'
+    SignatureQueryParam:
+      name: signature
+      in: query
+      description: |
+        Signature used to verify that the request was signed with the secret key associated with the subscriber key.
+
+        If Access Manager is enabled, either a valid authorization token or a signature are required.
+
+        See Access Manager documentation for details on how to compute the signature.
+      schema:
+        type: string
+        example: v2.YmvbpzHJlUDIMJOfD_CnsA8Uw2BJhwPeFZO1Qu5tfC4
+    TimestampQueryParam:
+      name: timestamp
+      in: query
+      description: |
+        Unix epoch timestamp used as a nonce for signature computation. Must have no more than ± 60 second offset from NTP.
+
+        Required if `signature` parameter is supplied.
+      schema:
+        type: integer
+        example: 1563226304

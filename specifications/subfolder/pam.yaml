@@ -1,0 +1,490 @@
+openapi: 3.0.1
+info:
+  title: PubNub PAM APIs
+  description: API for PubNub Access Manager v3.
+  contact:
+    name: PubNub Support
+    url: https://www.pubnub.com/support
+    email: support@pubnub.com
+  termsOfService: https://www.pubnub.com/terms-and-conditions/
+  version: 1.0.0
+servers:
+  - url: https://ps.pndsn.com
+tags:
+- name: PAM v2
+  description: PubNub Access Manager (PAM v2) provides fine-grained access controls to PubNub Data Streams.
+- name: PAM v3
+  description: PubNub Access Manager (PAM v3) provides fine-grained access controls to PubNub Data Streams.
+paths:
+  /v2/auth/grant/sub-key/{sub_key}:
+    get:
+      tags:
+      - PAM v2
+      summary: Applying PAM v2
+      operationId: grant
+      description: Endpoint to apply PAM v2
+      parameters:      
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      - $ref: '#/components/parameters/TimeToLiveQueryParam'
+      - $ref: '#/components/parameters/ChannelQueryParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/WritePermissionQueryParam'
+      - $ref: '#/components/parameters/ReadPermissionQueryParam'
+      - $ref: '#/components/parameters/ManagePermissionQueryParam'
+      - $ref: '#/components/parameters/DeletePermissionQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+             schema:
+               $ref: '../responses.yaml#/PAMv2Response'
+        '400':
+          description: Error validating inputs. (E.g. missing required params or invalid input types.)
+          content:
+           text/javascript:
+            schema:
+             $ref: '../responses.yaml#/PamErrorResponse'
+            example: {
+                      "status": 400,
+                      "error": {
+                          "message": "Invalid ttl",
+                          "source": "authz",
+                          "details": [
+                          {
+                              "message": "Valid range is 1 minute to 30 days.",
+                              "location": "ttl",
+                              "locationType": "body"
+                          }
+                          ]
+                      },
+                      "service": "Access Manager"
+                    }
+        '403':
+          description: Invalid signature. (E.g. wrong secret key or character set encoding for signature computation.)
+          content:
+            text/javascript:
+             schema:
+               $ref: '../responses.yaml#/PamErrorResponse'
+             example: {
+                        "status": 403,
+                        "error": {
+                            "message": "Invalid signature",
+                            "source": "authz",
+                            "details": [
+                            {
+                                "message": "Client and server produced different signatures for the same inputs.",
+                                "location": "signature",
+                                "locationType": "query"
+                            }
+                            ]
+                        },
+                        "service": "Access Manager"
+                     }
+
+  /v3/pam/{sub_key}/grant:
+    post:
+      tags:
+      - PAM v3
+      summary: Applying PAM v3
+      operationId: grantToken
+      description: Returns a signed token that can be used to access the requested resources for a specific duration.
+      requestBody:
+        description: A JSON blob of resource types to permission rules.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PAMv3RequestBody'
+        required: true
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/TimeStampQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      responses:
+        '200':
+          description: Grant request was successful.
+          content:
+            text/javascript:
+             schema:
+               $ref: '../responses.yaml#/PAMv3Response'
+        '400':
+          description: Error validating inputs. (E.g. missing required params or invalid input types.)
+          content:
+           text/javascript:
+            schema:
+             $ref: '../responses.yaml#/PamErrorResponse'
+            example: {
+                      "status": 400,
+                      "error": {
+                          "message": "Invalid ttl",
+                          "source": "authz",
+                          "details": [
+                          {
+                              "message": "Valid range is 1 minute to 30 days.",
+                              "location": "ttl",
+                              "locationType": "body"
+                          }
+                          ]
+                      },
+                      "service": "Access Manager"
+                    }
+        '403':
+          description: Invalid signature. (E.g. wrong secret key or character set encoding for signature computation.)
+          content:
+            text/javascript:
+             schema:
+               $ref: '../responses.yaml#/PamErrorResponse'
+             example: {
+                        "status": 403,
+                        "error": {
+                            "message": "Invalid signature",
+                            "source": "authz",
+                            "details": [
+                            {
+                                "message": "Client and server produced different signatures for the same inputs.",
+                                "location": "signature",
+                                "locationType": "query"
+                            }
+                            ]
+                        },
+                        "service": "Access Manager"
+                     }
+
+components:
+  parameters:
+    SubKeyPathParam:
+      name: sub_key
+      in: path
+      description: Your PubNub Subscribe API Key.
+      required: true
+      schema:
+        type: string
+      example: mySubKey
+    SignatureQueryParam:
+      name: signature
+      in: query
+      description: |
+          Used to verify the request was signed with the secret key associated
+          with the PubNub subscribe key.
+          Signature is computed using HMAC+SHA256 with the user's secret key as
+          the signing key, and a signing message composed of the HTTP method,
+          publish key, request path, query string, and request body (or emtpy string)
+          in the following format;
+              "{method}\n{pub_key}\n{path}\n{query_string}\n{body}"
+          Query string parameters must be sorted lexicographically (case-sensitive)
+          by key; duplicate keys are not allowed. Secondly, all characters in the
+          query string parameters must be percent-encoded *except* alphanumeric,
+          hyphen, underscore, period, and tilde; E.g. all characters matching the
+          RegExp `/[^0-9a-zA-Z\-_\.~]/` must remain **unencoded**. Space characters
+          must be replaced by `%20` (NOT `+` character). Each key-value pair must
+          be separated by ampersand characters. Unicode characters must be broken
+          up into UTF-8 encoded bytes before percent-encoding.
+          Here is an example of a query string containing unicode characters;
+              timestamp=123456789&PoundsSterling=£13.37
+          And here is the same query string after sorting and percent-encoding;
+              PoundsSterling=%C2%A313.37&timestamp=123456789
+          The request body must be appended to the message verbatim (byte-for-byte
+          as provided in the request).
+          Here is a full example message for signature computation. In this example,
+          the POST body does not have a trailing line break character, but it does
+          have structurual whitespace and is encoded with UTF-8;
+              POST
+              demo
+              /v3/pam/demo/grant
+              PoundsSterling=%C2%A313.37&timestamp=123456789
+              {
+                "ttl": 1440,
+                "permissions": {
+                  "resources" : {
+                    "channels": {
+                      "inbox-jay": 3
+                    },
+                    "groups": {},
+                    "users": {},
+                    "spaces": {}
+                  },
+                  "patterns" : {
+                    "channels": {},
+                    "groups": {},
+                    "users": {},
+                    "spaces": {}
+                  },
+                  "meta": {
+                    "user-id": "jay@example.com",
+                    "contains-unicode": "The 💩 test."
+                  }
+                }
+              }
+          Here's the same message as a Python `repr()` string:
+              'POST\ndemo\n/v3/pam/demo/grant\nPoundsSterling=%C2%A313.37&timestamp=123456789\n{\n  "ttl": 1440,\n  "permissions": {\n    "resources" : {\n      "channels": {\n        "inbox-jay": 3\n      },\n      "groups": {},\n      "users": {},\n      "spaces": {}\n    },\n    "patterns" : {\n      "channels": {},\n      "groups": {},\n      "users": {},\n      "spaces": {}\n    },\n    "meta": {\n      "user-id": "jay@example.com",\n      "contains-unicode": "The \xf0\x9f\x92\xa9 test."\n    }\n  }\n}'
+          Let's imagine the demo account's secret key is;
+              wMfbo9G0xVUG8yfTfYw5qIdfJkTd7A
+          The signature generated for this request is Base64 encoded using the
+          "URL safe" characters `-` and `_` replacing `+` and `/` respectively.
+          The padding `=` characters are stripped from the end. The final step
+          is concatenating the version prefix `v2.`.
+          Here's the expected signature for this request;
+              v2.k80LsDMD-sImA8rCBj-ntRKhZ8mSjHY8Ivngt9W3Yc4
+      required: true
+      schema:
+        type: string
+      example: v2.k80LsDMD-sImA8rCBj-ntRKhZ8mSjHY8Ivngt9W3Yc4
+    AuthQueryParam:
+      name: auth
+      in: query
+      description: The Auth key that is being granted permissions.
+      required: true
+      schema:
+        type: string
+      example: myAuthKey
+    UuidQueryParam:
+      name: uuid
+      in: query
+      description: A unique alphanumeric ID for identifying the client to the PubNub Presence System, as well as for PubNub Analytics.
+      required: false
+      schema:
+        type: string
+      example: db9c5e39-7c95-40f5-8d71-125765b6f561
+    TimestampQueryParam:
+      name: timestamp
+      in: query
+      description: >
+          Unix epoch timestamp used as a nonce for signature computation. Must have
+          no more than ± 60 second offset from NTP.
+          This is not associated with the TTL at all.
+      required: true
+      schema:
+        type: integer
+      example: 123456789      
+    TimeToLiveQueryParam:
+      name: ttl
+      in: query
+      description: Time to live for permission to be valid
+      required: false
+      schema:
+        type: integer
+      example: 123456789
+    ChannelQueryParam:
+      name: channel
+      in: query
+      description: Specifies the channels on which to grant permissions. Comma separated values are accepted.
+      required: false
+      schema:
+        type: string
+      example: 'ch1,ch2'
+    ChannelGroupQueryParam:
+      name: channel-group
+      in: query
+      description: Specifies the channel groups on which to grant permissions. Comma separated values are accepted.
+      required: false
+      schema:
+        type: string
+      example: 'group1,group2'     
+    WritePermissionQueryParam:
+      name: w
+      in: query
+      description: Write permission
+      required: false
+      schema:
+        type: integer
+        enum:
+          - 0
+          - 1
+      example: 1
+    ReadPermissionQueryParam:
+      name: r
+      in: query
+      description: Read permission
+      required: false
+      schema:
+        type: integer
+        enum:
+         - 0
+         - 1
+      example: 0
+    ManagePermissionQueryParam:
+      name: m
+      in: query
+      description: Manage permission
+      required: false
+      schema:
+        type: boolean
+      example: 0      
+    DeletePermissionQueryParam:
+      name: d
+      in: query
+      description: Delete permission
+      required: false
+      schema:
+        type: integer
+        enum:
+         - 0
+         - 1
+      example: 0 
+    TimeStampQueryParam:
+      name: timestamp
+      in: query
+      description: Unix epoch timestamp used as a nonce for signature computation. Must have no more than ± 60 second offset from NTP.
+        This is not associated with the TTL at all.
+      schema:
+        type: integer
+      required: true
+      example: 123456789
+
+  schemas:
+    PAMv3RequestBody:
+      type: object
+      description: >
+        A JSON blob of resource types to permission rules.
+        At least one of `channels`, `groups`, `users`, or `spaces` resource types
+        under the `resources` or `patterns` mapping is required to have a non-empty
+        value. Others may be an empty map.
+      properties:
+        ttl:
+          type: integer
+          example: 1440
+        permissions:
+          $ref: '#/components/schemas/PAMv3RequestPermission'
+      example:
+        resources:
+          channels:
+            inbox-jay: 3
+          groups: {}
+          users: {}
+          spaces: {}
+        patterns:
+          channels:
+            ^topic-[0-9a-f]*$: 1
+            ^topic-[0-9a-f]*-pnpres$: 3
+          groups: {}
+          users: {}
+          spaces: {}
+        meta:
+          user-id: jay@example.com
+    PAMv3RequestPermission:
+      type: object
+      required: ["resources", "patterns", "meta"]
+      properties:
+        resources:
+          $ref: '#/components/schemas/PAMv3RequestPermResources'
+        patterns:
+          $ref: '#/components/schemas/PAMv3RequestPermPatterns'
+        meta:
+          type: object
+          description: >
+            The meta mapping is available for arbitrary key-value pairs, to use
+            as your application sees fit. Beware that the `meta` object is copied
+            into the token verbatim; potentially being a significant source of
+            "token bloat".
+            This mapping may be used for identity/authentication purposes, restricting
+            token use (in the "public key use" sense as defined by JWK), or
+            exclusions/exceptions.
+            PubNub reserves all keys beginning with the three-character prefix `pn-`
+            for future purposes. The example shows how these _may_ be used, but note these
+            features are currently unimplemented.
+            **⚠️ Use of undocumented reserved meta fields is considered undefined behavior;
+            Using undefined behavior in grant requests or within tokens passed to any
+            PubNub REST API are allowed to break in unexpected ways, including spawning
+            ["nasal demons"](http://www.catb.org/jargon/html/N/nasal-demons.html).**
+    PAMv3RequestPermResources:
+      type: object
+      required: ["channels", "groups", "users", "spaces"]
+      additionalProperties: false
+      description: A mapping of resource types to resource IDs.
+      properties:
+        channels:
+          type: object
+          description: A shallow mapping of channel names to permissions.
+          additionalProperties:
+            $ref: '#/components/schemas/BitMask'
+        groups:
+          type: object
+          description: A shallow mapping of channel-group names to permissions.
+          additionalProperties:
+            $ref: '#/components/schemas/BitMask'
+        users:
+          type: object
+          description: A shallow mapping of user IDs to permissions.
+          additionalProperties:
+            $ref: '#/components/schemas/BitMask'
+        spaces:
+          type: object
+          description: A shallow mapping of space IDs to permissions.
+          additionalProperties:
+            $ref: '#/components/schemas/BitMask'
+    PAMv3RequestPermPatterns:
+      type: object
+      required: ["channels", "groups", "users", "spaces"]
+      additionalProperties: false
+      description: A mapping of resource types to regular expressions.
+      properties:
+        channels:
+          type: object
+          description: A shallow mapping of channel regular expressions to permissions.
+          additionalProperties:
+            $ref: '#/components/schemas/BitMask'
+        groups:
+          type: object
+          description: A shallow mapping of channel-group regular expressions to permissions.
+          additionalProperties:
+            $ref: '#/components/schemas/BitMask'
+        users:
+          type: object
+          description: A shallow mapping of user ID regular expressions to permissions.
+          additionalProperties:
+            $ref: '#/components/schemas/BitMask'
+        spaces:
+          type: object
+          description: A shallow mapping of space ID regular expressions to permissions.
+          additionalProperties:
+            $ref: '#/components/schemas/BitMask'
+    BitMask:
+      type: integer
+      format: int64
+      description: |
+        Permissions bitmask. Values can be combined with a bitwise OR operation.
+        |Name    |Value (binary)|Value (hex)|Value (dec)|Description                                      |
+        |--------|--------------|-----------|-----------|-------------------------------------------------|
+        |`READ`  |`0b0000_0001` |`0x01`     |`1`        |Applies to Subscribe, History, Presence, Objects |
+        |`WRITE` |`0b0000_0010` |`0x02`     |`2`        |Applies to Publish, Objects                      |
+        |`MANAGE`|`0b0000_0100` |`0x04`     |`4`        |Applies to Channel-Groups, Objects               |
+        |`DELETE`|`0b0000_1000` |`0x08`     |`8`        |Applies to History                               |
+        |`CREATE`|`0b0001_0000` |`0x10`     |`16`       |Applies to Objects                               |
+        ## Permissions matrix:
+        |Resource type|Permission|API                    |Allowances                                         |
+        |-------------|----------|-----------------------|---------------------------------------------------|
+        |`channels`   |`READ`    |Subscribe              |Receiving messages on a channel                    |
+        |`channels`   |`READ`    |Presence Here Now      |Listing UUIDs subscribed to a channel              |
+        |`channels`   |`READ`    |Presence User State    |Set/get state on a channel                         |
+        |`channels`   |`READ`    |Push; Add Device       |Adding a device to a channel for push notifications|
+        |`channels`   |`READ`    |History                |Receiving historical messages on a channel         |
+        |`channels`   |`DELETE`  |History; Delete        |Deleting historical messages on a channel          |
+        |`channels`   |`WRITE`   |Publish                |Sending messages on a channel                      |
+        |`channels`   |`WRITE`   |Signal                 |Sending signals on a channel                       |
+        |`groups`     |`READ`    |Subscribe              |Receiving messages on a channel-group              |
+        |`groups`     |`READ`    |Presence Here Now      |Listing UUIDs subscribed to a channel-group        |
+        |`groups`     |`READ`    |Presence User State    |Set/get state on a channel-group                   |
+        |`groups`     |`READ`    |Groups; List           |Listing all channels in a channel-group            |
+        |`groups`     |`MANAGE`  |Groups; Add Channels   |Adding channels to a channel-group                 |
+        |`groups`     |`MANAGE`  |Groups; Remove Channels|Removing channels from a channel-group             |
+        |`groups`     |`MANAGE`  |Delete Group           |Deleting a channel-group                           |
+        |`users`      |`CREATE`  |User; Create           |Creating a user by `UserID`                        |
+        |`users`      |`DELETE`  |User; Delete           |Deleting a user and all of its space memberships   |
+        |`users`      |`MANAGE`  |User; Add membership   |Adding space membership for a user                 |
+        |`users`      |`READ`    |User; Read             |Reading a user's information and space memberships |
+        |`users`      |`WRITE`   |User; Update           |Updating a user's information                      |
+        |`spaces`     |`CREATE`  |Space; Create          |Creating a space by `SpaceID`                      |
+        |`spaces`     |`DELETE`  |Space; Delete          |Deleting a space and all of its members            |
+        |`spaces`     |`MANAGE`  |Space; Add members     |Adding members to a space                          |
+        |`spaces`     |`READ`    |Space; Read            |Reading a space's information and member users     |
+        |`spaces`     |`WRITE`   |Space; Update          |Updating a space's information                     |
+        |`spaces`     |`MANAGE`  |Space; User Memberships|Adding and removing members from a space           |
+        **⚠️ Use of undocumented bitmask values or combinations with resource
+        types is considered undefined behavior; Using undefined behavior in
+        grant requests or within tokens passed to any PubNub REST API are
+        allowed to break in unexpected ways, including spawning
+        ["nasal demons"](http://www.catb.org/jargon/html/N/nasal-demons.html).**

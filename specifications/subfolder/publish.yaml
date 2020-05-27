@@ -1,0 +1,437 @@
+openapi: 3.0.1
+info:
+  title: PubNub Publish APIs
+  description: >
+    The PubNub Publish APIs enables you to publish messages to channels or channel groups 
+  contact:
+    name: PubNub Support
+    url: https://www.pubnub.com/support
+    email: support@pubnub.com
+  termsOfService: https://www.pubnub.com/terms-and-conditions/
+  version: 1.0.0
+servers:
+  - url: https://ps.pndsn.com
+tags:
+- name: Publish
+  description: Publish messages to channel or channel groups
+- name: Fire
+  description: The fire endpoint allows the client to send a message to BLOCKS Event Handlers.
+- name: Signal
+  description: This resource allows a developer to send a signal to a channel.
+paths:
+  /publish/{pub_key}/{sub_key}/0/{channel}/{callback}/{payload}:
+    get:
+      tags:
+      - Publish
+      summary: Publish a message to a channel.
+      operationId: publishGet
+      description: > 
+        Publish JSON to channel via GET request
+        
+        Returns a three element array
+        * Array Element 0 - Integer – 1 or 0, where 1 is success, and 0 is error.
+        * Array Element 1 - String – Description of the success or error, if available.
+        * Array Element 2 - String – The current PubNub time expressed as a Timetoken, on success only.
+
+        * Errors specific to Publish() will occur when URL (e.g., message payload) is too large (>=32K),
+          and invalid publish and/or subscribe keys are used.
+        * In the event of an error, you will receive a non-200 HTTP status code. 
+          Depending on the error, you may or may not have a parseable array returned. If you do, and it has a second element,
+          and that element is a string, you may parse it for a description of the error.
+      parameters:
+      - $ref: '#/components/parameters/PubKeyPathParam'
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/CallbackPathParam'
+      - $ref: '#/components/parameters/PublishPayloadPathParam'
+      - $ref: '#/components/parameters/StoreQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/MetadataQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/TimeToLiveQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '../responses.yaml#/PublishResponse'
+              example: [
+                        1,
+                        "Sent",
+                        "14375220012064619"
+                        ]
+        '400':
+          description: Invalid Key
+          content:
+            application/json:
+              schema:
+                $ref: '../responses.yaml#/PublishResponse'
+              example: [
+                        0,
+                        "Invalid Subscribe Key"
+                        ]
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '../responses.yaml#/PublishResponse'
+              example: [
+                        0,
+                        "Forbidden"
+                        ]
+        '413':
+          description: Message payload is too large (>=32K)
+          content:
+            application/json:
+              schema:
+                $ref: '../responses.yaml#/PublishResponse'
+              example: [
+                        0,
+                        "Request Entity Too Large"
+                        ]
+  /publish/{pub_key}/{sub_key}/0/{channel}/{callback}:
+    post:
+      tags:
+      - Publish
+      summary: Publish a message to a channel.
+      operationId: publish
+      description: >
+        Publish JSON to channel via POST
+        
+        Returns a three element array
+        * Array Element 0 - Integer – 1 or 0, where 1 is success, and 0 is error.
+        * Array Element 1 - String – Description of the success or error, if available.
+        * Array Element 2 - String – The current PubNub time expressed as a Timetoken, on success only.
+
+        * Errors specific to Publish() will occur when URL (e.g., message payload) is too large (>=32K),
+          and invalid publish and/or subscribe keys are used.
+        * In the event of an error, you will receive a non-200 HTTP status code. 
+          Depending on the error, you may or may not have a parseable array returned. If you do, and it has a second element,
+          and that element is a string, you may parse it for a description of the error.
+      requestBody:
+        description: contains message for publishing to a channel
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishRequestBody'
+        required: true
+      parameters:
+      - $ref: '#/components/parameters/PubKeyPathParam'
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/CallbackPathParam'
+      - $ref: '#/components/parameters/StoreQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/MetadataQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/TimeToLiveQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '../responses.yaml#/PublishResponse'
+              example: [
+                        1,
+                        "Sent",
+                        "14375220012064619"
+                        ]
+        '400':
+          description: Invalid Key
+          content:
+            application/json:
+              schema:
+                $ref: '../responses.yaml#/PublishResponse'
+              example: [
+                        0,
+                        "Invalid Subscribe Key"
+                        ]
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '../responses.yaml#/PublishResponse'
+              example: [
+                        0,
+                        "Forbidden"
+                        ]
+        '413':
+          description: Message payload is too large (>=32K)
+          content:
+            application/json:
+              schema:
+                $ref: '../responses.yaml#/PublishResponse'
+              example: [
+                        0,
+                        "Request Entity Too Large"
+                        ]
+
+    get:
+      tags:
+      - Fire  
+      summary: Fire Endpoint
+      operationId: fire
+      description: Use this api to to send a message to BLOCKS Event Handlers.
+      parameters:
+      - $ref: '#/components/parameters/PubKeyPathParam'
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/CallbackPathParam'
+      - $ref: '#/components/parameters/StoreQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/MetadataQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/NoRepQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Invalid Key
+          content:
+            application/json:
+              schema:
+                $ref: '../responses.yaml#/PublishResponse'
+              example: [
+                        0,
+                        "Invalid Subscribe Key"
+                        ]
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '../responses.yaml#/PublishResponse'
+              example: [
+                        0,
+                        "Forbidden"
+                        ]
+        '413':
+          description: Message payload is too large (>=32K)
+          content:
+            application/json:
+              schema:
+                $ref: '../responses.yaml#/PublishResponse'
+              example: [
+                        0,
+                        "Request Entity Too Large"
+                        ]
+  /signal/{pub_key}/{sub_key}/0/{channel}/{callback}/{payload}:
+    get:
+      tags:
+      - Signal
+      summary: Send a signal to a channel
+      operationId: signal
+      description: >
+        Signals are very small, transient messages that represent momentary snippets of information
+
+        Returns a three element array
+        * Array Element 0 - Integer – 1 or 0, where 1 is success, and 0 is error.
+        * Array Element 1 - String – Description of the success or error, if available.
+        * Array Element 2 - String – The current PubNub time expressed as a Timetoken, on success only.
+      parameters:
+      - $ref: '#/components/parameters/PubKeyPathParam'
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/CallbackPathParam'
+      - $ref: '#/components/parameters/SignalPayloadPathParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: Publish successfull
+          content:
+            'application/json':
+              schema:
+                $ref: '../responses.yaml#/PublishResponse'
+              example: [
+                        1,
+                        "Sent",
+                        "14375220012064619"
+                        ]
+        '400':
+          description: Bad Request
+          content:
+            text/javascript:
+             schema:
+              $ref: '../responses.yaml#/BadRequestError'
+        '403':
+          description: Unauthorized access
+          content:
+            text/javascript:
+             schema:
+              $ref: '../responses.yaml#/ChannelAccessForbiddenError'
+        '404':
+          description: Requested object was not found.
+          content:
+            text/javascript:
+             schema:
+              $ref: '../responses.yaml#/SignalErrorResponseObjNotFound'
+        '413':
+          description: The Signal payload size is larger than 30 bytes.
+          content:
+            text/javascript:
+             schema:
+              $ref: '../responses.yaml#/RequestEntityTooLargeError'
+        '429':
+          description: Request rate limit exceeded.
+          content:
+            text/javascript:
+             schema:
+              $ref: '../responses.yaml#/TooManyRequestsError'
+components:
+  parameters:
+    PubKeyPathParam:
+      name: pub_key
+      in: path
+      description: the publish key to use
+      required: true
+      schema:
+        type: string
+      example: myPubKey    
+    SubKeyPathParam:
+      name: sub_key
+      in: path
+      description: the subscriber key
+      required: true
+      schema:
+        type: string
+      example: mySubKey
+    ChannelPathParam:
+      name: channel
+      in: path
+      description: the destination of the message
+      required: true
+      schema:
+        type: string
+      example: ch1
+    CallbackPathParam:
+      name: callback
+      in: path
+      description: response will be wrapped in JSONP function, 0 for no JSONP
+      required: true
+      schema:
+        type: string
+      examples:
+        myCallback:
+          value: 'myCallback'
+          summary: 'response will be wrapped in JSONP function'
+        zero:
+          value: 0
+          summary: 'for no JSONP'
+    PublishPayloadPathParam:
+      name: payload
+      in: path
+      description: url-encoded JSON. Payload Size can not be more than 32K.
+      schema:
+        type: string
+      required: true
+      example: '%7B%22text%22%3A%22hey%22%7D'
+    SignalPayloadPathParam:
+      name: payload
+      in: path
+      description: > 
+        SIGNALs are limited to a message payload size of 30 bytes. 
+        This limit applies only to the request body, and not to the URI or headers. 
+      schema:
+        type: string
+      required: true
+    StoreQueryParam:
+      name: store
+      in: query
+      description: > 
+        This parameter overrides default account configuration on message saving.
+        1 to Save, 0 to not save. 
+        Fire should have value 0 for this query parameter as the message is not stored in history.
+      schema:
+        type: integer
+      required: false
+      example: 0
+    AuthQueryParam:
+      name: auth
+      in: query
+      description: If the channel is protected by PAM, auth must be passed with a key which is authorized to publish to the channel.
+      schema:
+        type: string
+      required: false
+      example: authKey
+    MetadataQueryParam:
+      name: meta
+      in: query
+      description: used to send additional information about the message which can be used on stream filtering.
+      required: false
+      schema:
+        type: object
+        additionalProperties:
+          type: string
+      example: {"cool":"meta"}
+    UuidQueryParam:
+      name: uuid
+      in: query
+      description: A unique alphanumeric ID for identifying the client to the PubNub Presence System, as well as for PubNub Analytics.
+      schema:
+        type: string
+      required: true
+      example: db9c5e39-7c95-40f5-8d71-125765b6f561
+    TimeToLiveQueryParam:
+      name: ttl
+      in: query
+      description: >
+        Set a per-message time to live in storage.
+        If store = 1, and ttl = 0, the message is stored with no expiry time.
+        If store = 1, and ttl = X (X is an Integer value), the message is stored with an expiry time of X hours.
+        If store = 0, the ttl parameter is ignored.
+        If ttl is not specified, then expiration of the message defaults back to the expiry value for the key.
+      schema:
+        type: integer
+      required: false
+      example: 1
+    NoRepQueryParam:
+      name: norep
+      in: query
+      description: No replication across POPs. This value should be true for Fire as The message sent via Fire is not replicated
+      schema:
+        type: boolean
+      required: true
+      example: true  
+    SignatureQueryParam:
+      name: signature
+      in: query
+      description: |
+        Signature used to verify that the request was signed with the secret key associated with the subscriber key.
+
+        If Access Manager is enabled, either a valid authorization token or a signature are required.
+
+        See Access Manager documentation for details on how to compute the signature.
+      schema:
+        type: string
+        example: v2.YmvbpzHJlUDIMJOfD_CnsA8Uw2BJhwPeFZO1Qu5tfC4
+    TimestampQueryParam:
+      name: timestamp
+      in: query
+      description: |
+        Unix epoch timestamp used as a nonce for signature computation. Must have no more than ± 60 second offset from NTP.
+
+        Required if `signature` parameter is supplied.
+      schema:
+        type: integer
+        example: 1563226304
+  schemas:
+    PublishRequestBody:
+      type: object
+      properties:
+        message:
+          type: string
+      example: 
+        message: "All your base are belong to us."

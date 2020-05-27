@@ -1,0 +1,1266 @@
+openapi: 3.0.2
+info:
+  title: PubNub Objects API
+  description: >
+    The PubNub Objects API enables you to create and retrieve data 
+    associated with channels and uuids in the PubNub realtime application platform.
+  contact:
+    name: PubNub Support
+    url: https://www.pubnub.com/support
+    email: support@pubnub.com
+  termsOfService: https://www.pubnub.com/terms-and-conditions/
+  version: 1.0.0
+servers:
+  - url: https://ps.pndsn.com
+tags:
+  - name: uuid
+    description: Manage metadata for uuids
+  - name: channel
+    description: Manage metadata for channels
+  - name: membership
+    description: Manage membership metadata, by channel and by uuid
+paths:
+  /v2/objects/{sub_key}/uuids:
+    parameters:
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      - $ref: '#/components/parameters/SubKeyPathParam'
+    get:
+      tags:
+        - uuid
+      summary: Get metadata for all uuids
+      description: >
+        Returns a paginated list of uuid metadata, optionally including custom properties.
+      parameters:
+        - $ref: '#/components/parameters/UUIDIncludeQueryParam'
+        - $ref: '#/components/parameters/LimitQueryParam'
+        - $ref: '#/components/parameters/StartQueryParam'
+        - $ref: '#/components/parameters/EndQueryParam'
+        - $ref: '#/components/parameters/TotalCountQueryParam'
+        - $ref: '#/components/parameters/FilterQueryParam'
+        - $ref: '#/components/parameters/SortQueryParam'
+      responses:
+        200:
+          description: Successfully returned the list of uuid metadata.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UUIDListResponse'
+        304:
+          description: Requested resource has not been modified since last retrieval.
+        403:
+          $ref: '#/components/responses/ForbiddenOrDisabled'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/Internal'
+        503:
+          $ref: '#/components/responses/ServiceUnavailable'
+  /v2/objects/{sub_key}/uuids/{uuid}:
+    parameters:
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/UUIDPathParam'
+    get:
+      tags:
+        - uuid
+      summary: Get uuid metadata
+      description: Returns metadata for the specified uuid, optionally including custom properties.
+      parameters:
+        - $ref: '#/components/parameters/UUIDIncludeQueryParam'
+      responses:
+        200:
+          description: Successfully retrieved the requested uuid metadata.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UUIDResponse'
+        304:
+          description: Requested resource has not been modified since last retrieval.
+        403:
+          $ref: '#/components/responses/ForbiddenOrDisabled'
+        404:
+          $ref: '#/components/responses/NotFound'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/Internal'
+        503:
+          $ref: '#/components/responses/ServiceUnavailable'
+    patch:
+      tags:
+        - uuid
+      summary: Set uuid metadata
+      description: >
+        Sets metadata for the specified uuid. Returns the updated uuid object, optionally including custom properties.
+
+
+        **Notes:**
+          * You can change all of the uuid object's properties, except its identifier.
+          * Invalid property names are silently ignored and will _not_ cause a request to fail.
+          * If you set the "custom" property, you must completely replace it; partial updates are not supported.
+          * The custom object can only contain scalar values.
+      parameters:
+        - $ref: '#/components/parameters/UUIDIncludeQueryParam'
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/UUID'
+        description: >
+          JSON object with uuid metadata to set.
+      responses:
+        200:
+          description: Successfully set uuid metadata.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UUIDResponse'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/ForbiddenOrDisabled'
+        412:
+          $ref: '#/components/responses/PreconditionFailed'
+        415:
+          $ref: '#/components/responses/UnsupportedMediaType'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/Internal'
+        503:
+          $ref: '#/components/responses/ServiceUnavailable'
+    delete:
+      tags:
+        - uuid
+      summary: Delete uuid metadata
+      description: Deletes metadata for the specified uuid.
+      responses:
+        200:
+          description: Successfully deleted uuid metadata.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Response'
+        403:
+          $ref: '#/components/responses/ForbiddenOrDisabled'
+        412:
+          $ref: '#/components/responses/PreconditionFailed'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/Internal'
+        503:
+          $ref: '#/components/responses/ServiceUnavailable'
+  /v2/objects/{sub_key}/channels:
+    parameters:
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      - $ref: '#/components/parameters/SubKeyPathParam'
+    get:
+      tags:
+        - channel
+      summary: Get metadata for all channels
+      description: Returns metadata for all channels, optionally including custom properties.
+      parameters:
+        - $ref: '#/components/parameters/ChannelIncludeQueryParam'
+        - $ref: '#/components/parameters/LimitQueryParam'
+        - $ref: '#/components/parameters/StartQueryParam'
+        - $ref: '#/components/parameters/EndQueryParam'
+        - $ref: '#/components/parameters/TotalCountQueryParam'
+        - $ref: '#/components/parameters/FilterQueryParam'
+        - $ref: '#/components/parameters/SortQueryParam'
+      responses:
+        200:
+          description: Successfully returned the list of channel metadata.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ChannelListResponse'
+        304:
+          description: Requested resource has not been modified since last retrieval.
+        403:
+          $ref: '#/components/responses/ForbiddenOrDisabled'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/Internal'
+        503:
+          $ref: '#/components/responses/ServiceUnavailable'
+  /v2/objects/{sub_key}/channels/{channel}:
+    parameters:
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+    get:
+      tags:
+        - channel
+      summary: Get channel metadata
+      description: Returns metadata for the specified channel, optionally including custom properties.
+      parameters:
+        - $ref: '#/components/parameters/ChannelIncludeQueryParam'
+      responses:
+        200:
+          description: Successfully returned metadata for the requested channel.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ChannelResponse'
+        304:
+          description: Requested resource has not been modified since last retrieval.
+        403:
+          $ref: '#/components/responses/ForbiddenOrDisabled'
+        404:
+          $ref: '#/components/responses/NotFound'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/Internal'
+        503:
+          $ref: '#/components/responses/ServiceUnavailable'
+    patch:
+      tags:
+        - channel
+      summary: Set channel metadata
+      description: >
+        Sets metadata for the specified channel. Returns the channel object, optionally including custom properties.
+
+
+        **Notes:**
+          * You can change all of the channel's metadata, except its identifier.
+          * Invalid property names are silently ignored and will _not_ cause a request to fail.
+          * If you set the "custom" property, you must completely replace it; partial updates are not supported.
+          * The custom object can only contain scalar values.
+      parameters:
+        - $ref: '#/components/parameters/ChannelIncludeQueryParam'
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Channel'
+        description: >
+          JSON object with channel metadata to set.
+      responses:
+        200:
+          description: Successfully set the channel metadata.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ChannelResponse'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/ForbiddenOrDisabled'
+        412:
+          $ref: '#/components/responses/PreconditionFailed'
+        415:
+          $ref: '#/components/responses/UnsupportedMediaType'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/Internal'
+        503:
+          $ref: '#/components/responses/ServiceUnavailable'
+    delete:
+      tags:
+        - channel
+      summary: Delete channel metadata
+      description: Deletes metadata for the specified channel.
+      responses:
+        200:
+          description: Successfully deleted metadata for the channel.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Response'
+        403:
+          $ref: '#/components/responses/ForbiddenOrDisabled'
+        412:
+          $ref: '#/components/responses/PreconditionFailed'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/Internal'
+        503:
+          $ref: '#/components/responses/ServiceUnavailable'
+  /v2/objects/{sub_key}/uuids/{uuid}/channels:
+    parameters:
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/UUIDPathParam'
+    get:
+      tags:
+        - membership
+      summary: Get the list of uuid's channel membership metadata
+      description: >
+        Returns channel membership metadata for the specified uuid, optionally including custom properties for: the uuid's perspective on their membership set ("custom"), the uuid's perspective on the channel ("channel"), and the channel's custom data ("channel.custom").
+      parameters:
+        - $ref: '#/components/parameters/UUIDMembershipIncludeQueryParam'
+        - $ref: '#/components/parameters/LimitQueryParam'
+        - $ref: '#/components/parameters/StartQueryParam'
+        - $ref: '#/components/parameters/EndQueryParam'
+        - $ref: '#/components/parameters/TotalCountQueryParam'
+        - $ref: '#/components/parameters/FilterQueryParam'
+        - $ref: '#/components/parameters/SortQueryParam'
+      responses:
+        200:
+          description: Successfully returned the uuid's channel memberships.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UUIDMembershipListResponse'
+        304:
+          description: Requested resource has not been modified since last retrieval.
+        403:
+          $ref: '#/components/responses/ForbiddenOrDisabled'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/Internal'
+        503:
+          $ref: '#/components/responses/ServiceUnavailable'
+    patch:
+      tags:
+        - membership
+      summary: Set the uuid's channel membership metadata
+      description: >
+        Sets channel membership metadata for the specified uuid. Use the **set** and **delete** properties in the request body to perform those operations on one or more memberships.
+
+
+        Returns the updated uuid's channel membership metadata, optionally including:
+          * the uuid's custom properties
+          * the custom properties for the uuid's membership in each channel
+          * each channel's custom properties
+
+
+        **Notes:**
+          * You can change all of the membership object's properties, except its identifier.
+          * Invalid property names are silently ignored and will _not_ cause a request to fail.
+          * If you set the "custom" property, you must completely replace it; partial updates are not supported.
+          * The custom object can only contain scalar values.
+
+      #
+      # how do i get a 400 from this one? do we need any notes about it?
+      #
+      parameters:
+        - $ref: '#/components/parameters/UUIDMembershipIncludeQueryParam'
+        - $ref: '#/components/parameters/LimitQueryParam'
+        - $ref: '#/components/parameters/StartQueryParam'
+        - $ref: '#/components/parameters/EndQueryParam'
+        - $ref: '#/components/parameters/TotalCountQueryParam'
+        - $ref: '#/components/parameters/FilterQueryParam'
+        - $ref: '#/components/parameters/SortQueryParam'
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/UUIDMembershipInputChangeSet'
+        description: >
+          JSON object with changes to the uuid's channel membership metadata.
+      responses:
+        200:
+          description: Successfully set the uuid's channel membership metadata.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/UUIDMembershipListResponse'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/ForbiddenOrDisabled'
+        415:
+          $ref: '#/components/responses/UnsupportedMediaType'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/Internal'
+        503:
+          $ref: '#/components/responses/ServiceUnavailable'
+  /v2/objects/{sub_key}/channels/{channel}/uuids:
+    parameters:
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+    get:
+      tags:
+        - membership
+      summary: Get the list of members' metadata in the channel
+      description: >
+        Returns the members' metadata in the specified channel, optionally including:
+          * each uuid's custom properties
+          * the custom properties for each uuid's membership in the channel
+          * the channel's custom properties
+      parameters:
+        - $ref: '#/components/parameters/ChannelMembershipIncludeQueryParam'
+        - $ref: '#/components/parameters/LimitQueryParam'
+        - $ref: '#/components/parameters/StartQueryParam'
+        - $ref: '#/components/parameters/EndQueryParam'
+        - $ref: '#/components/parameters/TotalCountQueryParam'
+        - $ref: '#/components/parameters/FilterQueryParam'
+        - $ref: '#/components/parameters/SortQueryParam'
+      responses:
+        200:
+          description: Successfully returned the channel's members' metadata.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ChannelMembershipListResponse'
+        304:
+          description: Requested resource has not been modified since last retrieval.
+        403:
+          $ref: '#/components/responses/ForbiddenOrDisabled'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/Internal'
+        503:
+          $ref: '#/components/responses/ServiceUnavailable'
+    patch:
+      tags:
+        - membership
+      summary: Set the members' metadata in the channel
+      description: >
+        Sets the members's metadata in the specified channel. Use the **set** and **delete** properties in the request body to perform those operations on one or more memberships.
+
+
+        Returns the list of channel members' metadata, optionally including:
+          * the channel's custom properties
+          * the custom properties for each uuid's membership in the channel
+          * each uuid's custom properties
+
+
+        **Notes:**
+          * You can change all of the membership object's properties, except its identifier.
+          * Invalid property names are silently ignored and will _not_ cause a request to fail.
+          * If you set the "custom" property, you must completely replace it; partial updates are not supported.
+          * The custom object can only contain scalar values.
+
+      parameters:
+        - $ref: '#/components/parameters/ChannelMembershipIncludeQueryParam'
+        - $ref: '#/components/parameters/LimitQueryParam'
+        - $ref: '#/components/parameters/StartQueryParam'
+        - $ref: '#/components/parameters/EndQueryParam'
+        - $ref: '#/components/parameters/TotalCountQueryParam'
+        - $ref: '#/components/parameters/FilterQueryParam'
+        - $ref: '#/components/parameters/SortQueryParam'
+      requestBody:
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/ChannelMembershipInputChangeSet'
+        description: >
+          JSON object with changes to the channel's members list.
+      responses:
+        200:
+          description: Successfully set the channel's members' metadata.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ChannelMembershipListResponse'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/ForbiddenOrDisabled'
+        415:
+          $ref: '#/components/responses/UnsupportedMediaType'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+        500:
+          $ref: '#/components/responses/Internal'
+        503:
+          $ref: '#/components/responses/ServiceUnavailable'
+components:
+  parameters:
+    SubKeyPathParam:
+      name: sub_key
+      in: path
+      description: The subscriber key.
+      required: true
+      schema:
+        type: string
+        example: sub-c-406fe670-ff0a-11e8-a860-92908bb92f21
+    UUIDPathParam:
+      name: uuid
+      in: path
+      description: |
+        Unique identifier of an end-user. Must not be empty, and may contain up to 92 UTF-8 byte sequences.
+
+        **Prohibited characters** are `,`, `/`, `\`, `*`, `:`, channel,
+        non-printable ASCII control characters, and Unicode zero.
+      required: true
+      schema:
+        type: string
+        example: charlie
+    ChannelPathParam:
+      name: channel
+      in: path
+      description: |
+        Channel identifier. Must not be empty, and may contain up to 92 UTF-8 byte sequences.
+
+        **Prohibited characters** are `,`, `/`, `\`, `*`, `:`, channel,
+        non-printable ASCII control characters, and Unicode zero.
+      required: true
+      schema:
+        type: string
+        example: main
+    UUIDIncludeQueryParam:
+      name: include
+      in: query
+      description: List of additional/complex uuid metadata to include in response. Omit this query parameter if you don't want to retrieve additional metadata.
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+            - custom
+        example:
+          - custom
+    ChannelIncludeQueryParam:
+      name: include
+      in: query
+      description: List of additional/complex metadata to include in response. Omit this query parameter if you don't want to retrieve additional metadata.
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+            - custom
+        example:
+          - custom
+    UUIDMembershipIncludeQueryParam:
+      name: include
+      in: query
+      description: List of additional/complex metadata to include in response. Omit this query parameter if you don't want to retrieve additional metadata.
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+            - custom
+            - channel
+            - channel.custom
+        example:
+          - custom
+          - channel
+    ChannelMembershipIncludeQueryParam:
+      name: include
+      in: query
+      description: List of additional/complex metadata to include in response. Omit this query parameter if you don't want to retrieve additional metadata.
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+            - custom
+            - uuid
+            - uuid.custom
+        example:
+          - custom
+          - uuid
+    LimitQueryParam:
+      name: limit
+      in: query
+      description: Number of objects to return in response. Default is 100, which is also the maximum value.
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 100
+        default: 100
+        example: 10
+    StartQueryParam:
+      name: start
+      in: query
+      description: Previously-returned cursor bookmark for fetching the next page.
+      schema:
+        type: string
+    EndQueryParam:
+      name: end
+      in: query
+      description: Previously-returned cursor bookmark for fetching the previous page. Ignored if you also supply the start parameter.
+      schema:
+        type: string
+    FilterQueryParam:
+      name: filter
+      in: query
+      description: |
+        Expression used to filter the results. Only objects whose properties satisfy the given expression are returned.
+
+        The following grammar is supported:
+
+        ```
+        <expression>           ::= <and_expression> ( "||" <and_expression> )*
+        <and_expression>       ::= <binary_condition> ( "&&" <binary_condition> )*
+        <binary_condition>     ::= "!" <binary_condition> | "(" <expression> ")" | <relational_condition>
+        <relational_condition> ::= <property_path> <relational_operator> <value>
+        <property_path>        ::= <property_name> ( "." <property_name> )*
+        <property_name>        ::= <identifier> | "[" <string> "]"
+        <value>                ::= <string> | <number> | "true" | "false" | "null"
+
+        Tokens
+
+        <identifier>           ::=  <letter> | "$" | "_" ( <letter> | "$" | "_" | <digit> )*
+        <relational_operator>  ::= "==" | "!=" | "<=" | ">=" | "<" | ">" | "LIKE"
+        <string>               ::= <double_quote> ( "\" <double_quote> | "\" <special_char> | "\" "u" <hex_digit> <hex_digit> <hex_digit> <hex_digit> | <unicode_char> - <double_quote> - "\" )* <double_quote>
+                                 | "'" ( "\" "'" | "\" <special_char> | "\" "u" <hex_digit> <hex_digit> <hex_digit> <hex_digit> | <unicode_char> - "'" - "\" )* "'"
+        <number>               ::= ( "+" | "-" )? ( <digit> )* ( "." )? <digit> ( <digit> )* ( "e" | "E" ( "+" | "-" )? <digit> ( <digit> )* )?
+        <letter>               ::= Unicode Letter (category; any kind of letter from any language)
+        <digit>                ::= "0" .. "9"
+        <hex_digit>            ::= <digit> | "A" .. "F"
+        <double_quote>         ::= the " character
+        <unicode_char>         ::= any character in the Unicode range from U+0020 to U+10FFFF inclusive
+        <special_char>         ::= "\" | "/" | "b" | "f" | "n" | "r" | "t"
+        ```
+
+        Date/time properties, such as `updated`, must be compared to valid date/time strings
+        formatted according to ISO 8601.
+
+        **Custom properties** must have the same type as the value used in the expression;
+        it is an error to compare a custom property of one type to a value of another type.
+        Objects that do not have the referenced custom property at all are excluded regardless
+        of the operator or value used in the expression. The `null` value can be used to filter out
+        objects that do or do not have the referenced custom property.
+
+        The operator `LIKE` supports wildcards denoted by the character `*`. A wildcard matches any sequence
+        of arbitrary Unicode characters, including the empty sequence. The literal asterisk is matched when escaped
+        using the backslash (`\`) character.
+
+        Note that a value used with `LIKE` must be properly encoded just like any other string value. Thus,
+        in order to escape an asterisk, the raw value must contain `\\*`.
+
+        Finally, the entire expression must be properly URL-encoded when used in the query string.
+      schema:
+        type: string
+      examples:
+        'Simple expression':
+          description: Return results whose custom property named `public` is equal to boolean `true`.
+          value: custom.public == true
+        'Date/time comparison':
+          description: Return results that were modified on or after August 31st, 2019 (UTC).
+          value: updated >= "2019-08-31T00:00:00Z"
+        'Compound expression':
+          description: Return results that don't have a description but have a non-empty custom `label` or `description` property.
+          value: description == null && (custom.label != "" || custom.description != "")
+        'Wildcard':
+          description: Return results whose name starts with the letter `X`.
+          value: name LIKE 'X*'
+        'Escaped wildcard':
+          description: Return results whose name contains an asterisk.
+          value: name LIKE '*\\**'
+    SortQueryParam:
+      name: sort
+      in: query
+      description: |
+        List of properties to sort by.
+
+        Append :asc or :desc to a property to specify sort direction. The default sort direction is ascending.
+      schema:
+        type: array
+        items:
+          type: string
+          pattern: '^[^:]+(:(asc|desc))?$'
+      example:
+        - name
+        - updated:desc
+    TotalCountQueryParam:
+      name: count
+      in: query
+      description: Request totalCount to be included in paginated response. By default, totalCount is omitted.
+      schema:
+        type: boolean
+        example: true
+    AuthQueryParam:
+      name: auth
+      in: query
+      description: |
+        Authorization token with permissions to perform the request.
+
+        If Access Manager is enabled, either a valid authorization token or a signature are required.
+
+        See Access Manager documentation for details on how to obtain an authorization token.
+      schema:
+        type: string
+        example: p0F2AkF0Gl043rhDdHRsCkNyZXOkRGNoYW6hZnNlY3JldAFDZ3JwoEN1c3KgQ3NwY6BDcGF0pERjaGFuoENncnCgQ3VzcqBDc3BjoERtZXRhoENzaWdYIGOAeTyWGJI-blahPGD9TuKlaW1YQgiB4uR_edmfq-61
+    SignatureQueryParam:
+      name: signature
+      in: query
+      description: |
+        Signature used to verify that the request was signed with the secret key associated with the subscriber key.
+
+        If Access Manager is enabled, either a valid authorization token or a signature are required.
+
+        See Access Manager documentation for details on how to compute the signature.
+      schema:
+        type: string
+        example: v2.YmvbpzHJlUDIMJOfD_CnsA8Uw2BJhwPeFZO1Qu5tfC4
+    TimestampQueryParam:
+      name: timestamp
+      in: query
+      description: |
+        Unix epoch timestamp used as a nonce for signature computation. Must have no more than ± 60 second offset from NTP.
+
+        Required if `signature` parameter is supplied.
+      schema:
+        type: integer
+        example: 1563226304
+  schemas:
+    Channel:
+      description: Distinct interaction context in which end-users exchange messages (for example, a chat room).
+      allOf:
+        - type: object
+          properties:
+            name:
+              type: string
+              minLength: 1
+              description: Name of the channel. Must not be empty or consist only of whitespace characters.
+              example: Main
+            description:
+              type: string
+              description: Description of the channel.
+        - $ref: '#/components/schemas/CustomMetadata'
+      example: &ChannelExampleSimple
+        name: My channel
+        description: A channel that is mine
+    ChannelIdentifier:
+      description: Object with a channel identifier.
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+          maxLength: 92
+          description: |
+            Channel identifier. Must not be empty, and may contain up to 92 UTF-8 byte sequences.
+
+            **Prohibited characters** are `,`, `/`, `\`, `*`, `:`, channel,
+            non-printable ASCII control characters, and Unicode zero.
+          example: main
+    ChannelOutput:
+      description: Object with channel metadata used in responses.
+      allOf:
+        - $ref: '#/components/schemas/ChannelIdentifier'
+        - $ref: '#/components/schemas/Channel'
+        - $ref: '#/components/schemas/ObjectMetadata'
+      example: &ChannelOutputExampleSimple
+        id: my-channel
+        <<: *ChannelExampleSimple
+        updated: '2019-02-20T23:11:20.893755'
+        eTag: RTc1NUQwNUItREMyNy00Q0YxLUJCNDItMEZDMTZDMzVCN0VGCg==
+    ChannelResponse:
+      description: Response body in which the data is at most one channel object.
+      allOf:
+        - $ref: '#/components/schemas/Response'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/ChannelOutput'
+      example:
+        status: 200
+        data:
+          <<: *ChannelOutputExampleSimple
+    ChannelListResponse:
+      description: Response body in which the data is an array of channel metadata.
+      allOf:
+        - $ref: '#/components/schemas/ListResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/ChannelOutput'
+      example:
+        status: 200
+        data:
+          - &ChannelOutputExampleFull
+            id: my-channel
+            <<: *ChannelExampleSimple
+            custom: null
+            updated: '2019-02-20T23:11:20.893755'
+            eTag: RTc1NUQwNUItREMyNy00Q0YxLUJCNDItMEZDMTZDMzVCN0VGCg==
+          - &ChannelOutputExampleCustom
+            id: main
+            name: Main channel
+            description: The main channel
+            custom:
+              public: true
+              motd: Always check your spelling!
+            updated: '2019-02-20T23:11:20.893755'
+            eTag: RTc1NUQwNUItREMyNy00Q0YxLUJCNDItMEZDMTZDMzVCN0VGCg==
+        totalCount: 9
+        next: MUIwQTAwMUItQkRBRC00NDkyLTgyMEMtODg2OUU1N0REMTNBCg==
+        prev: M0FFODRENzMtNjY2Qy00RUExLTk4QzktNkY1Q0I2MUJFNDRCCg==
+    UUID:
+      description: Unique participant in messaging interactions.
+      allOf:
+        - type: object
+          properties:
+            name:
+              type: string
+              minLength: 1
+              description: Name of the uuid. Must not be empty or consist only of whitespace characters.
+              example: John Doe
+            externalId:
+              type: string
+              description: UUID's identifier in external system.
+            profileUrl:
+              type: string
+              format: uri
+              description: URL for the uuid's profile picture. Syntax is as defined in RFC 3986.
+              example: http://avatars.com/john-doe
+            email:
+              type: string
+              format: email
+              description: >
+                The uuid's email address. Syntax is as defined by RFC 5322 and extended by RFC 6532, with one exception:
+                the display-name part is not allowed (in other words, only the addr-spec part is allowed).
+              example: john@example.com
+        - $ref: '#/components/schemas/CustomMetadata'
+      example: &UUIDExampleSimple
+        name: John Doe
+        externalId: null
+        profileUrl: null
+        email: jack@twitter.com
+    UUIDIdentifier:
+      description: Object with uuid identifier.
+      type: object
+      properties:
+        id:
+          type: string
+          minLength: 1
+          maxLength: 92
+          description: |
+            Unique identifier of an end-user. Must not be empty, and may contain up to 92 UTF-8 byte sequences.
+
+            **Prohibited characters** are `,`, `/`, `\`, `*`, `:`, channel,
+            non-printable ASCII control characters, and Unicode zero.
+          example: uuid-1
+    UUIDOutput:
+      description: Object with uuid metadata used in responses.
+      allOf:
+        - $ref: '#/components/schemas/UUIDIdentifier'
+        - $ref: '#/components/schemas/UUID'
+        - $ref: '#/components/schemas/ObjectMetadata'
+      example: &UUIDOutputExampleSimple
+        id: uuid-1
+        <<: *UUIDExampleSimple
+        updated: '2019-02-20T23:11:20.893755'
+        eTag: MDcyQ0REOTUtNEVBOC00QkY2LTgwOUUtNDkwQzI4MjgzMTcwCg==
+    UUIDResponse:
+      description: Response body in which the data is at most one uuid object.
+      allOf:
+        - $ref: '#/components/schemas/Response'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/UUIDOutput'
+      example:
+        status: 200
+        data:
+          <<: *UUIDOutputExampleSimple
+    UUIDListResponse:
+      description: Response body in which the data is an array of uuid metadata.
+      allOf:
+        - $ref: '#/components/schemas/ListResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/UUIDOutput'
+      example:
+        status: 200
+        data:
+          - &UUIDOutputExampleFull
+            id: uuid-1
+            <<: *UUIDExampleSimple
+            custom: null
+            updated: '2019-02-20T23:11:20.893755'
+            eTag: MDcyQ0REOTUtNEVBOC00QkY2LTgwOUUtNDkwQzI4MjgzMTcwCg==
+          - &UUIDOutputExampleCustom
+            id: uuid-2
+            name: Bob Cat
+            externalId: null
+            profileUrl: null
+            email: bobc@example.com
+            custom:
+              phone: '999-999-9999'
+            updated: '2019-02-21T03:29:00.173452'
+            eTag: QkRENDA5MjItMUZCNC00REI5LUE4QTktRjJGNUMxNTc2MzE3Cg==
+    ChannelMembershipIdentifier:
+      description: Object with identifier of channel membership metadata.
+      type: object
+      properties:
+        uuid:
+          allOf:
+            - $ref: '#/components/schemas/UUIDIdentifier'
+          required:
+            - id
+      required:
+        - uuid
+      example: &ChannelMembershipExampleSimple
+        uuid:
+          id: uuid-1
+    ChannelMembershipInputChangeSet:
+      description: Object describing changes to the list of uuids that are members of the channel.
+      type: object
+      properties:
+        set:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/ChannelMembershipIdentifier'
+              - $ref: '#/components/schemas/CustomMetadata'
+        delete:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChannelMembershipIdentifier'
+      example:
+        set:
+          - &ChannelMembershipExampleCustom
+            uuid:
+              id: uuid-2
+            custom:
+              role: moderator
+        delete:
+          - uuid:
+              id: uuid-0
+    ChannelMembershipOutput:
+      description: Object with channel membership metadata used in responses.
+      allOf:
+        - type: object
+          properties:
+            uuid:
+              $ref: '#/components/schemas/UUIDOutput'
+        - $ref: '#/components/schemas/CustomMetadata'
+        - $ref: '#/components/schemas/ObjectMetadata'
+      example: &ChannelMembershipOutputExampleFull
+        uuid: *UUIDOutputExampleFull
+        custom:
+          role: admin
+        updated: '2019-02-20T23:11:20.893755'
+        eTag: QkRENDA5MjItMUZCNC00REI5LUE4QTktRjJGNUMxNTc2MzE3Cg==
+    ChannelMembershipResponse:
+      description: Response body in which the data is at most one channel membership object.
+      allOf:
+        - $ref: '#/components/schemas/Response'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/ChannelMembershipOutput'
+      example:
+        status: 200
+        data:
+          <<: *ChannelMembershipOutputExampleFull
+    ChannelMembershipListResponse:
+      description: Response body in which the data is an array of channel membership metadata.
+      allOf:
+        - $ref: '#/components/schemas/ListResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/ChannelMembershipOutput'
+      example:
+        status: 200
+        data:
+          - *ChannelMembershipOutputExampleFull
+          - &ChannelMembershipOutputExampleCustom
+            uuid: *UUIDOutputExampleCustom
+            updated: '2019-02-20T23:11:20.893755'
+            eTag: QkRENDA5MjItMUZCNC00REI5LUE4QTktRjJGNUMxNTc2MzE3Cg==
+        totalCount: 37
+        next: RDIwQUIwM0MtNUM2Ni00ODQ5LUFGRjMtNDk1MzNDQzE3MUVCCg==
+        prev: MzY5RjkzQUQtNTM0NS00QjM0LUI0M0MtNjNBQUFGODQ5MTk2Cg==
+    UUIDMembershipIdentifier:
+      description: Object with identifier of a uuid's channel membership metadata.
+      type: object
+      properties:
+        channel:
+          allOf:
+            - $ref: '#/components/schemas/ChannelIdentifier'
+          required:
+            - id
+      required:
+        - channel
+      example: &UUIDMembershipExampleSimple
+        channel:
+          id: my-channel
+    UUIDMembershipInputChangeSet:
+      description: Object describing changes to the list of channels in which the uuid is a member.
+      type: object
+      properties:
+        set:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/UUIDMembershipIdentifier'
+              - $ref: '#/components/schemas/CustomMetadata'
+        delete:
+          type: array
+          items:
+            $ref: '#/components/schemas/UUIDMembershipIdentifier'
+      example:
+        set:
+          - &UUIDMembershipExampleCustom
+            channel:
+              id: my-channel
+            custom:
+              starred: true
+        delete:
+          - channel:
+              id: my-channel
+    UUIDMembershipOutput:
+      description: Object with uuid membership metadata used in responses.
+      allOf:
+        - type: object
+          properties:
+            channel:
+              $ref: '#/components/schemas/ChannelOutput'
+        - $ref: '#/components/schemas/CustomMetadata'
+        - $ref: '#/components/schemas/ObjectMetadata'
+      example: &UUIDMembershipOutputExampleFull
+        channel: *ChannelOutputExampleFull
+        custom:
+          starred: false
+        updated: '2019-02-20T23:11:20.893755'
+        eTag: RUNDMDUwNjktNUYwRC00RTI0LUI1M0QtNUUzNkE2NkU0MEVFCg==
+    UUIDMembershipListResponse:
+      description: Response body in which the data is an array of the uuid's channel membership metadata.
+      allOf:
+        - $ref: '#/components/schemas/ListResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/UUIDMembershipOutput'
+      example:
+        status: 200
+        data:
+          - *UUIDMembershipOutputExampleFull
+          - &UUIDMembershipOutputExampleCustom
+            channel: *ChannelOutputExampleCustom
+            updated: '2019-02-20T23:11:20.893755'
+            eTag: RUNDMDUwNjktNUYwRC00RTI0LUI1M0QtNUUzNkE2NkU0MEVFCg==
+        totalCount: 7
+        next: RDIwQUIwM0MtNUM2Ni00ODQ5LUFGRjMtNDk1MzNDQzE3MUVCCg==
+        prev: MzY5RjkzQUQtNTM0NS00QjM0LUI0M0MtNjNBQUFGODQ5MTk2Cg==
+    ObjectMetadata:
+      description: Properties included in all objects that are returned in responses.
+      type: object
+      properties:
+        updated:
+          type: string
+          format: date-time
+          description: Date and time the object was last updated.
+        eTag:
+          type: string
+          description: The object's content fingerprint used in conditional requests.
+    CustomMetadata:
+      description: Property used in objects that support application-defined custom properties.
+      type: object
+      properties:
+        custom:
+          type: object
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: number
+              - type: boolean
+          description: JSON object of key/value pairs with supported data-types. Values must be scalar only; arrays or objects are not supported.
+    Response:
+      description: Successful response body used when a single object is returned.
+      type: object
+      properties:
+        status:
+          type: integer
+          description: HTTP status code.
+        data:
+          type: object
+          description: Object returned.
+    ListResponse:
+      description: Successful response body used when an array of objects is returned.
+      allOf:
+        - $ref: '#/components/schemas/Response'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                description: Object returned.
+              description: List of returned objects.
+            totalCount:
+              type: integer
+              description: Total count of objects without pagination.
+            next:
+              type: string
+              description: Cursor bookmark for fetching next page.
+            prev:
+              type: string
+              description: Cursor bookmark for fetching previous page.
+    ErrorResponse:
+      type: object
+      description: Error response body.
+      properties:
+        status:
+          type: integer
+          description: HTTP status code.
+        error:
+          type: object
+          description: Error response.
+          properties:
+            message:
+              type: string
+              description: User-facing error message.
+            source:
+              type: string
+              enum:
+                - metadata
+              description: Internal source of the error.
+            details:
+              type: array
+              items:
+                $ref: '#/components/schemas/ErrorDetail'
+    ErrorDetail:
+      type: object
+      description: Additional error detail included in some error responses.
+      properties:
+        message:
+          type: string
+          description: A user-facing error message.
+          example: The email must be a valid email address.
+        location:
+          type: string
+          description: >
+            Name of the offending query string parameter,
+            or a dot-delimited JSON path to the source of the error in the input document, if applicable.
+          example: uuid.email
+        locationType:
+          type: string
+          enum:
+            - path
+            - query
+            - header
+            - body
+  responses:
+    BadRequest:
+      description: The request body contains invalid data.
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 400
+            error:
+              message: Request payload contained invalid input.
+              source: metadata
+              details:
+                - message: The email must be a valid email address.
+                  location: uuid.email
+                  locationType: body
+    ForbiddenOrDisabled:
+      description: >
+        Disabled - The subscriber key doesn't have Metadata API enabled. <br>
+        Forbidden - The client isn't authorized to perform this operation. The authorization key you provided doesn't have the required permissions for this operation.
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            Forbidden:
+              value:
+                status: 403
+                error:
+                  message: Invalid signature
+                  source: authz
+                  details:
+                  - message: Client and server produced different signatures for the same inputs.
+                    location: signature
+                    locationType: query
+            Disabled:
+              value:
+                status: 403
+                error:
+                  message: Metadata not enabled for this subscriber key.
+                  source: metadata
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 404
+            error:
+              message: Requested resource was not found.
+              source: metadata
+    PreconditionFailed:
+      description: Conditional operation cannot be performed because the target resource has changed since the last retrieval.
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 412
+            error:
+              message: Resource already changed by another request since last retrieval.
+              source: metadata
+    UnsupportedMediaType:
+      description: The format of the request body you supplied isn't supported. The request body must be in JSON format.
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 415
+            error:
+              message: Request payload must be in JSON format.
+              source: metadata
+    TooManyRequests:
+      description: Request rate limit exceeded.
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 429
+            error:
+              message: You have exceeded the maximum number of requests per second allowed for your subscriber key.
+              source: metadata
+    Internal:
+      description: An internal server error occurred.
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 500
+            error:
+              message: An unexpected error occurred while processing the request.
+              source: metadata
+    ServiceUnavailable:
+      description: Request processing exceeded the maximum allowed time.
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            status: 503
+            error:
+              message: The server took longer to respond than the maximum allowed processing time.
+              source: metadata

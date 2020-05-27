@@ -11,7 +11,7 @@ export class FetchAListOfActionsOrderedByActionTimetokenGet {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, channel: string, start: string, end: string, limit: number, auth: string) {
+  static validate(subKey: string, channel: string, start: string, end: string, limit: number, auth: string, signature: string, timestamp: number) {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -37,10 +37,18 @@ export class FetchAListOfActionsOrderedByActionTimetokenGet {
       return false;
     }
 
+    if (typeof (signature) !== 'string') {
+      return false;
+    }
+
+    if (!Number.isInteger(timestamp)) {
+      return false;
+    }
+
     return true;
   }
 
-  static execute(subKey: string, channel: string, start: string, end: string, limit: number, auth: string) {
+  static execute(subKey: string, channel: string, start: string, end: string, limit: number, auth: string, signature: string, timestamp: number) {
     // ...
   }
 

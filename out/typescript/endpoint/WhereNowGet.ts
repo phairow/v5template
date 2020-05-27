@@ -11,7 +11,7 @@ export class WhereNowGet {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, uuid: string, auth: string, callback: string) {
+  static validate(subKey: string, uuid: string, auth: string, callback: string, signature: string, timestamp: number) {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -29,10 +29,18 @@ export class WhereNowGet {
       return false;
     }
 
+    if (typeof (signature) !== 'string') {
+      return false;
+    }
+
+    if (!Number.isInteger(timestamp)) {
+      return false;
+    }
+
     return true;
   }
 
-  static execute(subKey: string, uuid: string, auth: string, callback: string) {
+  static execute(subKey: string, uuid: string, auth: string, callback: string, signature: string, timestamp: number) {
     // ...
   }
 

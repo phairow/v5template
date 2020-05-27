@@ -9,8 +9,10 @@ import { SdkResponse } from '../../format/SdkResponse';
 import { StringUtil } from '../../../util/string';
 
 export async function openApiParser(generator: SdkGenerator, apiPath: string): Promise<SdkApiDefinition> {
+  try {
+    console.log('apipath', apiPath)
   let parser = new SwaggerParser();
-  let api = await parser.parse(apiPath);
+  let api = await parser.bundle(apiPath);
   let sdkEndpoints: SdkEndpoint[] = [];
   let schemas: OpenAPIV3.SchemaObject[] = [];
   let parameters: OpenAPIV3.ParameterObject[] = [];
@@ -62,6 +64,11 @@ export async function openApiParser(generator: SdkGenerator, apiPath: string): P
     parameters,
     schemas,
   };
+} catch (e) {
+  console.log('error in parse');
+  console.log(e)
+  throw e;
+}
 }
 
 function convertOperationToSdkDefinitionFormat(

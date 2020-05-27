@@ -11,7 +11,7 @@ export class RemovingADeviceGet {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, pushToken: string, type: string, uuid: string) {
+  static validate(subKey: string, pushToken: string, type: string, uuid: string, signature: string, timestamp: number) {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -29,10 +29,18 @@ export class RemovingADeviceGet {
       return false;
     }
 
+    if (typeof (signature) !== 'string') {
+      return false;
+    }
+
+    if (!Number.isInteger(timestamp)) {
+      return false;
+    }
+
     return true;
   }
 
-  static execute(subKey: string, pushToken: string, type: string, uuid: string) {
+  static execute(subKey: string, pushToken: string, type: string, uuid: string, signature: string, timestamp: number) {
     // ...
   }
 

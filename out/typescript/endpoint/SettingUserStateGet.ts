@@ -11,7 +11,7 @@ export class SettingUserStateGet {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, channel: string, channelGroup: string, uuid: string, auth: string, state: string, callback: string) {
+  static validate(subKey: string, channel: string, channelGroup: string, uuid: string, auth: string, state: string, callback: string, signature: string, timestamp: number) {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -41,10 +41,18 @@ export class SettingUserStateGet {
       return false;
     }
 
+    if (typeof (signature) !== 'string') {
+      return false;
+    }
+
+    if (!Number.isInteger(timestamp)) {
+      return false;
+    }
+
     return true;
   }
 
-  static execute(subKey: string, channel: string, channelGroup: string, uuid: string, auth: string, state: string, callback: string) {
+  static execute(subKey: string, channel: string, channelGroup: string, uuid: string, auth: string, state: string, callback: string, signature: string, timestamp: number) {
     // ...
   }
 

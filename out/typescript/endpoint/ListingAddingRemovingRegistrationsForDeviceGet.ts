@@ -11,13 +11,21 @@ export class ListingAddingRemovingRegistrationsForDeviceGet {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, pushToken: string, type: string, uuid: string) {
+  static validate(subKey: string, pushToken: string, add: string, remove: string, type: string, uuid: string, signature: string, timestamp: number) {
 
     if (typeof (subKey) !== 'string') {
       return false;
     }
 
     if (typeof (pushToken) !== 'string') {
+      return false;
+    }
+
+    if (typeof (add) !== 'string') {
+      return false;
+    }
+
+    if (typeof (remove) !== 'string') {
       return false;
     }
 
@@ -29,10 +37,18 @@ export class ListingAddingRemovingRegistrationsForDeviceGet {
       return false;
     }
 
+    if (typeof (signature) !== 'string') {
+      return false;
+    }
+
+    if (!Number.isInteger(timestamp)) {
+      return false;
+    }
+
     return true;
   }
 
-  static execute(subKey: string, pushToken: string, type: string, uuid: string) {
+  static execute(subKey: string, pushToken: string, add: string, remove: string, type: string, uuid: string, signature: string, timestamp: number) {
     // ...
   }
 

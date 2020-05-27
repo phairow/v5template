@@ -11,7 +11,7 @@ export class ListingAllRegisteredChannelGroupsGet {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, uuid: string) {
+  static validate(subKey: string, uuid: string, signature: string, timestamp: number) {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -21,10 +21,18 @@ export class ListingAllRegisteredChannelGroupsGet {
       return false;
     }
 
+    if (typeof (signature) !== 'string') {
+      return false;
+    }
+
+    if (!Number.isInteger(timestamp)) {
+      return false;
+    }
+
     return true;
   }
 
-  static execute(subKey: string, uuid: string) {
+  static execute(subKey: string, uuid: string, signature: string, timestamp: number) {
     // ...
   }
 

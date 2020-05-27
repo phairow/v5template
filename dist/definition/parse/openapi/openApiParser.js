@@ -16,41 +16,49 @@ const SwaggerParser = require("swagger-parser");
 const string_1 = require("../../../util/string");
 function openApiParser(generator, apiPath) {
     return __awaiter(this, void 0, void 0, function* () {
-        let parser = new SwaggerParser();
-        let api = yield parser.parse(apiPath);
-        let sdkEndpoints = [];
-        let schemas = [];
-        let parameters = [];
         try {
-            sdkEndpoints = sdkEndpoints.concat(
-            // iterate the path components
-            Object.keys(api.paths)
-                // extract each path object from open api document
-                .map((pathKey) => api.paths[pathKey])
-                // convert and combine the endpoints for each path
-                .reduce((allEndpoints, endpointOperations) => {
-                return allEndpoints.concat(
-                // iterate the endpoint operations for each path
-                Object.keys(endpointOperations)
-                    // filter out parameters, not sure why it exists here, parser error?
-                    .filter((operationKey) => operationKey !== 'parameters')
-                    // convert to sdk definition format
-                    .map((operationKey) => convertOperationToSdkDefinitionFormat(parser, api, schemas, parameters, operationKey, endpointOperations)));
-            }, [] // initial list of all endpoints for the reduce operation
-            )
-                // exclude any endpoints that do not have a title
-                // TODO: this filter step should not be needed in the end
-                .filter((item) => item.title && item.title.length > 0));
+            console.log('apipath', apiPath);
+            let parser = new SwaggerParser();
+            let api = yield parser.bundle(apiPath);
+            let sdkEndpoints = [];
+            let schemas = [];
+            let parameters = [];
+            try {
+                sdkEndpoints = sdkEndpoints.concat(
+                // iterate the path components
+                Object.keys(api.paths)
+                    // extract each path object from open api document
+                    .map((pathKey) => api.paths[pathKey])
+                    // convert and combine the endpoints for each path
+                    .reduce((allEndpoints, endpointOperations) => {
+                    return allEndpoints.concat(
+                    // iterate the endpoint operations for each path
+                    Object.keys(endpointOperations)
+                        // filter out parameters, not sure why it exists here, parser error?
+                        .filter((operationKey) => operationKey !== 'parameters')
+                        // convert to sdk definition format
+                        .map((operationKey) => convertOperationToSdkDefinitionFormat(parser, api, schemas, parameters, operationKey, endpointOperations)));
+                }, [] // initial list of all endpoints for the reduce operation
+                )
+                    // exclude any endpoints that do not have a title
+                    // TODO: this filter step should not be needed in the end
+                    .filter((item) => item.title && item.title.length > 0));
+            }
+            catch (e) {
+                console.log('error getting operations', e);
+                throw e;
+            }
+            return {
+                endpoints: sdkEndpoints,
+                parameters,
+                schemas,
+            };
         }
         catch (e) {
-            console.log('error getting operations', e);
+            console.log('error in parse');
+            console.log(e);
             throw e;
         }
-        return {
-            endpoints: sdkEndpoints,
-            parameters,
-            schemas,
-        };
     });
 }
 exports.openApiParser = openApiParser;

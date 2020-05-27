@@ -11,7 +11,7 @@ export class RemoveActionsFromAGivenMessageDelete {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, channel: string, messageTimetoken: string, actionTimetoken: string, auth: string, uuid: string) {
+  static validate(subKey: string, channel: string, messageTimetoken: string, actionTimetoken: string, auth: string, uuid: string, signature: string, timestamp: number) {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -37,10 +37,18 @@ export class RemoveActionsFromAGivenMessageDelete {
       return false;
     }
 
+    if (typeof (signature) !== 'string') {
+      return false;
+    }
+
+    if (!Number.isInteger(timestamp)) {
+      return false;
+    }
+
     return true;
   }
 
-  static execute(subKey: string, channel: string, messageTimetoken: string, actionTimetoken: string, auth: string, uuid: string) {
+  static execute(subKey: string, channel: string, messageTimetoken: string, actionTimetoken: string, auth: string, uuid: string, signature: string, timestamp: number) {
     // ...
   }
 

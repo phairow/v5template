@@ -11,7 +11,7 @@ export class DeleteHistoryDelete {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, channels: string, start: unknown, end: unknown) {
+  static validate(subKey: string, channels: string, start: unknown, end: unknown, signature: string, timestamp: number) {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -29,10 +29,18 @@ export class DeleteHistoryDelete {
       return false;
     }
 
+    if (typeof (signature) !== 'string') {
+      return false;
+    }
+
+    if (!Number.isInteger(timestamp)) {
+      return false;
+    }
+
     return true;
   }
 
-  static execute(subKey: string, channels: string, start: unknown, end: unknown) {
+  static execute(subKey: string, channels: string, start: unknown, end: unknown, signature: string, timestamp: number) {
     // ...
   }
 

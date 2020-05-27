@@ -11,7 +11,7 @@ export class GlobalHereNowGet {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string) {
+  static validate(subKey: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string, signature: string, timestamp: number) {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -41,10 +41,18 @@ export class GlobalHereNowGet {
       return false;
     }
 
+    if (typeof (signature) !== 'string') {
+      return false;
+    }
+
+    if (!Number.isInteger(timestamp)) {
+      return false;
+    }
+
     return true;
   }
 
-  static execute(subKey: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string) {
+  static execute(subKey: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string, signature: string, timestamp: number) {
     // ...
   }
 

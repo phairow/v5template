@@ -74,7 +74,7 @@ export default class SdkGenerator extends Generator {
           let output = Mustache.render(templateString, context, (partialName) => { return fs.readFileSync(this.templateDir + partialName + '.mustache', 'utf8') });
           this.fs.write(outFile, output);
         } catch (e) {
-          console.log(e)
+          console.log(e);
         }
       }
     }
@@ -108,18 +108,29 @@ export default class SdkGenerator extends Generator {
 
   private async _parseOpenapiSpecs(): Promise<SdkApiDefinition[]> {
     let schemaDir = path.resolve(__dirname, '../../specifications/');
-    let schemaFiles: string[] = [];
+    let specificationFiles: string[] = [];
 
     fs.readdirSync(schemaDir).forEach((file) => {
       let schemaPath = path.join(schemaDir, file);
       let stats = fs.statSync(schemaPath);
 
-      if (stats.isFile() && path.extname(schemaPath) === '.yaml') {
-        schemaFiles.push(schemaPath);
+      if (stats.isFile() && file !== 'responses.yaml' && path.extname(schemaPath) === '.yaml') {
+        specificationFiles.push(schemaPath);
+      } else if (stats.isDirectory()) {
+        let subDir = file;
+        let schemaDirSubfolder = path.resolve(__dirname, '../../specifications/', subDir);
+        fs.readdirSync(schemaDirSubfolder).forEach((subFile) => {
+          let schemaPath = path.join(schemaDir, subDir, subFile);
+          let stats = fs.statSync(schemaPath);
+    
+          if (stats.isFile() && path.extname(schemaPath) === '.yaml') {
+            specificationFiles.push(schemaPath);
+          }
+        });
       }
     });
 
-    let specsToProcess = schemaFiles.map(async (schemaPath) => {
+    let specsToProcess = specificationFiles.map(async (schemaPath) => {
       return await openApiParser(this, schemaPath);
     });
 

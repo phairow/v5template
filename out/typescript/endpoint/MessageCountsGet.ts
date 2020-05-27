@@ -11,7 +11,7 @@ export class MessageCountsGet {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, channels: string, auth: string, timetoken: unknown, channelsTimetoken: string) {
+  static validate(subKey: string, channels: string, auth: string, timetoken: unknown, channelsTimetoken: string, signature: string, timestamp: number) {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -33,10 +33,18 @@ export class MessageCountsGet {
       return false;
     }
 
+    if (typeof (signature) !== 'string') {
+      return false;
+    }
+
+    if (!Number.isInteger(timestamp)) {
+      return false;
+    }
+
     return true;
   }
 
-  static execute(subKey: string, channels: string, auth: string, timetoken: unknown, channelsTimetoken: string) {
+  static execute(subKey: string, channels: string, auth: string, timetoken: unknown, channelsTimetoken: string, signature: string, timestamp: number) {
     // ...
   }
 

@@ -1,0 +1,247 @@
+openapi: 3.0.1
+info:
+  title: PubNub Subscribe APIs
+  description: PubNub APIs for Subscribing channels or channel groups.
+  contact:
+    name: PubNub Support
+    url: https://www.pubnub.com/support
+    email: support@pubnub.com
+  termsOfService: https://www.pubnub.com/terms-and-conditions/
+  version: 1.0.0
+servers:
+  - url: https://ps.pndsn.com
+tags:
+- name: Subscribe
+  description: Subscribing the channel.
+paths:
+  /subscribe/{sub_key}/{channel}/{callback}/{timetoken}:
+    get:
+      tags:
+      - Subscribe
+      summary: Subscribe to channel v1 API
+      operationId: subscribeV1
+      description: Subscribe to messages on channels and/or channel groups.
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/CallbackPathParam'
+      - $ref: '#/components/parameters/TimetokenPathParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/StateQueryParam'
+      - $ref: '#/components/parameters/HeartbeatQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          $ref: '../responses.yaml#/SubscribeResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/javascript:
+             schema:
+              $ref: '../responses.yaml#/BadRequestError'
+        '403':
+          description: Unauthorized access
+          content:
+            text/javascript:
+             schema:
+              $ref: '../responses.yaml#/ChannelAccessForbiddenError'
+        '413':
+          description: The Signal POST body is larger than 30 bytes.
+          content:
+            text/javascript:
+             schema:
+              $ref: '../responses.yaml#/RequestEntityTooLargeError'
+        '429':
+          description: Request rate limit exceeded.
+          content:
+            text/javascript:
+             schema:
+              $ref: '../responses.yaml#/TooManyRequestsError'
+  /v2/subscribe/{sub_key}/{channel}/{callback}:
+    get:
+      tags: 
+        - Subscribe
+      summary: Subscribe to channel(s) or channel group(s)
+      operationId: subscribeV2
+      description: This resource allows a developer to Subscribe to PubNub.
+      parameters: 
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/CallbackPathParam'
+      - $ref: '#/components/parameters/TimetokenQueryParam'
+      - $ref: '#/components/parameters/RegionQueryParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/HeartbeatQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/FilterExpressionQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: Successfully updated the user.
+          content:
+            'application/javascript':
+              schema:
+                $ref: '../responses.yaml#/SubscribeResponse'
+        '400':
+          description: Bad Request
+          content:
+            text/javascript:
+             schema:
+              $ref: '../responses.yaml#/BadRequestError'
+        '403':
+          description: Unauthorized access
+          content:
+            text/javascript:
+             schema:
+              $ref: '../responses.yaml#/ChannelAccessForbiddenError'
+        '413':
+          description: The Signal POST body is larger than 30 bytes.
+          content:
+            text/javascript:
+             schema:
+              $ref: '../responses.yaml#/RequestEntityTooLargeError'
+        '429':
+          description: Request rate limit exceeded.
+          content:
+            text/javascript:
+             schema:
+              $ref: '../responses.yaml#/TooManyRequestsError'
+components:
+  parameters:
+    SubKeyPathParam:
+      name: sub_key
+      in: path
+      description: The subscriber key.
+      required: true
+      schema:
+        type: string
+        example: sub-c-406fe670-ff0a-11e8-a860-92908bb92f21
+    ChannelPathParam:
+      name: channel
+      in: path
+      description: The channel name(s) you are subscribing to. Verify that channels are comprised of valid characters. You may subscribe to mulitple channels using a comma seperator. If subscribing to no channels (only channel groups), use a comma char (,) as a placeholder. You may subscribe to channels, channels & channel groups, or just channel groups.
+      required: true
+      schema: 
+        type: string
+      example: ch1
+    CallbackPathParam:
+      name: callback
+      in: path
+      description: JSONP callback name, or 0 if none.
+      required: true
+      schema:
+        type: string
+      examples:
+        myCallback:
+          value: 'myFunction'
+          summary: 'response will be wrapped in JSONP function'
+        zero:
+          value: 0
+          summary: 'for no JSONP'
+    TimetokenPathParam:
+      name: timetoken
+      in: path
+      description: 0 (zero) for the initial subscribe, or a valid timetoken if resuming / continuing / fast-forwarding from a previous subscribe flow.
+      schema:
+        type: string
+      required: true
+      examples:
+        nonZero:
+          value: 1231312313123
+          summary: A valid timetoken if resuming
+        zero:
+          value: 0
+          summary: 0 (zero) for the initial subscribe
+    ChannelGroupQueryParam:
+      name: channel-group
+      in: query
+      description: Channel group name(s) to subscribe to. If subscribing to more than one channel group, use a comma separator between channel group names. You may subscribe to channels, channels & channel groups, or just channel groups.
+      schema:
+        type: string
+      required: false
+      example: cg1,cg2,cg3
+    StateQueryParam:
+      name: state
+      in: query
+      description: When state is set, this value is an object with root keys associated with each channel you are setting state for. You must be subscribed to a channel to set state for it. (Refer to the get/set state sections)
+      schema:
+        type: string
+      required: false
+      example: '%7B%22text%22%3A%22hey%22%7D'      
+    HeartbeatQueryParam:
+      name: heartbeat
+      in: query
+      description: > 
+        This query paramter can be used to set the presence timeout period. 
+        Heartbeat is the mechanism used to 'ping' back from the client to the server that the client is still online. 
+        Heartbeat has no functional effect on the performance or integrity of the client itself. Its only provided for Presence functionality.
+        The heartbeat is only germane to the Presence service. Default value is 300
+      schema:
+        type: integer
+      required: false
+    AuthQueryParam:
+      name: auth
+      in: query
+      description: If the channel / channel group is protected by PAM, auth must be passed with a key which is authorized to read from the channel.
+      schema:
+        type: string
+      required: false
+      example: authKey
+    UuidQueryParam:
+      name: uuid
+      in: query
+      description: A unique alphanumeric ID for identifying the client to the PubNub Presence System, as well as for PubNub Analytics.
+      schema:
+        type: string
+      required: true
+      example: db9c5e39-7c95-40f5-8d71-125765b6f561
+    TimetokenQueryParam:
+      name: tt
+      in: query
+      description: 0 (zero) for the initial subscribe, or a valid timetoken if resuming / continuing / fast-forwarding from a previous subscribe flow.
+      required: true
+      schema:
+        type: string
+      example: '1231312313123'
+    RegionQueryParam:
+      name: tr
+      in: query
+      description: Region as returned from the initial call with tt=0.
+      required: false
+      schema:
+        type: string
+    FilterExpressionQueryParam:
+      name: filter-expr
+      in: query
+      description: Set filter expression for Subscribe message filtering.
+      required: false
+      schema:
+        type: string
+      example: uuid%20!%3D%20%27cvc1%27 
+    SignatureQueryParam:
+      name: signature
+      in: query
+      description: |
+        Signature used to verify that the request was signed with the secret key associated with the subscriber key.
+
+        If Access Manager is enabled, either a valid authorization token or a signature are required.
+
+        See Access Manager documentation for details on how to compute the signature.
+      schema:
+        type: string
+        example: v2.YmvbpzHJlUDIMJOfD_CnsA8Uw2BJhwPeFZO1Qu5tfC4
+    TimestampQueryParam:
+      name: timestamp
+      in: query
+      description: |
+        Unix epoch timestamp used as a nonce for signature computation. Must have no more than ± 60 second offset from NTP.
+
+        Required if `signature` parameter is supplied.
+      schema:
+        type: integer
+        example: 1563226304

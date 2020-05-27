@@ -1,0 +1,1060 @@
+# Publish Subscribe 
+PublishResponse:
+  type: array
+  items:
+    oneOf:
+      - type: integer                
+      - type: string
+
+SubscribeResponse:
+  type: object
+  properties:
+    t:
+      $ref: '#/SubscribeResponseTimetoken'
+    m:
+      $ref: '#/SubscribeResponseMessage'
+  examples:
+    NormalMessages:
+      value: {
+              "t": {
+                  "t": "15628652479932717",
+                  "r": 4
+              },
+              "m":[
+                  {
+                      "a": "1",
+                      "f": 514,
+                      "i": "pn-0ca50551-4bc8-446e-8829-c70b704545fd",
+                      "s": 1,
+                      "p": {
+                          "t": "15628652479933927",
+                          "r": 4
+                      },
+                      "k": "demo",
+                      "c": "my-channel",
+                      "d": "my message",
+                      "b": "my-channel"
+                  }
+              ]
+            }
+    SignalMessageResponse:
+      value: {
+                "t": {
+                    "t": "15653761881633527",
+                    "r": 1
+                },
+                "m": [
+                    {
+                        "a": "5",
+                        "f": 0,
+                        "e": 1,
+                        "i": "user-123",
+                        "p": {
+                            "t": "15653761881622292",
+                            "r": 1
+                        },
+                        "k": "demo",
+                        "c": "myChannel",
+                        "d": "typing_on",
+                        "b": "myChannelGroup"
+                    }
+                ]
+            }
+    ObjectsMessageResponse:
+      value: {
+              "t": {
+                  "t":"15665291391003207",
+                  "r":7
+              },
+              "m":[
+                  {
+                      "a":"1",
+                      "f":0,
+                      "e":2,
+                      "p": {
+                          "t":"15665291390119767",
+                          "r":2
+                      },
+                      "k":"sub-c-26a73b0a-c3f2-11e9-8b24-569e8a5c3af3",
+                      "c":"spaceid0",
+                      "d": {
+                          "source":"objects",
+                          "version":"1.0",
+                          "event":"update",
+                          "type":"space",
+                          "data": {
+                              "description":"desc5",
+                              "eTag":"AYSay6Cm6YfKEA",
+                              "id":"spaceid0",
+                              "name":"name",
+                              "updated":"2019-08-23T02:58:58.983927Z"
+                          }
+                      },
+                      "b":"spaceid0"
+                  }
+              ]
+              }
+    MessageActionsResponse:
+      value: {
+                "t":{
+                    "t":"15694740174268096",
+                    "r":56
+                },
+                "m":[
+                    {
+                        "f":0,
+                        "e":3,
+                        "i":"pn-53ca01eb-f7c5-4653-9639-ab45b8768d0f",
+                        "p":{
+                            "t":"15694740174271958",
+                            "r":56
+                        },
+                        "k":"sub-c-d7da9e58-c997-11e9-a139-dab2c75acd6f",
+                        "c":"my-channel",
+                        "d":{
+                            "source":"actions",
+                            "version":"1.0",
+                            "data":{
+                                "messageTimetoken":"15694739912496365",
+                                "type":"reaction",
+                                "value":"smiley_face",
+                                "actionTimetoken":"15694740173724452"
+                            },
+                            "event":"added"
+                        },
+                        "b":"my-channel"
+                    }
+                ]
+              }
+SubscribeResponseTimetoken:
+  type: object
+  properties:
+    t:
+      type: string
+      description: the timetoken
+      example: "15628652479932717"
+    r:
+      type: integer
+      description: the region
+      example: 4
+SubscribeResponseMessage:
+  type: array
+  items:
+    $ref: '#/SubscribeResponseMessageArrayItem'
+SubscribeResponseMessageArrayItem:
+  type: object
+  properties:
+    a:
+      type: string
+      description: Shard
+      example: "1"
+    f:
+      type: integer
+      description: Flags
+      example: 514
+    e:
+      type: integer
+      description: > 
+        The value of this parameter denotes the type of messages 
+        e.g. 1 is for Signal, 
+             2 is for Objects messages, 
+             3 is for MessageAction messages
+      example: 1
+    i:
+      type: string
+      description: Issuing Client Id
+      example: "pn-0ca50551-4bc8-446e-8829-c70b704545fd"
+    s:
+      type: integer
+      description: Sequence number
+      example: 1
+    p:
+      $ref: '#/SubscribeResponsePublishTimetokenMetadata'
+    k:
+      type: string
+      description: Subscribe Key
+      example: "demo"
+    c:
+      type: string
+      description: Channel
+      example: "my-channel"
+    d:
+      type: string
+      description: The payload
+      example: "my message"
+    b:
+      type: string
+      description: Subscription match or the channel group
+      example: "my-channel"
+SubscribeResponsePublishTimetokenMetadata:
+  type: object
+  description: Publish Timetoken Metadata
+  properties:
+    t:
+      type: string
+      example: "15628652479933927"
+    r:
+      type: integer
+      example: 4
+
+# ChannelGroup
+GetAllChannelGroupsV1SuccessResponse:
+  type: object
+  properties:
+    service:
+      type: string
+      example: name of the service returning the data
+    status:
+      type: string
+      example: HTTP status code of the performed action
+    error:
+      type: string
+      example: returns the reason an error has occoured
+    payload:
+      type: object
+      properties:
+        sub_key:
+          type: string
+          example: subKey
+        groups:
+          type: array
+          items:
+            type: string
+          example:  [
+            "group1",
+            "group2",
+            "group3"
+        ]
+      example: {
+            "service": "channel-registry",
+            "status": "200",
+            "error": false,
+            "message": "OK"
+              }
+GetAllChannelsOfChannelGroupSuccessResponse:
+  type: object
+  properties:
+    service:
+      type: string
+      example: name of the service returning the data
+    status:
+      type: string
+      example: HTTP status code of the performed action
+    error:
+      type: string
+      example: returns the reason an error has occoured
+    payload:
+      type: object
+      properties:
+        group:
+          type: string
+          example: group_id
+        channels:
+          type: array
+          items:
+            type: string
+          example: [
+                      "channel1",
+                      "channel2",
+                      "channel3"
+                  ]
+ChannelGroupOperationsDefaultSuccessResponse:
+  type: object
+  properties:
+    service:
+      type: string
+      example: "channel-registry"
+    status:
+      type: string
+      example: "200"
+    error:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: "OK"
+
+# Message History
+MessageHistoryResponse:
+  type: array
+  items:
+    oneOf:
+      - type: array
+      - type: integer
+  example: [["Pub1","Pub2","Pub3"],13406746729185766,13406746780720711]
+HistoryWithActionsSuccessResponse:
+  type: object
+  properties:
+      status:
+        type: integer
+        example: 200
+      error:
+        type: boolean
+        example: false
+      error_message:
+        type: string
+      channels:
+        $ref: '#/historyWithActionsChannels'
+      more:
+        $ref: '#/historyWithActionsResponseMoreInfo'
+  example: {
+        "status": 200,
+        "error": false,
+        "error_message": "",
+        "channels": {
+          "demo-channel": [
+            {
+              "message": "Hi",
+              "timetoken": 15610547826970040,
+              "actions": {
+                "receipt": {
+                  "read": [
+                    {
+                      "uuid": "user-7",
+                      "actionTimetoken": 15610547826970044
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "message": "Hello",
+              "timetoken": 15610547826970000,
+              "actions": {
+                "reaction": {
+                  "smiley_face": [
+                    {
+                      "uuid": "user-456",
+                      "actionTimetoken": 15610547826970050
+                    }
+                  ],
+                  "poop_pile": [
+                    {
+                      "uuid": "user-789",
+                      "actionTimetoken": 15610547826980050
+                    },
+                    {
+                      "uuid": "user-567",
+                      "actionTimetoken": 15610547826970000
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "more": {
+          "url": "/v1/history-with-actions/s/channel/c?start=15610547826970000&limit=98",
+          "start": "15610547826970000",
+          "limit": 98
+        }
+      }
+HistoryMessageCountV3Response:
+  type: object
+  properties:
+      status:
+        type: integer
+        example: 200
+      error:
+        type: boolean
+        example: false
+      channels:
+        $ref: '#/messageCountChannels'
+  example: {
+              "status": 200,
+              "error": false,
+              "error_message": "",
+              "channels": {
+                  "myChannel1": 33,
+                  "myChannel2": 0
+              }
+          }
+HistoryDeleteSuccessResponse:
+  type: object
+  properties:
+      status:
+        type: integer
+        example: 200
+      error:
+        type: boolean
+        example: false
+      error_message:
+        type: string
+        example: ""
+historyWithActionsChannels:
+  type: object
+  additionalProperties:
+    $ref: '#/historyValueArray'
+historyValueArray:
+  type: array
+  items:
+    $ref: '#/historyValueArrayMessage'
+historyValueArrayMessage:
+  type: object
+  properties:
+    message:
+      type: string
+    timetoken:
+      type: number
+    actions:
+      anyOf:
+        - $ref: '#/actionsWithReceipt'
+        - $ref: '#/actionsWithReaction'
+actionsWithReceipt:
+  type: object
+  properties:
+    receipt:
+      $ref: '#/receiptInfo'
+receiptInfo:
+  type: object
+  properties:
+    read:
+      type: array
+      items:
+        $ref: '#/actionInfo'
+actionsWithReaction:
+  type: object
+  properties:
+    reaction:
+      $ref: '#/reactionInfo'
+actionInfo:
+  type: object
+  properties:
+    uuid:
+      type: string
+    actionTimetoken:
+      type: number
+reactionInfo:
+  type: object
+  additionalProperties:
+    $ref: '#/arrayOfActionInfo'
+arrayOfActionInfo:
+  type: array
+  items:
+    $ref: '#/actionInfo'
+historyWithActionsResponseMoreInfo:
+  type: object
+  properties:
+    url:
+      type: string
+    start:
+      type: string
+    limit:
+      type: integer
+messageCountChannels:
+  type: object
+  additionalProperties:
+    type: number
+
+
+# Presence
+WhereNowSuccessResponse:
+  type: object
+  properties:
+    status:
+      type: integer
+    message:
+      type: string
+    payload:
+      type: object
+      properties:
+        channels:
+          type: array
+          items:
+            type: string
+    service:
+      type: string
+  example:
+          {
+              "status": 200, 
+              "message": "OK", 
+              "payload": {
+                  "channels": [
+                      "my-channel"
+                  ]
+              }, 
+              "service": "Presence"
+          }
+GlobalHereNowSuccessResponse:
+  type: object
+  properties:
+      status:
+        type: integer
+      message:
+        type: string
+      payload:
+        type: object
+        properties:
+          channels:
+          $ref: '#/HereNowGlobalChannels'
+          total_channels:
+            type: integer
+          total_occupancy:
+            type: integer
+      service:
+        type: string
+  example:
+    {
+      "status": 200,
+      "message": "OK",
+      "payload": {
+          "channels": {
+              "81d8d989-b95f-443c-a726-04fac323b331": {
+                  "uuids": [
+                      "70fc1140-22b5-4abc-85b2-ff8c17b24d59"
+                  ],
+                  "occupancy": 1
+              },
+              "81b7a746-d153-49e2-ab70-3037a75cec7e": {
+                  "uuids": [
+                      "91363e7f-584b-49cc-822c-52c2c01e5928"
+                  ],
+                  "occupancy": 1
+              },
+              "c068d15e-772a-4bcd-aa27-f920b7a4eaa8": {
+                  "uuids": [
+                      "ccfac1dd-b3a5-4afd-9fd9-db11aeb65395"
+                  ],
+                  "occupancy": 1
+              }
+          },
+          "total_channels": 3,
+          "total_occupancy": 3
+      },
+      "service": "Presence"
+    }
+HereNowSuccessResponse:
+  type: object
+  properties:
+    status:
+      type: integer
+      example: 200
+    message:
+      type: string
+      example: OK
+    occupancy:
+      type: integer
+      example: 1
+    uuids:
+      type: array
+      items:
+        type: string
+    service:
+      type: string
+      example: Presence
+  example:
+    { 
+    "status": 200,
+    "message": "OK",  
+    "occupancy": 1,  
+    "uuids": ["pn-4152c98f-0b60-404c-9719-c42dbf8fc246"],
+    "service": "Presence"
+    }
+LeaveAnnounceSuccessResponse:
+  type: object
+  properties:
+    status:
+      type: integer
+      example: 200
+    message:
+      type: string
+      example: OK
+    action:
+      type: string
+      example: leave
+    service:
+      type: string
+      example: Presence
+  example:
+      {  
+      "status": 200,
+      "message": "OK",
+      "action": "leave",
+      "service": "Presence"
+      }     
+GetUserStateSuccessResponse:
+  type: object
+  properties:
+    service:
+      type: string
+      example: Presence
+    status:
+      type: integer
+      example: 200
+    error:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: OK
+    payload:
+      type: string
+      example: "{text:hey}"
+  example:
+      {
+          "service": "presence",
+          "status": 200,
+          "error": false,
+          "message": "OK",
+          "payload": "{text:hey}"
+      }
+SetUserStateSuccessResponse:
+  type: object
+  properties:
+    service:
+      type: string
+      example: Presence
+    status:
+      type: integer
+      example: 200
+    error:
+      type: boolean
+      example: false
+    message:
+      type: string
+      example: OK
+    payload:
+      type: string
+      example: "{text:hey}"
+  example:
+      {
+          "service": "presence",
+          "status": 200,
+          "error": false,
+          "message": "OK",
+          "payload": "{text:hey}"
+      }
+GetPresenceSuccessResponse:
+  type: object
+  properties:
+    status:
+      type: integer
+      example: 200
+    message:
+      type: string
+      example: OK
+    service:
+      type: string
+      example: Presence
+  example:
+      {  
+      "status": 200,
+      "message": "OK",  
+      "service": "Presence"
+      }
+HereNowGlobalChannels:
+  type: object
+  additionalProperties:
+    $ref: '#/HereNowGlobalChannel'
+HereNowGlobalChannel:
+  type: object
+  properties:
+    uuids:
+      type: array
+      items:
+        type: string
+    occupancy:
+      type: integer
+
+# Message Actions
+FetchActionsSuccessResponse:
+  type: object
+  properties:
+    status:
+      type: integer
+      example: 200
+    data:
+      type: array
+      items:
+        $ref: '#/MessageActionData'
+    more:
+      $ref: '#/MessageActionResponseMore'
+AddMessageActionSuccessResponse:
+  type: object
+  properties:
+    status:
+      type: integer
+      example: 200
+    data:
+        $ref: '#/MessageActionData'
+AddMessageActionPublishFailedError:
+  type: object
+  properties:
+    status:
+      type: integer
+      example: 207
+    data:
+        $ref: '#/MessageActionData'
+    error:
+        $ref: '#/MessageActionsCommonErrorObject'
+MessageActionData:
+  type: object
+  properties:
+    type:
+      type: string
+      example: reaction
+    value:
+      type: string
+      example: smiley_face
+    actionTimetoken:
+      type: string
+      example: '15610547826970050'
+    messageTimetoken:
+      type: string
+      example: '15610547826969050'
+    uuid:
+      type: string
+      example: 'terryterry69420'
+MessageActionResponseMore:
+  type: object
+  properties:
+    url:
+      type: string
+      example: "/v1/actions/sub-c-6ba5f838-6456-11e8-9307-eaaa55e2558c/channel/test_channel_1567187121_2_6_6?start=15610547826970050&end=15645905639093361&limit=2"
+    start:
+      type: string
+      example: '15610547826970050'
+    end:
+      type: string
+      example: '15645905639093361'
+    limit:
+      type: string
+      example: '2'
+RemoveActionSuccessResponse:
+  type: object
+  properties:
+    status:
+      type: integer
+      example: 200
+    data:
+      type: object
+      example: {}
+
+# Push Notification
+ManageChannelDeviceResponse:
+  type: array
+  items:
+    oneOf:
+      - type: integer                
+      - type: string
+  examples:
+    Manage:
+      value: [1, "Modified Channels"]
+    RemoveDevice:
+      value: [1, "Removed Device"]
+
+# PAM
+PAMv2Response:
+  type: object
+  properties:
+    status:
+      type: number
+      example: 200
+    message:
+      type: string
+      example: Success
+    payload:
+      $ref: '#/PAMv2ResponsePayload'
+    service:
+      type: string
+      example: Access Manager
+PAMv2ResponsePayload:
+  type: object
+  properties:
+    ttl:
+      type: number
+      example: 1440
+    auths:
+      type: object
+      properties:
+        password:
+          $ref: '#/PAMv2ResponsePassword'
+    subscribe_key:
+      type: string
+      example: '{subscribe-key}'
+    level:
+      type: string
+      example: user
+    channel:
+      type: string
+      example: my_channel
+PAMv2ResponsePassword:
+  type: object
+  properties:
+    r:
+      type: integer
+      enum:
+      - 0
+      - 1
+      example: 1
+    w:
+      type: integer
+      enum:
+      - 0
+      - 1
+      example: 1
+    m:
+      type: integer
+      enum:
+      - 0
+      - 1
+      example: 1
+    d:
+      type: integer
+      enum:
+      - 0
+      - 1
+      example: 1
+
+PAMv3Response:
+  type: object
+  properties:
+    status:
+      type: integer
+      example: 200
+    data:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Success
+        token:
+          type: string
+          example: p0F2AkF0Gl043rhDdHRsCkNyZXOkRGNoYW6hZnNlY3JldAFDZ3JwoEN1c3KgQ3NwY6BDcGF0pERjaGFuoENncnCgQ3VzcqBDc3BjoERtZXRhoENzaWdYIGOAeTyWGJI
+    service:
+      type: string
+      example: Access Manager
+
+# Error responses
+BadRequestError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Invalid Subscribe Key"
+        error:
+          type: boolean
+          example: true
+        status:
+          type: integer
+          example: 400
+HistoryErrorInvalidRequest:
+  type: object
+  properties:
+    status:
+      type: integer
+      example: 400
+    error:
+      type: boolean
+      example: true
+    error_message:
+      type: string
+      example: 'Invalid Arguments: start'
+    channels:
+      type: object
+      example: {}
+HistoryParseError:
+  type: object
+  properties:
+      status:
+        type: integer
+        example: 400
+      error:
+        type: boolean
+        example: true
+      error_message:
+        type: string
+        example: Parse error
+MessageActionsInvalidInputError:
+  type: object
+  properties:
+    status:
+      type: integer
+      example: 400
+    error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Request payload contained invalid input.
+        source:
+          type: string
+          example: objects
+        details:
+          type: array
+          items:
+            $ref: '#/MessageActionsInvalidInputErrorDetails'
+MessageActionsInvalidInputErrorDetails:
+  type: object
+  properties:
+    message:
+      type: string
+      example: Missing Field
+    location:
+      type: string
+      example: value
+    locationType:
+      type: string
+      example: body
+MessageActionsCommonErrorObject:
+  type: object
+  properties:
+    status:
+      type: integer
+    error:
+      type: object
+      properties:
+        message:
+          type: string
+        source:
+          type: string
+MessageActionsErrorInvalidSubscribeKey:
+  type: object
+  properties:
+    status:
+      type: integer
+      example: 400
+    error:
+      type: object
+      properties:
+        source:
+          type: string
+          example: actions
+        message:
+          type: string
+          example: Invalid Subkey
+MessageActionsErrorUnauthorizedClient:
+  type: object
+  properties:
+    status:
+      type: integer
+      example: 403
+    error:
+      type: object
+      properties:
+        source:
+          type: string
+          example: actions
+        message:
+          type: string
+          example: Supplied authorization key does not have the permissions required to perform this operation.
+MessageActionsPublishFailed:
+  type: object
+  properties:
+    status:
+      type: integer
+      example: 207
+    data:
+        $ref: '#/MessageActionData'
+    error:
+        $ref: '#/MessageActionsCommonErrorObject'
+ChannelAccessForbiddenError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Forbidden"
+        payload:
+          type: object
+          properties:
+            channels:
+              type: array
+              items:
+                type: string
+              example: ['ch1','ch2']
+        error:
+          type: boolean
+          example: true
+        service:
+          type: string
+          example: "Access Manager"
+        status:
+          type: integer
+          example: 403
+HistoryErrorUnauthorizedClient:
+  type: object
+  properties:
+    status:
+      type: integer
+      example: 403
+    error:
+      type: boolean
+      example: true
+    error_message:
+      type: string
+      example: Do not have permission to delete
+SignalErrorResponseObjNotFound:
+      type: object
+      example: []
+RequestEntityTooLargeError:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 413
+        service:
+          type: string
+          example: "Balancer"
+        error:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Request Entity Too Large"
+TooManyRequestsError:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 429
+        error:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Too many requests."
+
+PamErrorResponse:
+  type: object
+  properties:
+    status:
+      type: integer
+    error:
+      type: object
+      properties:
+        message:
+          type: string
+        source:
+          type: string
+        details:
+          type: array
+          items:
+            $ref: '#/PamErrorDetails'
+    service:
+      type: string
+PamErrorDetails:
+      type: object
+      properties:
+        message:
+          type: string
+        location:
+          type: string
+        locationType:
+          type: string
+
+InvalidSubscribeKeyError:
+  description: Invalid Subscribe key
+  type: object
+  properties:
+    message:
+      type: string
+      example: "Invalid Subscribe Key"
+    error:
+      type: boolean
+      example: true
+    service:
+      type: string
+      example: "Access Manager"
+    status:
+      type: integer
+      example: 400

@@ -1,11 +1,13 @@
 openapi: 3.0.1
 info:
   title: PubNub Time API
-  description: PubNub Time Api
-  termsOfService: http://pubnub.com/terms/
+  description: PubNub Time API
   contact:
+    name: PubNub Support
+    url: https://www.pubnub.com/support
     email: support@pubnub.com
-  version: 0.0.1
+  termsOfService: https://www.pubnub.com/terms-and-conditions/
+  version: 1.0.0
 servers:
 - url: https://ps.pndsn.com
 tags:
@@ -17,6 +19,7 @@ paths:
       tags:
       - Time
       summary: fetch time
+      operationId: time
       description: Get current PubNub Time in the form of a Timetoken.
       parameters:
       - $ref: '#/components/parameters/CallbackPathParam'

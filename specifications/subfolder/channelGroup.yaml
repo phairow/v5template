@@ -1,0 +1,158 @@
+openapi: 3.0.1
+info:
+  title: PubNub Channel Groups APIs
+  description: PubNub Channel group APIs for managing channel groups.
+  contact:
+    name: PubNub Support
+    url: https://www.pubnub.com/support
+    email: support@pubnub.com
+  termsOfService: https://www.pubnub.com/terms-and-conditions/
+  version: 1.0.0
+servers:
+  - url: https://ps.pndsn.com
+tags:
+- name: ChannelGroups
+  description: For channel group related operations
+paths:
+  /v1/channel-registration/sub-key/{sub_key}/channel-group:
+    get:
+      tags:
+      - ChannelGroups
+      summary: Listing all registered channel groups
+      operationId: listChannelGroups
+      description: Get all channel groups for subscribe key
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+             schema:
+                 $ref: '../responses.yaml#/GetAllChannelGroupsV1SuccessResponse'
+  /v1/channel-registration/sub-key/{sub_key}/channel-group/{group}:
+    get:
+      tags:
+      - ChannelGroups
+      summary: All channels of a channel group
+      operationId: listChannelGroupChannels
+      description: This endpoint supports Listing all channels for a channel group //Adding Channels // New Channel Group
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/GroupPathParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/AddQueryParam'
+      - $ref: '#/components/parameters/RemoveQueryParam' 
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+             schema:
+                 $ref: '../responses.yaml#/GetAllChannelsOfChannelGroupSuccessResponse'
+
+  /v1/channel-registration/sub-key/{sub_key}/channel-group/{group_name}/remove:
+    get:
+      tags:
+      - ChannelGroups
+      summary: Deleting a Channel Group
+      description: This endpoint is for deleting a Channel Group
+      operationId: removeChannelGroup
+      parameters:  
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/GroupNamePathParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: Channel Group deleted
+          content:
+            application/json:
+             schema:
+                 $ref: '../responses.yaml#/ChannelGroupOperationsDefaultSuccessResponse'
+components:
+  parameters:
+    SubKeyPathParam:
+      name: sub_key
+      in: path
+      description: the subscriber key
+      required: true
+      schema:
+        type: string
+      example: mySubKey
+    UuidQueryParam:
+      name: uuid
+      in: query
+      description: A unique alphanumeric ID for identifying the client to the PubNub Presence System, as well as for PubNub Analytics.
+      schema:
+        type: string
+      required: true
+      example: db9c5e39-7c95-40f5-8d71-125765b6f561
+    GroupPathParam:
+      name: group
+      in: path
+      description: the group for which we need the list of channels
+      required: true
+      schema:
+        type: string
+      example: group1
+    AuthQueryParam:
+      name: auth
+      in: query
+      description: Provide authkey If the channel is protected by PAM, auth must be passed with a key which is authorized to publish to the channel.
+      required: false
+      schema:
+        type: string
+      example: authKey
+    AddQueryParam:
+      name: add
+      in: query
+      description: Name of a channel to be added to the channel group. You may add mulitple channels using a comma seperator (ch1,ch2,ch3). Required to add channel to a channel group
+      schema:
+        type: string
+      example: ch1
+    RemoveQueryParam:
+      name: remove
+      in: query
+      description: Name of a channel to be removed from the channel group. You may add mulitple channels using a comma seperator (ch1,ch2,ch3). Required to remove channel from a channel group
+      schema:
+        type: string
+      example: ch1 
+    GroupNamePathParam:
+      name: group_name
+      in: path
+      description: the group to be deleted
+      schema:
+        type: string
+      required: true
+      example: group1
+    SignatureQueryParam:
+      name: signature
+      in: query
+      description: |
+        Signature used to verify that the request was signed with the secret key associated with the subscriber key.
+
+        If Access Manager is enabled, either a valid authorization token or a signature are required.
+
+        See Access Manager documentation for details on how to compute the signature.
+      schema:
+        type: string
+        example: v2.YmvbpzHJlUDIMJOfD_CnsA8Uw2BJhwPeFZO1Qu5tfC4
+    TimestampQueryParam:
+      name: timestamp
+      in: query
+      description: |
+        Unix epoch timestamp used as a nonce for signature computation. Must have no more than ± 60 second offset from NTP.
+
+        Required if `signature` parameter is supplied.
+      schema:
+        type: integer
+        example: 1563226304

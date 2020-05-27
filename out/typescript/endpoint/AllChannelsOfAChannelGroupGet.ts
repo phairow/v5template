@@ -11,7 +11,7 @@ export class AllChannelsOfAChannelGroupGet {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, group: string, auth: string, uuid: string, add: string, remove: string) {
+  static validate(subKey: string, group: string, auth: string, uuid: string, add: string, remove: string, signature: string, timestamp: number) {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -37,10 +37,18 @@ export class AllChannelsOfAChannelGroupGet {
       return false;
     }
 
+    if (typeof (signature) !== 'string') {
+      return false;
+    }
+
+    if (!Number.isInteger(timestamp)) {
+      return false;
+    }
+
     return true;
   }
 
-  static execute(subKey: string, group: string, auth: string, uuid: string, add: string, remove: string) {
+  static execute(subKey: string, group: string, auth: string, uuid: string, add: string, remove: string, signature: string, timestamp: number) {
     // ...
   }
 

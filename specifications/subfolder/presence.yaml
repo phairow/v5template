@@ -1,0 +1,333 @@
+openapi: 3.0.1
+info:
+  title: PubNub Presence APIs
+  description: PubNub APIs for Presence operations. 
+  contact:
+    name: PubNub Support
+    url: https://www.pubnub.com/support
+    email: support@pubnub.com
+  termsOfService: https://www.pubnub.com/terms-and-conditions/
+  version: 1.0.0
+servers:
+  - url: https://ps.pndsn.com
+tags:
+- name: Presence
+  description: Presence is what enables us to say who (UUID) is on a where (channel), when, and how (state).
+paths:
+  /v2/presence/sub_key/{sub_key}/channel/{channel}/heartbeat: 
+    get:
+      tags:
+      - Presence
+      summary: Announce Heartbeat
+      operationId: announceHeartbeat
+      description: >
+        Inform presence server user is still active. If user has not been seen before, user will join the channel and send a "join event".
+
+        * Heartbeat has no functional effect on the performance or integrity of the client itself. Its only provided for Presence functionality.
+        * Heartbeat is the mechanism used to 'ping' back from the client to the server that the client is still online.
+          The heartbeat is only germane to the Presence service.
+
+        It affects presence in the following ways:
+        * Subscribe calls and Heartbeat calls count as heartbeat signals to Presence, but only on the server RESPONSE does the heartbeat signal register.
+        * Since a subscribe call can long poll, the server RESPONSE to the subscribe REQUEST may not be immediate (could be many minutes), 
+          so it's not always beneficial to rely on only the subscribe call as the heartbeat.
+        * Since the server will RESPOND immediately to the client HP REST API call REQUEST, using the heartbeat call, 
+          in concert with subscribe calls, is the perfect method to registering heartbeats with the Presence system.
+
+      parameters: 
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/CallbackQueryParam'
+      - $ref: '#/components/parameters/HeartbeatQueryParam'
+      - $ref: '#/components/parameters/StateQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+             schema:
+                $ref: '../responses.yaml#/GetPresenceSuccessResponse'
+                
+  /v2/presence/sub-key/{sub_key}/channel/{channel}/uuid/{uuid}/data:
+    get:
+      tags: 
+      - Presence
+      summary: Setting User State
+      operationId: setState
+      description: Set the Presence state info for a given UUID
+      parameters: 
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/UuidPathParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/StateQueryParam'
+      - $ref: '#/components/parameters/CallbackQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+             schema:
+                $ref: '../responses.yaml#/SetUserStateSuccessResponse'
+       
+  /v2/presence/sub-key/{sub_key}/channel/{channel}/uuid:
+    get:
+      tags: 
+      - Presence
+      summary: Getting User State
+      operationId: getState
+      description: It gives the Presence state info for a given UUID.
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/CallbackQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+             schema:
+                $ref: '../responses.yaml#/GetUserStateSuccessResponse'
+
+  
+  /v2/presence/sub_key/{sub_key}/channel/{channel}/leave:
+    get:
+      tags: 
+      - Presence
+      summary: Announce Leave
+      operationId: announceLeave
+      description: Indicate to the PubNub Presence system that a device has left a channel(s).
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/CallbackQueryParam'
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+             schema:
+                $ref: '../responses.yaml#/LeaveAnnounceSuccessResponse'
+    post:
+      tags:
+      - Presence
+      summary: Announce Leave
+      operationId: announceLeavePost
+      description: Indicate to the PubNub Presence system that a device has left a channel(s).
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/CallbackQueryParam'    
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+             schema:
+                $ref: '../responses.yaml#/LeaveAnnounceSuccessResponse'
+  
+  /v2/presence/sub-key/{sub_key}/channel/{channel}:
+    get:
+      tags:
+      - Presence
+      summary: HereNow information
+      operationId: hereNow
+      description: Retrieve UUID and State Information for subscribed devices on a specific channel.
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelPathParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/DisableUuidsQueryParam'
+      - $ref: '#/components/parameters/StateQueryParam'  
+      - $ref: '#/components/parameters/CallbackQueryParam'   
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+             schema:
+                $ref: '../responses.yaml#/HereNowSuccessResponse'
+
+  /v2/presence/sub-key/{sub_key}:
+    get:
+      tags:
+      - Presence
+      summary: Global Here Now
+      operationId: globalHereNow
+      description: > 
+        Retrieve UUID and State Information for subscribed devices on a all channels.
+        This is exactly like Here Now, except without a channel path / channel group query string parameter.
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/ChannelGroupQueryParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/DisableUuidsQueryParam'
+      - $ref: '#/components/parameters/StateQueryParam'  
+      - $ref: '#/components/parameters/CallbackQueryParam' 
+      - $ref: '#/components/parameters/UuidQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+             schema:
+                $ref: '../responses.yaml#/GetPresenceSuccessResponse'
+
+  /v2/presence/sub-key/{sub_key}/uuid/{uuid}:
+    get:
+      tags:
+      - Presence
+      summary: Where Now
+      operationId: whereNow
+      description: Get list of channels user is present in.
+      parameters:
+      - $ref: '#/components/parameters/SubKeyPathParam'
+      - $ref: '#/components/parameters/UuidPathParam'
+      - $ref: '#/components/parameters/AuthQueryParam'
+      - $ref: '#/components/parameters/CallbackQueryParam'
+      - $ref: '#/components/parameters/SignatureQueryParam'
+      - $ref: '#/components/parameters/TimestampQueryParam'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+             schema:
+                $ref: '../responses.yaml#/WhereNowSuccessResponse'
+
+components:
+  parameters:
+    SubKeyPathParam:
+      name: sub_key
+      in: path
+      description: the subscriber key
+      required: true
+      schema:
+        type: string
+      example: mySubKey
+    ChannelPathParam:
+      name: channel
+      in: path
+      description: > 
+        The channel name for which the new state will be applied. 
+        Verify that channels are comprised of valid characters. May be a single channel, or multiple channels, separated by comma.
+      required: true
+      schema:
+        type: string
+      example: ch1,ch2  
+    ChannelGroupQueryParam:
+      name: channel-group
+      in: query
+      description: > 
+        Channel group name(s) to subscribe to. If subscribing to more than one channel group, use a comma separator between channel group names.
+        You may subscribe to channels, channels & channel groups, or just channel groups.
+      required: false
+      schema:
+        type: string
+      example: cg1,cg2,cg3
+    AuthQueryParam:
+      name: auth
+      in: query
+      description: If the channel is protected by PAM, auth must be passed with a key which is authorized to publish to the channel.
+      schema:
+        type: string
+      required: false
+      example: authKey      
+    CallbackQueryParam:
+      name: callback
+      in: query
+      description: If provided, wraps the response in function (JSONP)
+      required: false
+      schema:
+        type: string
+      example: myFunction      
+    HeartbeatQueryParam:
+      name: heartbeat
+      in: query
+      description: Used to set the presence timeout period. It overrides the default value of 300 for Presence Timeout.
+      required: false
+      schema:
+        type: integer
+      example: 120
+    StateQueryParam:
+      name: state
+      in: query
+      description: When state is set, this value is an object with root keys associated with each channel you are setting state for. You must be subscribed to a channel to set state for it.
+      required: true
+      schema:
+        type: string
+      example: '%7B%22text%22%3A%22hey%22%7D'
+    UuidQueryParam:
+      name: uuid
+      in: query
+      description: A unique alphanumeric ID for identifying the client to the PubNub Presence System, as well as for PubNub Analytics.
+      schema:
+        type: string
+      required: true
+      example: db9c5e39-7c95-40f5-8d71-125765b6f561      
+    UuidPathParam:
+      name: uuid
+      in: path
+      description: A unique alphanumeric ID for identifying the client to the PubNub Presence System, as well as for PubNub Analytics.
+      required: true
+      schema:
+        type: string
+      example: 'db9c5e39-7c95-40f5-8d71-125765b6f561'
+    DisableUuidsQueryParam:
+      name: disable_uuids
+      in: query
+      description: If true or 1, or not provided, UUIDS, and accompanying state info, will not be returned, only occupancy numbers. If 0, or false, UUIDS, will be returned with occupancy numbers.
+      required: false
+      schema:
+        type: string
+      example: 0
+    SignatureQueryParam:
+      name: signature
+      in: query
+      description: |
+        Signature used to verify that the request was signed with the secret key associated with the subscriber key.
+
+        If Access Manager is enabled, either a valid authorization token or a signature are required.
+
+        See Access Manager documentation for details on how to compute the signature.
+      schema:
+        type: string
+        example: v2.YmvbpzHJlUDIMJOfD_CnsA8Uw2BJhwPeFZO1Qu5tfC4
+    TimestampQueryParam:
+      name: timestamp
+      in: query
+      description: |
+        Unix epoch timestamp used as a nonce for signature computation. Must have no more than ± 60 second offset from NTP.
+
+        Required if `signature` parameter is supplied.
+      schema:
+        type: integer
+        example: 1563226304

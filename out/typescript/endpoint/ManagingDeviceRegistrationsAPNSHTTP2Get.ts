@@ -11,13 +11,13 @@ export class ManagingDeviceRegistrationsAPNSHTTP2Get {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, deviceApns2: string, uuid: string, auth: string, list: string, add: string, remove: string, environment: string, topic: string) {
+  static validate(subKey: string, devicesApns2: string, uuid: string, auth: string, list: string, add: string, remove: string, environment: string, topic: string, signature: string, timestamp: number) {
 
     if (typeof (subKey) !== 'string') {
       return false;
     }
 
-    if (typeof (deviceApns2) !== 'string') {
+    if (typeof (devicesApns2) !== 'string') {
       return false;
     }
 
@@ -49,10 +49,18 @@ export class ManagingDeviceRegistrationsAPNSHTTP2Get {
       return false;
     }
 
+    if (typeof (signature) !== 'string') {
+      return false;
+    }
+
+    if (!Number.isInteger(timestamp)) {
+      return false;
+    }
+
     return true;
   }
 
-  static execute(subKey: string, deviceApns2: string, uuid: string, auth: string, list: string, add: string, remove: string, environment: string, topic: string) {
+  static execute(subKey: string, devicesApns2: string, uuid: string, auth: string, list: string, add: string, remove: string, environment: string, topic: string, signature: string, timestamp: number) {
     // ...
   }
 

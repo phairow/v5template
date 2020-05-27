@@ -5,33 +5,32 @@ import { ListingAllRegisteredChannelGroupsGet } from './endpoint/ListingAllRegis
 import { AllChannelsOfAChannelGroupGet } from './endpoint/AllChannelsOfAChannelGroupGet';
 import { DeletingAChannelGroupGet } from './endpoint/DeletingAChannelGroupGet';
 import { FetchMessageHistoryApiV2Get } from './endpoint/FetchMessageHistoryApiV2Get';
-import { FetchMessageHistoryApiV3Get } from './endpoint/FetchMessageHistoryApiV3Get';
+import { FetchMessageHistoryApiV3BatchHistoryGet } from './endpoint/FetchMessageHistoryApiV3BatchHistoryGet';
+import { DeleteHistoryDelete } from './endpoint/DeleteHistoryDelete';
 import { HistoryWithActionsGet } from './endpoint/HistoryWithActionsGet';
 import { MessageCountsGet } from './endpoint/MessageCountsGet';
-import { DeleteHistoryDelete } from './endpoint/DeleteHistoryDelete';
 import { FetchAListOfActionsOrderedByActionTimetokenGet } from './endpoint/FetchAListOfActionsOrderedByActionTimetokenGet';
 import { AddAMessageActionPost } from './endpoint/AddAMessageActionPost';
 import { RemoveActionsFromAGivenMessageDelete } from './endpoint/RemoveActionsFromAGivenMessageDelete';
-import { GetAllUsersGet } from './endpoint/GetAllUsersGet';
-import { CreateAUserPost } from './endpoint/CreateAUserPost';
-import { FetchAUserGet } from './endpoint/FetchAUserGet';
-import { UpdateAUserPatch } from './endpoint/UpdateAUserPatch';
-import { DeleteAUserDelete } from './endpoint/DeleteAUserDelete';
-import { GetAllSpacesGet } from './endpoint/GetAllSpacesGet';
-import { CreateASpacePost } from './endpoint/CreateASpacePost';
-import { GetASpaceGet } from './endpoint/GetASpaceGet';
-import { UpdateASpacePatch } from './endpoint/UpdateASpacePatch';
-import { DeleteASpaceDelete } from './endpoint/DeleteASpaceDelete';
-import { GetAUserSListOfSpaceMembershipsGet } from './endpoint/GetAUserSListOfSpaceMembershipsGet';
-import { UpdateAUserSSpaceMembershipsPatch } from './endpoint/UpdateAUserSSpaceMembershipsPatch';
-import { GetTheListOfMembersInASpaceGet } from './endpoint/GetTheListOfMembersInASpaceGet';
-import { UpdateTheMembersInASpacePatch } from './endpoint/UpdateTheMembersInASpacePatch';
-import { ApplyingPMAV2Get } from './endpoint/ApplyingPMAV2Get';
+import { GetMetadataForAllUuidsGet } from './endpoint/GetMetadataForAllUuidsGet';
+import { GetUuidMetadataGet } from './endpoint/GetUuidMetadataGet';
+import { SetUuidMetadataPatch } from './endpoint/SetUuidMetadataPatch';
+import { DeleteUuidMetadataDelete } from './endpoint/DeleteUuidMetadataDelete';
+import { GetMetadataForAllChannelsGet } from './endpoint/GetMetadataForAllChannelsGet';
+import { GetChannelMetadataGet } from './endpoint/GetChannelMetadataGet';
+import { SetChannelMetadataPatch } from './endpoint/SetChannelMetadataPatch';
+import { DeleteChannelMetadataDelete } from './endpoint/DeleteChannelMetadataDelete';
+import { GetTheListOfUuidSChannelMembershipMetadataGet } from './endpoint/GetTheListOfUuidSChannelMembershipMetadataGet';
+import { SetTheUuidSChannelMembershipMetadataPatch } from './endpoint/SetTheUuidSChannelMembershipMetadataPatch';
+import { GetTheListOfMembersMetadataInTheChannelGet } from './endpoint/GetTheListOfMembersMetadataInTheChannelGet';
+import { SetTheMembersMetadataInTheChannelPatch } from './endpoint/SetTheMembersMetadataInTheChannelPatch';
+import { ApplyingPAMV2Get } from './endpoint/ApplyingPAMV2Get';
 import { ApplyingPAMV3Post } from './endpoint/ApplyingPAMV3Post';
-import { GetPresenceInformationGet } from './endpoint/GetPresenceInformationGet';
+import { AnnounceHeartbeatGet } from './endpoint/AnnounceHeartbeatGet';
 import { SettingUserStateGet } from './endpoint/SettingUserStateGet';
 import { GettingUserStateGet } from './endpoint/GettingUserStateGet';
 import { AnnounceLeaveGet } from './endpoint/AnnounceLeaveGet';
+import { AnnounceLeavePost } from './endpoint/AnnounceLeavePost';
 import { HereNowInformationGet } from './endpoint/HereNowInformationGet';
 import { GlobalHereNowGet } from './endpoint/GlobalHereNowGet';
 import { WhereNowGet } from './endpoint/WhereNowGet';
@@ -43,8 +42,8 @@ import { ManagingDeviceRegistrationsAPNSHTTP2Get } from './endpoint/ManagingDevi
 import { RemoveADeviceFromAChannelGet } from './endpoint/RemoveADeviceFromAChannelGet';
 import { ListingAddingRemovingRegistrationsForDeviceGet } from './endpoint/ListingAddingRemovingRegistrationsForDeviceGet';
 import { RemovingADeviceGet } from './endpoint/RemovingADeviceGet';
-import { SubscribeToChannelV1ApiGet } from './endpoint/SubscribeToChannelV1ApiGet';
-import { SubscribeToChannelSOrChannelGroupGet } from './endpoint/SubscribeToChannelSOrChannelGroupGet';
+import { SubscribeToChannelV1APIGet } from './endpoint/SubscribeToChannelV1APIGet';
+import { SubscribeToChannelSOrChannelGroupSGet } from './endpoint/SubscribeToChannelSOrChannelGroupSGet';
 import { FetchTimeGet } from './endpoint/FetchTimeGet';
 import { MetadataQueryParamSchema } from './schema/MetadataQueryParamSchema';
 
@@ -57,134 +56,124 @@ export class Api {
     public log: Logger,
   ) {}
 
-    listingAllRegisteredChannelGroupsGet(subKey: string, uuid: string) {
-        if (ListingAllRegisteredChannelGroupsGet.validate(subKey, uuid)) {
-            return ListingAllRegisteredChannelGroupsGet.execute(subKey, uuid);
+    listingAllRegisteredChannelGroupsGet(subKey: string, uuid: string, signature: string, timestamp: number) {
+        if (ListingAllRegisteredChannelGroupsGet.validate(subKey, uuid, signature, timestamp)) {
+            return ListingAllRegisteredChannelGroupsGet.execute(subKey, uuid, signature, timestamp);
         }
     }       
-    allChannelsOfAChannelGroupGet(subKey: string, group: string, auth: string, uuid: string, add: string, remove: string) {
-        if (AllChannelsOfAChannelGroupGet.validate(subKey, group, auth, uuid, add, remove)) {
-            return AllChannelsOfAChannelGroupGet.execute(subKey, group, auth, uuid, add, remove);
+    allChannelsOfAChannelGroupGet(subKey: string, group: string, auth: string, uuid: string, add: string, remove: string, signature: string, timestamp: number) {
+        if (AllChannelsOfAChannelGroupGet.validate(subKey, group, auth, uuid, add, remove, signature, timestamp)) {
+            return AllChannelsOfAChannelGroupGet.execute(subKey, group, auth, uuid, add, remove, signature, timestamp);
         }
     }       
-    deletingAChannelGroupGet(subKey: string, groupName: string, auth: string, uuid: string) {
-        if (DeletingAChannelGroupGet.validate(subKey, groupName, auth, uuid)) {
-            return DeletingAChannelGroupGet.execute(subKey, groupName, auth, uuid);
+    deletingAChannelGroupGet(subKey: string, groupName: string, auth: string, uuid: string, signature: string, timestamp: number) {
+        if (DeletingAChannelGroupGet.validate(subKey, groupName, auth, uuid, signature, timestamp)) {
+            return DeletingAChannelGroupGet.execute(subKey, groupName, auth, uuid, signature, timestamp);
         }
     }       
-    fetchMessageHistoryApiV2Get(subKey: string, channel: string, stringtoken: boolean, count: number, reverse: boolean, start: unknown, end: unknown, includeToken: boolean, auth: string, uuid: string, includeMeta: boolean) {
-        if (FetchMessageHistoryApiV2Get.validate(subKey, channel, stringtoken, count, reverse, start, end, includeToken, auth, uuid, includeMeta)) {
-            return FetchMessageHistoryApiV2Get.execute(subKey, channel, stringtoken, count, reverse, start, end, includeToken, auth, uuid, includeMeta);
+    fetchMessageHistoryApiV2Get(subKey: string, channel: string, stringtoken: boolean, count: number, reverse: boolean, start: unknown, end: unknown, includeToken: boolean, auth: string, uuid: string, includeMeta: boolean, signature: string, timestamp: number) {
+        if (FetchMessageHistoryApiV2Get.validate(subKey, channel, stringtoken, count, reverse, start, end, includeToken, auth, uuid, includeMeta, signature, timestamp)) {
+            return FetchMessageHistoryApiV2Get.execute(subKey, channel, stringtoken, count, reverse, start, end, includeToken, auth, uuid, includeMeta, signature, timestamp);
         }
     }       
-    fetchMessageHistoryApiV3Get(subKey: string, channels: string, max: number, reverse: boolean, start: unknown, end: unknown, auth: string, includeMeta: boolean) {
-        if (FetchMessageHistoryApiV3Get.validate(subKey, channels, max, reverse, start, end, auth, includeMeta)) {
-            return FetchMessageHistoryApiV3Get.execute(subKey, channels, max, reverse, start, end, auth, includeMeta);
+    fetchMessageHistoryApiV3BatchHistoryGet(subKey: string, channels: string, max: number, reverse: boolean, start: unknown, end: unknown, auth: string, includeMeta: boolean) {
+        if (FetchMessageHistoryApiV3BatchHistoryGet.validate(subKey, channels, max, reverse, start, end, auth, includeMeta)) {
+            return FetchMessageHistoryApiV3BatchHistoryGet.execute(subKey, channels, max, reverse, start, end, auth, includeMeta);
         }
     }       
-    historyWithActionsGet(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean) {
-        if (HistoryWithActionsGet.validate(subKey, channel, auth, start, end, max, includeMeta)) {
-            return HistoryWithActionsGet.execute(subKey, channel, auth, start, end, max, includeMeta);
+    deleteHistoryDelete(subKey: string, channels: string, start: unknown, end: unknown, signature: string, timestamp: number) {
+        if (DeleteHistoryDelete.validate(subKey, channels, start, end, signature, timestamp)) {
+            return DeleteHistoryDelete.execute(subKey, channels, start, end, signature, timestamp);
         }
     }       
-    messageCountsGet(subKey: string, channels: string, auth: string, timetoken: unknown, channelsTimetoken: string) {
-        if (MessageCountsGet.validate(subKey, channels, auth, timetoken, channelsTimetoken)) {
-            return MessageCountsGet.execute(subKey, channels, auth, timetoken, channelsTimetoken);
+    historyWithActionsGet(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean, signature: string, timestamp: number) {
+        if (HistoryWithActionsGet.validate(subKey, channel, auth, start, end, max, includeMeta, signature, timestamp)) {
+            return HistoryWithActionsGet.execute(subKey, channel, auth, start, end, max, includeMeta, signature, timestamp);
         }
     }       
-    deleteHistoryDelete(subKey: string, channels: string, start: unknown, end: unknown) {
-        if (DeleteHistoryDelete.validate(subKey, channels, start, end)) {
-            return DeleteHistoryDelete.execute(subKey, channels, start, end);
+    messageCountsGet(subKey: string, channels: string, auth: string, timetoken: unknown, channelsTimetoken: string, signature: string, timestamp: number) {
+        if (MessageCountsGet.validate(subKey, channels, auth, timetoken, channelsTimetoken, signature, timestamp)) {
+            return MessageCountsGet.execute(subKey, channels, auth, timetoken, channelsTimetoken, signature, timestamp);
         }
     }       
-    fetchAListOfActionsOrderedByActionTimetokenGet(subKey: string, channel: string, start: string, end: string, limit: number, auth: string) {
-        if (FetchAListOfActionsOrderedByActionTimetokenGet.validate(subKey, channel, start, end, limit, auth)) {
-            return FetchAListOfActionsOrderedByActionTimetokenGet.execute(subKey, channel, start, end, limit, auth);
+    fetchAListOfActionsOrderedByActionTimetokenGet(subKey: string, channel: string, start: string, end: string, limit: number, auth: string, signature: string, timestamp: number) {
+        if (FetchAListOfActionsOrderedByActionTimetokenGet.validate(subKey, channel, start, end, limit, auth, signature, timestamp)) {
+            return FetchAListOfActionsOrderedByActionTimetokenGet.execute(subKey, channel, start, end, limit, auth, signature, timestamp);
         }
     }       
-    addAMessageActionPost(subKey: string, channel: string, messageTimetoken: string, auth: string, uuid: string) {
-        if (AddAMessageActionPost.validate(subKey, channel, messageTimetoken, auth, uuid)) {
-            return AddAMessageActionPost.execute(subKey, channel, messageTimetoken, auth, uuid);
+    addAMessageActionPost(subKey: string, channel: string, messageTimetoken: string, auth: string, uuid: string, signature: string, timestamp: number) {
+        if (AddAMessageActionPost.validate(subKey, channel, messageTimetoken, auth, uuid, signature, timestamp)) {
+            return AddAMessageActionPost.execute(subKey, channel, messageTimetoken, auth, uuid, signature, timestamp);
         }
     }       
-    removeActionsFromAGivenMessageDelete(subKey: string, channel: string, messageTimetoken: string, actionTimetoken: string, auth: string, uuid: string) {
-        if (RemoveActionsFromAGivenMessageDelete.validate(subKey, channel, messageTimetoken, actionTimetoken, auth, uuid)) {
-            return RemoveActionsFromAGivenMessageDelete.execute(subKey, channel, messageTimetoken, actionTimetoken, auth, uuid);
+    removeActionsFromAGivenMessageDelete(subKey: string, channel: string, messageTimetoken: string, actionTimetoken: string, auth: string, uuid: string, signature: string, timestamp: number) {
+        if (RemoveActionsFromAGivenMessageDelete.validate(subKey, channel, messageTimetoken, actionTimetoken, auth, uuid, signature, timestamp)) {
+            return RemoveActionsFromAGivenMessageDelete.execute(subKey, channel, messageTimetoken, actionTimetoken, auth, uuid, signature, timestamp);
         }
     }       
-    getAllUsersGet(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
-        if (GetAllUsersGet.validate(include, limit, start, end, count, filter, sort)) {
-            return GetAllUsersGet.execute(include, limit, start, end, count, filter, sort);
+    getMetadataForAllUuidsGet(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
+        if (GetMetadataForAllUuidsGet.validate(include, limit, start, end, count, filter, sort)) {
+            return GetMetadataForAllUuidsGet.execute(include, limit, start, end, count, filter, sort);
         }
     }       
-    createAUserPost(include: string[]) {
-        if (CreateAUserPost.validate(include)) {
-            return CreateAUserPost.execute(include);
+    getUuidMetadataGet(include: string[]) {
+        if (GetUuidMetadataGet.validate(include)) {
+            return GetUuidMetadataGet.execute(include);
         }
     }       
-    fetchAUserGet(include: string[]) {
-        if (FetchAUserGet.validate(include)) {
-            return FetchAUserGet.execute(include);
+    setUuidMetadataPatch(include: string[]) {
+        if (SetUuidMetadataPatch.validate(include)) {
+            return SetUuidMetadataPatch.execute(include);
         }
     }       
-    updateAUserPatch(include: string[]) {
-        if (UpdateAUserPatch.validate(include)) {
-            return UpdateAUserPatch.execute(include);
+    deleteUuidMetadataDelete() {
+        if (DeleteUuidMetadataDelete.validate()) {
+            return DeleteUuidMetadataDelete.execute();
         }
     }       
-    deleteAUserDelete() {
-        if (DeleteAUserDelete.validate()) {
-            return DeleteAUserDelete.execute();
+    getMetadataForAllChannelsGet(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
+        if (GetMetadataForAllChannelsGet.validate(include, limit, start, end, count, filter, sort)) {
+            return GetMetadataForAllChannelsGet.execute(include, limit, start, end, count, filter, sort);
         }
     }       
-    getAllSpacesGet(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
-        if (GetAllSpacesGet.validate(include, limit, start, end, count, filter, sort)) {
-            return GetAllSpacesGet.execute(include, limit, start, end, count, filter, sort);
+    getChannelMetadataGet(include: string[]) {
+        if (GetChannelMetadataGet.validate(include)) {
+            return GetChannelMetadataGet.execute(include);
         }
     }       
-    createASpacePost(include: string[]) {
-        if (CreateASpacePost.validate(include)) {
-            return CreateASpacePost.execute(include);
+    setChannelMetadataPatch(include: string[]) {
+        if (SetChannelMetadataPatch.validate(include)) {
+            return SetChannelMetadataPatch.execute(include);
         }
     }       
-    getASpaceGet(include: string[]) {
-        if (GetASpaceGet.validate(include)) {
-            return GetASpaceGet.execute(include);
+    deleteChannelMetadataDelete() {
+        if (DeleteChannelMetadataDelete.validate()) {
+            return DeleteChannelMetadataDelete.execute();
         }
     }       
-    updateASpacePatch(include: string[]) {
-        if (UpdateASpacePatch.validate(include)) {
-            return UpdateASpacePatch.execute(include);
+    getTheListOfUuidSChannelMembershipMetadataGet(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
+        if (GetTheListOfUuidSChannelMembershipMetadataGet.validate(include, limit, start, end, count, filter, sort)) {
+            return GetTheListOfUuidSChannelMembershipMetadataGet.execute(include, limit, start, end, count, filter, sort);
         }
     }       
-    deleteASpaceDelete() {
-        if (DeleteASpaceDelete.validate()) {
-            return DeleteASpaceDelete.execute();
+    setTheUuidSChannelMembershipMetadataPatch(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
+        if (SetTheUuidSChannelMembershipMetadataPatch.validate(include, limit, start, end, count, filter, sort)) {
+            return SetTheUuidSChannelMembershipMetadataPatch.execute(include, limit, start, end, count, filter, sort);
         }
     }       
-    getAUserSListOfSpaceMembershipsGet(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
-        if (GetAUserSListOfSpaceMembershipsGet.validate(include, limit, start, end, count, filter, sort)) {
-            return GetAUserSListOfSpaceMembershipsGet.execute(include, limit, start, end, count, filter, sort);
+    getTheListOfMembersMetadataInTheChannelGet(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
+        if (GetTheListOfMembersMetadataInTheChannelGet.validate(include, limit, start, end, count, filter, sort)) {
+            return GetTheListOfMembersMetadataInTheChannelGet.execute(include, limit, start, end, count, filter, sort);
         }
     }       
-    updateAUserSSpaceMembershipsPatch(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
-        if (UpdateAUserSSpaceMembershipsPatch.validate(include, limit, start, end, count, filter, sort)) {
-            return UpdateAUserSSpaceMembershipsPatch.execute(include, limit, start, end, count, filter, sort);
+    setTheMembersMetadataInTheChannelPatch(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
+        if (SetTheMembersMetadataInTheChannelPatch.validate(include, limit, start, end, count, filter, sort)) {
+            return SetTheMembersMetadataInTheChannelPatch.execute(include, limit, start, end, count, filter, sort);
         }
     }       
-    getTheListOfMembersInASpaceGet(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
-        if (GetTheListOfMembersInASpaceGet.validate(include, limit, start, end, count, filter, sort)) {
-            return GetTheListOfMembersInASpaceGet.execute(include, limit, start, end, count, filter, sort);
-        }
-    }       
-    updateTheMembersInASpacePatch(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
-        if (UpdateTheMembersInASpacePatch.validate(include, limit, start, end, count, filter, sort)) {
-            return UpdateTheMembersInASpacePatch.execute(include, limit, start, end, count, filter, sort);
-        }
-    }       
-    applyingPMAV2Get(subKey: string, signature: string, auth: string, uuid: string, timestamp: number, ttl: number, channel: string, channelGroup: string, w: number, r: number, m: boolean, d: number) {
-        if (ApplyingPMAV2Get.validate(subKey, signature, auth, uuid, timestamp, ttl, channel, channelGroup, w, r, m, d)) {
-            return ApplyingPMAV2Get.execute(subKey, signature, auth, uuid, timestamp, ttl, channel, channelGroup, w, r, m, d);
+    applyingPAMV2Get(subKey: string, signature: string, auth: string, uuid: string, timestamp: number, ttl: number, channel: string, channelGroup: string, w: number, r: number, m: boolean, d: number) {
+        if (ApplyingPAMV2Get.validate(subKey, signature, auth, uuid, timestamp, ttl, channel, channelGroup, w, r, m, d)) {
+            return ApplyingPAMV2Get.execute(subKey, signature, auth, uuid, timestamp, ttl, channel, channelGroup, w, r, m, d);
         }
     }       
     applyingPAMV3Post(subKey: string, timestamp: number, signature: string) {
@@ -192,89 +181,94 @@ export class Api {
             return ApplyingPAMV3Post.execute(subKey, timestamp, signature);
         }
     }       
-    getPresenceInformationGet(subKey: string, channel: string, channelGroup: string, auth: string, callback: string, heartbeat: number, state: string, uuid: string) {
-        if (GetPresenceInformationGet.validate(subKey, channel, channelGroup, auth, callback, heartbeat, state, uuid)) {
-            return GetPresenceInformationGet.execute(subKey, channel, channelGroup, auth, callback, heartbeat, state, uuid);
+    announceHeartbeatGet(subKey: string, channel: string, channelGroup: string, auth: string, callback: string, heartbeat: number, state: string, uuid: string, signature: string, timestamp: number) {
+        if (AnnounceHeartbeatGet.validate(subKey, channel, channelGroup, auth, callback, heartbeat, state, uuid, signature, timestamp)) {
+            return AnnounceHeartbeatGet.execute(subKey, channel, channelGroup, auth, callback, heartbeat, state, uuid, signature, timestamp);
         }
     }       
-    settingUserStateGet(subKey: string, channel: string, channelGroup: string, uuid: string, auth: string, state: string, callback: string) {
-        if (SettingUserStateGet.validate(subKey, channel, channelGroup, uuid, auth, state, callback)) {
-            return SettingUserStateGet.execute(subKey, channel, channelGroup, uuid, auth, state, callback);
+    settingUserStateGet(subKey: string, channel: string, channelGroup: string, uuid: string, auth: string, state: string, callback: string, signature: string, timestamp: number) {
+        if (SettingUserStateGet.validate(subKey, channel, channelGroup, uuid, auth, state, callback, signature, timestamp)) {
+            return SettingUserStateGet.execute(subKey, channel, channelGroup, uuid, auth, state, callback, signature, timestamp);
         }
     }       
-    gettingUserStateGet(subKey: string, channel: string, channelGroup: string, auth: string, callback: string) {
-        if (GettingUserStateGet.validate(subKey, channel, channelGroup, auth, callback)) {
-            return GettingUserStateGet.execute(subKey, channel, channelGroup, auth, callback);
+    gettingUserStateGet(subKey: string, channel: string, channelGroup: string, auth: string, callback: string, signature: string, timestamp: number) {
+        if (GettingUserStateGet.validate(subKey, channel, channelGroup, auth, callback, signature, timestamp)) {
+            return GettingUserStateGet.execute(subKey, channel, channelGroup, auth, callback, signature, timestamp);
         }
     }       
-    announceLeaveGet(subKey: string, channel: string, channelGroup: string, auth: string, callback: string, uuid: string) {
-        if (AnnounceLeaveGet.validate(subKey, channel, channelGroup, auth, callback, uuid)) {
-            return AnnounceLeaveGet.execute(subKey, channel, channelGroup, auth, callback, uuid);
+    announceLeaveGet(subKey: string, channel: string, channelGroup: string, auth: string, callback: string, uuid: string, signature: string, timestamp: number) {
+        if (AnnounceLeaveGet.validate(subKey, channel, channelGroup, auth, callback, uuid, signature, timestamp)) {
+            return AnnounceLeaveGet.execute(subKey, channel, channelGroup, auth, callback, uuid, signature, timestamp);
         }
     }       
-    hereNowInformationGet(subKey: string, channel: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string) {
-        if (HereNowInformationGet.validate(subKey, channel, channelGroup, auth, disableUuids, state, callback, uuid)) {
-            return HereNowInformationGet.execute(subKey, channel, channelGroup, auth, disableUuids, state, callback, uuid);
+    announceLeavePost(subKey: string, channel: string, channelGroup: string, auth: string, callback: string, uuid: string, signature: string, timestamp: number) {
+        if (AnnounceLeavePost.validate(subKey, channel, channelGroup, auth, callback, uuid, signature, timestamp)) {
+            return AnnounceLeavePost.execute(subKey, channel, channelGroup, auth, callback, uuid, signature, timestamp);
         }
     }       
-    globalHereNowGet(subKey: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string) {
-        if (GlobalHereNowGet.validate(subKey, channelGroup, auth, disableUuids, state, callback, uuid)) {
-            return GlobalHereNowGet.execute(subKey, channelGroup, auth, disableUuids, state, callback, uuid);
+    hereNowInformationGet(subKey: string, channel: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string, signature: string, timestamp: number) {
+        if (HereNowInformationGet.validate(subKey, channel, channelGroup, auth, disableUuids, state, callback, uuid, signature, timestamp)) {
+            return HereNowInformationGet.execute(subKey, channel, channelGroup, auth, disableUuids, state, callback, uuid, signature, timestamp);
         }
     }       
-    whereNowGet(subKey: string, uuid: string, auth: string, callback: string) {
-        if (WhereNowGet.validate(subKey, uuid, auth, callback)) {
-            return WhereNowGet.execute(subKey, uuid, auth, callback);
+    globalHereNowGet(subKey: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string, signature: string, timestamp: number) {
+        if (GlobalHereNowGet.validate(subKey, channelGroup, auth, disableUuids, state, callback, uuid, signature, timestamp)) {
+            return GlobalHereNowGet.execute(subKey, channelGroup, auth, disableUuids, state, callback, uuid, signature, timestamp);
         }
     }       
-    publishAMessageToAChannelGet(pubKey: string, subKey: string, channel: string, callback: string, payload: string, store: number, auth: string, meta: MetadataQueryParamSchema, uuid: string, ttl: number) {
-        if (PublishAMessageToAChannelGet.validate(pubKey, subKey, channel, callback, payload, store, auth, meta, uuid, ttl)) {
-            return PublishAMessageToAChannelGet.execute(pubKey, subKey, channel, callback, payload, store, auth, meta, uuid, ttl);
+    whereNowGet(subKey: string, uuid: string, auth: string, callback: string, signature: string, timestamp: number) {
+        if (WhereNowGet.validate(subKey, uuid, auth, callback, signature, timestamp)) {
+            return WhereNowGet.execute(subKey, uuid, auth, callback, signature, timestamp);
         }
     }       
-    publishAMessageToAChannelPost(pubKey: string, subKey: string, channel: string, callback: string, store: number, auth: string, meta: MetadataQueryParamSchema, uuid: string, ttl: number) {
-        if (PublishAMessageToAChannelPost.validate(pubKey, subKey, channel, callback, store, auth, meta, uuid, ttl)) {
-            return PublishAMessageToAChannelPost.execute(pubKey, subKey, channel, callback, store, auth, meta, uuid, ttl);
+    publishAMessageToAChannelGet(pubKey: string, subKey: string, channel: string, callback: string, payload: string, store: number, auth: string, meta: MetadataQueryParamSchema, uuid: string, ttl: number, signature: string, timestamp: number) {
+        if (PublishAMessageToAChannelGet.validate(pubKey, subKey, channel, callback, payload, store, auth, meta, uuid, ttl, signature, timestamp)) {
+            return PublishAMessageToAChannelGet.execute(pubKey, subKey, channel, callback, payload, store, auth, meta, uuid, ttl, signature, timestamp);
         }
     }       
-    fireEndpointGet(pubKey: string, subKey: string, channel: string, callback: string, store: number, auth: string, meta: MetadataQueryParamSchema, uuid: string, norep: boolean) {
-        if (FireEndpointGet.validate(pubKey, subKey, channel, callback, store, auth, meta, uuid, norep)) {
-            return FireEndpointGet.execute(pubKey, subKey, channel, callback, store, auth, meta, uuid, norep);
+    publishAMessageToAChannelPost(pubKey: string, subKey: string, channel: string, callback: string, store: number, auth: string, meta: MetadataQueryParamSchema, uuid: string, ttl: number, signature: string, timestamp: number) {
+        if (PublishAMessageToAChannelPost.validate(pubKey, subKey, channel, callback, store, auth, meta, uuid, ttl, signature, timestamp)) {
+            return PublishAMessageToAChannelPost.execute(pubKey, subKey, channel, callback, store, auth, meta, uuid, ttl, signature, timestamp);
         }
     }       
-    sendASignalToAChannelGet(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string) {
-        if (SendASignalToAChannelGet.validate(pubKey, subKey, channel, callback, payload, uuid, auth)) {
-            return SendASignalToAChannelGet.execute(pubKey, subKey, channel, callback, payload, uuid, auth);
+    fireEndpointGet(pubKey: string, subKey: string, channel: string, callback: string, store: number, auth: string, meta: MetadataQueryParamSchema, uuid: string, norep: boolean, signature: string, timestamp: number) {
+        if (FireEndpointGet.validate(pubKey, subKey, channel, callback, store, auth, meta, uuid, norep, signature, timestamp)) {
+            return FireEndpointGet.execute(pubKey, subKey, channel, callback, store, auth, meta, uuid, norep, signature, timestamp);
         }
     }       
-    managingDeviceRegistrationsAPNSHTTP2Get(subKey: string, deviceApns2: string, uuid: string, auth: string, list: string, add: string, remove: string, environment: string, topic: string) {
-        if (ManagingDeviceRegistrationsAPNSHTTP2Get.validate(subKey, deviceApns2, uuid, auth, list, add, remove, environment, topic)) {
-            return ManagingDeviceRegistrationsAPNSHTTP2Get.execute(subKey, deviceApns2, uuid, auth, list, add, remove, environment, topic);
+    sendASignalToAChannelGet(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string, signature: string, timestamp: number) {
+        if (SendASignalToAChannelGet.validate(pubKey, subKey, channel, callback, payload, uuid, auth, signature, timestamp)) {
+            return SendASignalToAChannelGet.execute(pubKey, subKey, channel, callback, payload, uuid, auth, signature, timestamp);
         }
     }       
-    removeADeviceFromAChannelGet(subKey: string, deviceApns2: string, uuid: string, auth: string, add: string, remove: string, environment: string, topic: string) {
-        if (RemoveADeviceFromAChannelGet.validate(subKey, deviceApns2, uuid, auth, add, remove, environment, topic)) {
-            return RemoveADeviceFromAChannelGet.execute(subKey, deviceApns2, uuid, auth, add, remove, environment, topic);
+    managingDeviceRegistrationsAPNSHTTP2Get(subKey: string, devicesApns2: string, uuid: string, auth: string, list: string, add: string, remove: string, environment: string, topic: string, signature: string, timestamp: number) {
+        if (ManagingDeviceRegistrationsAPNSHTTP2Get.validate(subKey, devicesApns2, uuid, auth, list, add, remove, environment, topic, signature, timestamp)) {
+            return ManagingDeviceRegistrationsAPNSHTTP2Get.execute(subKey, devicesApns2, uuid, auth, list, add, remove, environment, topic, signature, timestamp);
         }
     }       
-    listingAddingRemovingRegistrationsForDeviceGet(subKey: string, pushToken: string, type: string, uuid: string) {
-        if (ListingAddingRemovingRegistrationsForDeviceGet.validate(subKey, pushToken, type, uuid)) {
-            return ListingAddingRemovingRegistrationsForDeviceGet.execute(subKey, pushToken, type, uuid);
+    removeADeviceFromAChannelGet(subKey: string, devicesApns2: string, uuid: string, auth: string, add: string, remove: string, environment: string, topic: string, signature: string, timestamp: number) {
+        if (RemoveADeviceFromAChannelGet.validate(subKey, devicesApns2, uuid, auth, add, remove, environment, topic, signature, timestamp)) {
+            return RemoveADeviceFromAChannelGet.execute(subKey, devicesApns2, uuid, auth, add, remove, environment, topic, signature, timestamp);
         }
     }       
-    removingADeviceGet(subKey: string, pushToken: string, type: string, uuid: string) {
-        if (RemovingADeviceGet.validate(subKey, pushToken, type, uuid)) {
-            return RemovingADeviceGet.execute(subKey, pushToken, type, uuid);
+    listingAddingRemovingRegistrationsForDeviceGet(subKey: string, pushToken: string, add: string, remove: string, type: string, uuid: string, signature: string, timestamp: number) {
+        if (ListingAddingRemovingRegistrationsForDeviceGet.validate(subKey, pushToken, add, remove, type, uuid, signature, timestamp)) {
+            return ListingAddingRemovingRegistrationsForDeviceGet.execute(subKey, pushToken, add, remove, type, uuid, signature, timestamp);
         }
     }       
-    subscribeToChannelV1ApiGet(subKey: string, channel: string, callback: string, timetoken: string, channleGroup: string, state: string, heartbeat: number, auth: string, uuid: string) {
-        if (SubscribeToChannelV1ApiGet.validate(subKey, channel, callback, timetoken, channleGroup, state, heartbeat, auth, uuid)) {
-            return SubscribeToChannelV1ApiGet.execute(subKey, channel, callback, timetoken, channleGroup, state, heartbeat, auth, uuid);
+    removingADeviceGet(subKey: string, pushToken: string, type: string, uuid: string, signature: string, timestamp: number) {
+        if (RemovingADeviceGet.validate(subKey, pushToken, type, uuid, signature, timestamp)) {
+            return RemovingADeviceGet.execute(subKey, pushToken, type, uuid, signature, timestamp);
         }
     }       
-    subscribeToChannelSOrChannelGroupGet(subKey: string, channel: string, callback: string, tt: string, tr: string, channleGroup: string, heartbeat: number, auth: string, uuid: string, filterExpr: string) {
-        if (SubscribeToChannelSOrChannelGroupGet.validate(subKey, channel, callback, tt, tr, channleGroup, heartbeat, auth, uuid, filterExpr)) {
-            return SubscribeToChannelSOrChannelGroupGet.execute(subKey, channel, callback, tt, tr, channleGroup, heartbeat, auth, uuid, filterExpr);
+    subscribeToChannelV1APIGet(subKey: string, channel: string, callback: string, timetoken: string, channelGroup: string, state: string, heartbeat: number, auth: string, uuid: string, signature: string, timestamp: number) {
+        if (SubscribeToChannelV1APIGet.validate(subKey, channel, callback, timetoken, channelGroup, state, heartbeat, auth, uuid, signature, timestamp)) {
+            return SubscribeToChannelV1APIGet.execute(subKey, channel, callback, timetoken, channelGroup, state, heartbeat, auth, uuid, signature, timestamp);
+        }
+    }       
+    subscribeToChannelSOrChannelGroupSGet(subKey: string, channel: string, callback: string, tt: string, tr: string, channelGroup: string, heartbeat: number, auth: string, uuid: string, filterExpr: string, signature: string, timestamp: number) {
+        if (SubscribeToChannelSOrChannelGroupSGet.validate(subKey, channel, callback, tt, tr, channelGroup, heartbeat, auth, uuid, filterExpr, signature, timestamp)) {
+            return SubscribeToChannelSOrChannelGroupSGet.execute(subKey, channel, callback, tt, tr, channelGroup, heartbeat, auth, uuid, filterExpr, signature, timestamp);
         }
     }       
     fetchTimeGet(callback: string, uuid: string) {
