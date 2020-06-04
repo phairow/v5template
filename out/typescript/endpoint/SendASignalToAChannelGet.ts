@@ -1,6 +1,6 @@
-import { Logger } from "../../log/Logger";
-import { Networking } from "../../net/Networking";
-import { Parser } from "../../parse/Parser";
+import { Logger } from "core/modules/log/Logger";
+import { Networking } from "core/modules/net/Networking";
+import { Parser } from "core/modules/parse/Parser";
 
 export class SendASignalToAChannelGet {
   private httpMethod: string = 'get';
@@ -11,7 +11,7 @@ export class SendASignalToAChannelGet {
     public log: Logger,
   ) {}
 
-  static validate(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string, signature: string, timestamp: number) {
+  static validate(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string, signature: string, timestamp: number): boolean {
 
     if (typeof (pubKey) !== 'string') {
       return false;
@@ -52,8 +52,9 @@ export class SendASignalToAChannelGet {
     return true;
   }
 
-  static execute(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string, signature: string, timestamp: number) {
+  static execute(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string, signature: string, timestamp: number): boolean {
     // ...
+    return true;
   }
 
 }

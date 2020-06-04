@@ -1,6 +1,6 @@
-import { Logger } from "../../log/Logger";
-import { Networking } from "../../net/Networking";
-import { Parser } from "../../parse/Parser";
+import { Logger } from "core/modules/log/Logger";
+import { Networking } from "core/modules/net/Networking";
+import { Parser } from "core/modules/parse/Parser";
 
 export class FetchMessageHistoryApiV2Get {
   private httpMethod: string = 'get';
@@ -11,7 +11,7 @@ export class FetchMessageHistoryApiV2Get {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, channel: string, stringtoken: boolean, count: number, reverse: boolean, start: unknown, end: unknown, includeToken: boolean, auth: string, uuid: string, includeMeta: boolean, signature: string, timestamp: number) {
+  static validate(subKey: string, channel: string, stringtoken: boolean, count: number, reverse: boolean, start: unknown, end: unknown, includeToken: boolean, auth: string, uuid: string, includeMeta: boolean, signature: string, timestamp: number): boolean {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -68,8 +68,9 @@ export class FetchMessageHistoryApiV2Get {
     return true;
   }
 
-  static execute(subKey: string, channel: string, stringtoken: boolean, count: number, reverse: boolean, start: unknown, end: unknown, includeToken: boolean, auth: string, uuid: string, includeMeta: boolean, signature: string, timestamp: number) {
+  static execute(subKey: string, channel: string, stringtoken: boolean, count: number, reverse: boolean, start: unknown, end: unknown, includeToken: boolean, auth: string, uuid: string, includeMeta: boolean, signature: string, timestamp: number): boolean {
     // ...
+    return true;
   }
 
 }

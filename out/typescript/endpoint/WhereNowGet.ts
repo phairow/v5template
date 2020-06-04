@@ -1,6 +1,6 @@
-import { Logger } from "../../log/Logger";
-import { Networking } from "../../net/Networking";
-import { Parser } from "../../parse/Parser";
+import { Logger } from "core/modules/log/Logger";
+import { Networking } from "core/modules/net/Networking";
+import { Parser } from "core/modules/parse/Parser";
 
 export class WhereNowGet {
   private httpMethod: string = 'get';
@@ -11,7 +11,7 @@ export class WhereNowGet {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, uuid: string, auth: string, callback: string, signature: string, timestamp: number) {
+  static validate(subKey: string, uuid: string, auth: string, callback: string, signature: string, timestamp: number): boolean {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -40,8 +40,9 @@ export class WhereNowGet {
     return true;
   }
 
-  static execute(subKey: string, uuid: string, auth: string, callback: string, signature: string, timestamp: number) {
+  static execute(subKey: string, uuid: string, auth: string, callback: string, signature: string, timestamp: number): boolean {
     // ...
+    return true;
   }
 
 }

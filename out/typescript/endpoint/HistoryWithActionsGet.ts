@@ -1,6 +1,6 @@
-import { Logger } from "../../log/Logger";
-import { Networking } from "../../net/Networking";
-import { Parser } from "../../parse/Parser";
+import { Logger } from "core/modules/log/Logger";
+import { Networking } from "core/modules/net/Networking";
+import { Parser } from "core/modules/parse/Parser";
 
 export class HistoryWithActionsGet {
   private httpMethod: string = 'get';
@@ -11,7 +11,7 @@ export class HistoryWithActionsGet {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean, signature: string, timestamp: number) {
+  static validate(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean, signature: string, timestamp: number): boolean {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -52,8 +52,9 @@ export class HistoryWithActionsGet {
     return true;
   }
 
-  static execute(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean, signature: string, timestamp: number) {
+  static execute(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean, signature: string, timestamp: number): boolean {
     // ...
+    return true;
   }
 
 }

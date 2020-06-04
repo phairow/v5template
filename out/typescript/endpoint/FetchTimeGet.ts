@@ -1,6 +1,6 @@
-import { Logger } from "../../log/Logger";
-import { Networking } from "../../net/Networking";
-import { Parser } from "../../parse/Parser";
+import { Logger } from "core/modules/log/Logger";
+import { Networking } from "core/modules/net/Networking";
+import { Parser } from "core/modules/parse/Parser";
 
 export class FetchTimeGet {
   private httpMethod: string = 'get';
@@ -11,7 +11,7 @@ export class FetchTimeGet {
     public log: Logger,
   ) {}
 
-  static validate(callback: string, uuid: string) {
+  static validate(callback: string, uuid: string): boolean {
 
     if (typeof (callback) !== 'string') {
       return false;
@@ -24,8 +24,9 @@ export class FetchTimeGet {
     return true;
   }
 
-  static execute(callback: string, uuid: string) {
+  static execute(callback: string, uuid: string): boolean {
     // ...
+    return true;
   }
 
 }

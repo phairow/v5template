@@ -1,6 +1,6 @@
-import { Logger } from "../../log/Logger";
-import { Networking } from "../../net/Networking";
-import { Parser } from "../../parse/Parser";
+import { Logger } from "core/modules/log/Logger";
+import { Networking } from "core/modules/net/Networking";
+import { Parser } from "core/modules/parse/Parser";
 {{> includes/importEndpointMethodParamTypes}}
 
 export class {{title}} {
@@ -12,7 +12,7 @@ export class {{title}} {
     public log: Logger,
   ) {}
 
-  static validate({{> includes/parameterList }}) {
+  static validate({{> includes/parameterList }}): boolean {
 
 {{#parameters}}
 {{> includes/parameterValidate }}
@@ -21,8 +21,9 @@ export class {{title}} {
     return true;
   }
 
-  static execute({{> includes/parameterList }}) {
+  static execute({{> includes/parameterList }}): boolean {
     // ...
+    return true;
   }
 
 }

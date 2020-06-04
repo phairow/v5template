@@ -1,6 +1,6 @@
-import { Logger } from "../../log/Logger";
-import { Networking } from "../../net/Networking";
-import { Parser } from "../../parse/Parser";
+import { Logger } from "core/modules/log/Logger";
+import { Networking } from "core/modules/net/Networking";
+import { Parser } from "core/modules/parse/Parser";
 
 export class AnnounceLeaveGet {
   private httpMethod: string = 'get';
@@ -11,7 +11,7 @@ export class AnnounceLeaveGet {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, channel: string, channelGroup: string, auth: string, callback: string, uuid: string, signature: string, timestamp: number) {
+  static validate(subKey: string, channel: string, channelGroup: string, auth: string, callback: string, uuid: string, signature: string, timestamp: number): boolean {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -48,8 +48,9 @@ export class AnnounceLeaveGet {
     return true;
   }
 
-  static execute(subKey: string, channel: string, channelGroup: string, auth: string, callback: string, uuid: string, signature: string, timestamp: number) {
+  static execute(subKey: string, channel: string, channelGroup: string, auth: string, callback: string, uuid: string, signature: string, timestamp: number): boolean {
     // ...
+    return true;
   }
 
 }

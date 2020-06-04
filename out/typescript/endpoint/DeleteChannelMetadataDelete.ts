@@ -1,6 +1,6 @@
-import { Logger } from "../../log/Logger";
-import { Networking } from "../../net/Networking";
-import { Parser } from "../../parse/Parser";
+import { Logger } from "core/modules/log/Logger";
+import { Networking } from "core/modules/net/Networking";
+import { Parser } from "core/modules/parse/Parser";
 
 export class DeleteChannelMetadataDelete {
   private httpMethod: string = 'delete';
@@ -11,13 +11,14 @@ export class DeleteChannelMetadataDelete {
     public log: Logger,
   ) {}
 
-  static validate() {
+  static validate(): boolean {
 
     return true;
   }
 
-  static execute() {
+  static execute(): boolean {
     // ...
+    return true;
   }
 
 }

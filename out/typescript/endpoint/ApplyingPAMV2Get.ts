@@ -1,6 +1,6 @@
-import { Logger } from "../../log/Logger";
-import { Networking } from "../../net/Networking";
-import { Parser } from "../../parse/Parser";
+import { Logger } from "core/modules/log/Logger";
+import { Networking } from "core/modules/net/Networking";
+import { Parser } from "core/modules/parse/Parser";
 
 export class ApplyingPAMV2Get {
   private httpMethod: string = 'get';
@@ -11,7 +11,7 @@ export class ApplyingPAMV2Get {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, signature: string, auth: string, uuid: string, timestamp: number, ttl: number, channel: string, channelGroup: string, w: number, r: number, m: boolean, d: number) {
+  static validate(subKey: string, signature: string, auth: string, uuid: string, timestamp: number, ttl: number, channel: string, channelGroup: string, w: number, r: number, m: boolean, d: number): boolean {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -64,8 +64,9 @@ export class ApplyingPAMV2Get {
     return true;
   }
 
-  static execute(subKey: string, signature: string, auth: string, uuid: string, timestamp: number, ttl: number, channel: string, channelGroup: string, w: number, r: number, m: boolean, d: number) {
+  static execute(subKey: string, signature: string, auth: string, uuid: string, timestamp: number, ttl: number, channel: string, channelGroup: string, w: number, r: number, m: boolean, d: number): boolean {
     // ...
+    return true;
   }
 
 }

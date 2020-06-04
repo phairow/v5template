@@ -1,6 +1,5 @@
 import { SdkEndpoint } from "../../../definition/format/SdkEndpoint";
 import { StringUtil } from '../../../util/string';
-import { SdkApiDefinition } from "../../../definition/format/SdkApiDefinition";
 import {
   comma,
   comma_separated_list,

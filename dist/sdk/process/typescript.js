@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const api_1 = require("../convert/typescript/api");
 const endpoint_1 = require("../convert/typescript/endpoint");
+const schema_1 = require("../convert/typescript/schema");
 function process(generator, apis, renderTemplate) {
     // generator.log(generator.selectedLanguage + ' selected typescript');
     // generator.log(generator.outputDir);
@@ -11,17 +12,10 @@ function process(generator, apis, renderTemplate) {
     sdkApi.endpoints.forEach((sdkEndpoint) => {
         renderTemplate.mustache('endpoint', endpoint_1.endpointConvert(sdkEndpoint), sdkEndpoint.title, 'ts', 'endpoint');
     });
-    // try {
-    //   sdkApi.parameters.forEach((parameter: OpenAPIV3.ParameterObject) => {
-    //     renderTemplate.mustache('parameter', parameter, parameter.name, 'ts', 'parameter');
-    //   });
-    // } catch (e) {
-    //   console.log('parameters fail');
-    // }
     try {
         sdkApi.schemas.forEach((schema) => {
             if (schema.title) {
-                renderTemplate.ejs('schema', schema, schema.title || 'unknownschema', 'ts', 'schema');
+                renderTemplate.mustache('schema', schema_1.schemaConvert(schema), schema.title || 'unknownschema', 'ts', 'schema');
             }
         });
     }

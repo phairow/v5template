@@ -1,6 +1,6 @@
-import { Logger } from "../../log/Logger";
-import { Networking } from "../../net/Networking";
-import { Parser } from "../../parse/Parser";
+import { Logger } from "core/modules/log/Logger";
+import { Networking } from "core/modules/net/Networking";
+import { Parser } from "core/modules/parse/Parser";
 
 export class ApplyingPAMV3Post {
   private httpMethod: string = 'post';
@@ -11,7 +11,7 @@ export class ApplyingPAMV3Post {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, timestamp: number, signature: string) {
+  static validate(subKey: string, timestamp: number, signature: string): boolean {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -28,8 +28,9 @@ export class ApplyingPAMV3Post {
     return true;
   }
 
-  static execute(subKey: string, timestamp: number, signature: string) {
+  static execute(subKey: string, timestamp: number, signature: string): boolean {
     // ...
+    return true;
   }
 
 }

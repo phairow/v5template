@@ -17,7 +17,6 @@ const string_1 = require("../../../util/string");
 function openApiParser(generator, apiPath) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            console.log('apipath', apiPath);
             let parser = new SwaggerParser();
             let api = yield parser.bundle(apiPath);
             let sdkEndpoints = [];
@@ -46,6 +45,7 @@ function openApiParser(generator, apiPath) {
             }
             catch (e) {
                 console.log('error getting operations', e);
+                console.log(e);
                 throw e;
             }
             return {
@@ -55,7 +55,7 @@ function openApiParser(generator, apiPath) {
             };
         }
         catch (e) {
-            console.log('error in parse');
+            console.log('error parsing', apiPath);
             console.log(e);
             throw e;
         }

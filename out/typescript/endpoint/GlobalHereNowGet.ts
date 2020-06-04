@@ -1,6 +1,6 @@
-import { Logger } from "../../log/Logger";
-import { Networking } from "../../net/Networking";
-import { Parser } from "../../parse/Parser";
+import { Logger } from "core/modules/log/Logger";
+import { Networking } from "core/modules/net/Networking";
+import { Parser } from "core/modules/parse/Parser";
 
 export class GlobalHereNowGet {
   private httpMethod: string = 'get';
@@ -11,7 +11,7 @@ export class GlobalHereNowGet {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string, signature: string, timestamp: number) {
+  static validate(subKey: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string, signature: string, timestamp: number): boolean {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -52,8 +52,9 @@ export class GlobalHereNowGet {
     return true;
   }
 
-  static execute(subKey: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string, signature: string, timestamp: number) {
+  static execute(subKey: string, channelGroup: string, auth: string, disableUuids: string, state: string, callback: string, uuid: string, signature: string, timestamp: number): boolean {
     // ...
+    return true;
   }
 
 }

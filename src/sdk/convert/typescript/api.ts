@@ -1,7 +1,6 @@
 import { OpenAPIV3 } from 'openapi-types';
 import { SdkApiDefinition } from "../../../definition/format/SdkApiDefinition";
 import { endpointConvert, EndpointTypescript } from '../../convert/typescript/endpoint';
-import { SdkEndpoint } from "../../../definition/format/SdkEndpoint";
 import {
   comma,
   comma_separated_list,

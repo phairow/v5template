@@ -4,6 +4,7 @@ import { RenderTemplate } from '../index';
 import { SdkApiDefinition } from '../../definition/format/SdkApiDefinition';
 import { apiConvert } from '../convert/typescript/api';
 import { endpointConvert } from '../convert/typescript/endpoint';
+import { schemaConvert } from '../convert/typescript/schema';
 import { SdkEndpoint } from '../../definition/format/SdkEndpoint';
 
 export function process(generator: SdkGenerator, apis: SdkApiDefinition[], renderTemplate: RenderTemplate) {
@@ -19,17 +20,10 @@ export function process(generator: SdkGenerator, apis: SdkApiDefinition[], rende
     renderTemplate.mustache('endpoint', endpointConvert(sdkEndpoint), sdkEndpoint.title, 'ts', 'endpoint');
   });
 
-  // try {
-  //   sdkApi.parameters.forEach((parameter: OpenAPIV3.ParameterObject) => {
-  //     renderTemplate.mustache('parameter', parameter, parameter.name, 'ts', 'parameter');
-  //   });
-  // } catch (e) {
-  //   console.log('parameters fail');
-  // }
   try {
     sdkApi.schemas.forEach((schema: OpenAPIV3.SchemaObject) => {
       if (schema.title) {
-        renderTemplate.ejs('schema', schema, schema.title || 'unknownschema', 'ts', 'schema');
+        renderTemplate.mustache('schema', schemaConvert(schema), schema.title || 'unknownschema', 'ts', 'schema');
       }
     });
   } catch (e) {

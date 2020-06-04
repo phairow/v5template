@@ -1,6 +1,6 @@
-import { Logger } from "../../log/Logger";
-import { Networking } from "../../net/Networking";
-import { Parser } from "../../parse/Parser";
+import { Logger } from "core/modules/log/Logger";
+import { Networking } from "core/modules/net/Networking";
+import { Parser } from "core/modules/parse/Parser";
 import { MetadataQueryParamSchema } from '../schema/MetadataQueryParamSchema';
 
 
@@ -13,7 +13,7 @@ export class PublishAMessageToAChannelPost {
     public log: Logger,
   ) {}
 
-  static validate(pubKey: string, subKey: string, channel: string, callback: string, store: number, auth: string, meta: MetadataQueryParamSchema, uuid: string, ttl: number, signature: string, timestamp: number) {
+  static validate(pubKey: string, subKey: string, channel: string, callback: string, store: number, auth: string, meta: MetadataQueryParamSchema, uuid: string, ttl: number, signature: string, timestamp: number): boolean {
 
     if (typeof (pubKey) !== 'string') {
       return false;
@@ -59,8 +59,9 @@ export class PublishAMessageToAChannelPost {
     return true;
   }
 
-  static execute(pubKey: string, subKey: string, channel: string, callback: string, store: number, auth: string, meta: MetadataQueryParamSchema, uuid: string, ttl: number, signature: string, timestamp: number) {
+  static execute(pubKey: string, subKey: string, channel: string, callback: string, store: number, auth: string, meta: MetadataQueryParamSchema, uuid: string, ttl: number, signature: string, timestamp: number): boolean {
     // ...
+    return true;
   }
 
 }

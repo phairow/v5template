@@ -1,6 +1,6 @@
-import { Logger } from "../../log/Logger";
-import { Networking } from "../../net/Networking";
-import { Parser } from "../../parse/Parser";
+import { Logger } from "core/modules/log/Logger";
+import { Networking } from "core/modules/net/Networking";
+import { Parser } from "core/modules/parse/Parser";
 
 export class GetMetadataForAllChannelsGet {
   private httpMethod: string = 'get';
@@ -11,7 +11,7 @@ export class GetMetadataForAllChannelsGet {
     public log: Logger,
   ) {}
 
-  static validate(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
+  static validate(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]): boolean {
 
     if (!Array.isArray(include)) {
       return false;
@@ -44,8 +44,9 @@ export class GetMetadataForAllChannelsGet {
     return true;
   }
 
-  static execute(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]) {
+  static execute(include: string[], limit: number, start: string, end: string, count: boolean, filter: string, sort: string[]): boolean {
     // ...
+    return true;
   }
 
 }

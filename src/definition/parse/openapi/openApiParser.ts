@@ -10,65 +10,66 @@ import { StringUtil } from '../../../util/string';
 
 export async function openApiParser(generator: SdkGenerator, apiPath: string): Promise<SdkApiDefinition> {
   try {
-    console.log('apipath', apiPath)
-  let parser = new SwaggerParser();
-  let api = await parser.bundle(apiPath);
-  let sdkEndpoints: SdkEndpoint[] = [];
-  let schemas: OpenAPIV3.SchemaObject[] = [];
-  let parameters: OpenAPIV3.ParameterObject[] = [];
+    let parser = new SwaggerParser();
+    let api = await parser.bundle(apiPath);
+    let sdkEndpoints: SdkEndpoint[] = [];
+    let schemas: OpenAPIV3.SchemaObject[] = [];
+    let parameters: OpenAPIV3.ParameterObject[] = [];
 
-  try {
-    sdkEndpoints = sdkEndpoints.concat(
-      // iterate the path components
-      Object.keys(api.paths)
-      // extract each path object from open api document
-      .map((pathKey: string) => api.paths[pathKey])
-      // convert and combine the endpoints for each path
-      .reduce(
-        (
-          allEndpoints: SdkEndpoint[],
-          endpointOperations: OpenAPIV3.PathItemObject
-        ) => {
+    try {
+      sdkEndpoints = sdkEndpoints.concat(
+        // iterate the path components
+        Object.keys(api.paths)
+        // extract each path object from open api document
+        .map((pathKey: string) => api.paths[pathKey])
+        // convert and combine the endpoints for each path
+        .reduce(
+          (
+            allEndpoints: SdkEndpoint[],
+            endpointOperations: OpenAPIV3.PathItemObject
+          ) => {
 
-          return allEndpoints.concat(
-            // iterate the endpoint operations for each path
-            Object.keys(endpointOperations)
-            // filter out parameters, not sure why it exists here, parser error?
-            .filter((operationKey: string) => operationKey !== 'parameters')
-            // convert to sdk definition format
-            .map((operationKey: string) => 
-              convertOperationToSdkDefinitionFormat(
-                parser,
-                api,
-                schemas,
-                parameters,
-                operationKey,
-                endpointOperations,
+            return allEndpoints.concat(
+              // iterate the endpoint operations for each path
+              Object.keys(endpointOperations)
+              // filter out parameters, not sure why it exists here, parser error?
+              .filter((operationKey: string) => operationKey !== 'parameters')
+              // convert to sdk definition format
+              .map((operationKey: string) => 
+                convertOperationToSdkDefinitionFormat(
+                  parser,
+                  api,
+                  schemas,
+                  parameters,
+                  operationKey,
+                  endpointOperations,
+                )
               )
-            )
-          );
-        },
-        [] // initial list of all endpoints for the reduce operation
-      )
-      // exclude any endpoints that do not have a title
-      // TODO: this filter step should not be needed in the end
-      .filter((item: SdkEndpoint) => item.title && item.title.length > 0 )
-    );
-  } catch(e) {
-    console.log('error getting operations', e)
+            );
+          },
+          [] // initial list of all endpoints for the reduce operation
+        )
+        // exclude any endpoints that do not have a title
+        // TODO: this filter step should not be needed in the end
+        .filter((item: SdkEndpoint) => item.title && item.title.length > 0 )
+      );
+    } catch(e) {
+      console.log('error getting operations', e);
+      console.log(e);
+      throw e;
+    }
+
+    return {
+      endpoints: sdkEndpoints,
+      parameters,
+      schemas,
+    };
+  } catch (e) {
+    console.log('error parsing', apiPath);
+    console.log(e);
+
     throw e;
   }
-
-  return {
-    endpoints: sdkEndpoints,
-    parameters,
-    schemas,
-  };
-} catch (e) {
-  console.log('error in parse');
-  console.log(e)
-  throw e;
-}
 }
 
 function convertOperationToSdkDefinitionFormat(

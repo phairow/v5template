@@ -1,6 +1,6 @@
-import { Logger } from "../../log/Logger";
-import { Networking } from "../../net/Networking";
-import { Parser } from "../../parse/Parser";
+import { Logger } from "core/modules/log/Logger";
+import { Networking } from "core/modules/net/Networking";
+import { Parser } from "core/modules/parse/Parser";
 
 export class RemoveADeviceFromAChannelGet {
   private httpMethod: string = 'get';
@@ -11,7 +11,7 @@ export class RemoveADeviceFromAChannelGet {
     public log: Logger,
   ) {}
 
-  static validate(subKey: string, devicesApns2: string, uuid: string, auth: string, add: string, remove: string, environment: string, topic: string, signature: string, timestamp: number) {
+  static validate(subKey: string, devicesApns2: string, uuid: string, auth: string, add: string, remove: string, environment: string, topic: string, signature: string, timestamp: number): boolean {
 
     if (typeof (subKey) !== 'string') {
       return false;
@@ -56,8 +56,9 @@ export class RemoveADeviceFromAChannelGet {
     return true;
   }
 
-  static execute(subKey: string, devicesApns2: string, uuid: string, auth: string, add: string, remove: string, environment: string, topic: string, signature: string, timestamp: number) {
+  static execute(subKey: string, devicesApns2: string, uuid: string, auth: string, add: string, remove: string, environment: string, topic: string, signature: string, timestamp: number): boolean {
     // ...
+    return true;
   }
 
 }
