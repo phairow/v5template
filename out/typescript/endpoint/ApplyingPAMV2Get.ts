@@ -1,6 +1,9 @@
-import { Logger } from "core/modules/log/Logger";
-import { Networking } from "core/modules/net/Networking";
-import { Parser } from "core/modules/parse/Parser";
+import {
+  Logger,
+  Parser,
+  Networking,
+  TokenManager,
+} from "pubnub-core";
 
 export class ApplyingPAMV2Get {
   private httpMethod: string = 'get';
@@ -9,6 +12,7 @@ export class ApplyingPAMV2Get {
     public net: Networking,
     public parse: Parser,
     public log: Logger,
+    public token: TokenManager,
   ) {}
 
   static validate(subKey: string, signature: string, auth: string, uuid: string, timestamp: number, ttl: number, channel: string, channelGroup: string, w: number, r: number, m: boolean, d: number): boolean {

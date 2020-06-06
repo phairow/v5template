@@ -1,6 +1,9 @@
-import { Logger } from "core/modules/log/Logger";
-import { Networking } from "core/modules/net/Networking";
-import { Parser } from "core/modules/parse/Parser";
+import {
+  Logger,
+  Parser,
+  Networking,
+  TokenManager,
+} from "pubnub-core";
 
 export class SubscribeToChannelSOrChannelGroupSGet {
   private httpMethod: string = 'get';
@@ -9,6 +12,7 @@ export class SubscribeToChannelSOrChannelGroupSGet {
     public net: Networking,
     public parse: Parser,
     public log: Logger,
+    public token: TokenManager,
   ) {}
 
   static validate(subKey: string, channel: string, callback: string, tt: string, tr: string, channelGroup: string, heartbeat: number, auth: string, uuid: string, filterExpr: string, signature: string, timestamp: number): boolean {

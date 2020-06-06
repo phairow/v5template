@@ -1,6 +1,9 @@
-import { Logger } from "core/modules/log/Logger";
-import { Networking } from "core/modules/net/Networking";
-import { Parser } from "core/modules/parse/Parser";
+import {
+  Logger,
+  Parser,
+  Networking,
+  TokenManager,
+} from "pubnub-core";
 
 export class HistoryWithActionsGet {
   private httpMethod: string = 'get';
@@ -9,6 +12,7 @@ export class HistoryWithActionsGet {
     public net: Networking,
     public parse: Parser,
     public log: Logger,
+    public token: TokenManager,
   ) {}
 
   static validate(subKey: string, channel: string, auth: string, start: unknown, end: unknown, max: number, includeMeta: boolean, signature: string, timestamp: number): boolean {

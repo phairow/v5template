@@ -1,6 +1,9 @@
-import { Logger } from "core/modules/log/Logger";
-import { Networking } from "core/modules/net/Networking";
-import { Parser } from "core/modules/parse/Parser";
+import {
+  Logger,
+  Parser,
+  Networking,
+  TokenManager,
+} from "pubnub-core";
 
 export class AnnounceHeartbeatGet {
   private httpMethod: string = 'get';
@@ -9,6 +12,7 @@ export class AnnounceHeartbeatGet {
     public net: Networking,
     public parse: Parser,
     public log: Logger,
+    public token: TokenManager,
   ) {}
 
   static validate(subKey: string, channel: string, channelGroup: string, auth: string, callback: string, heartbeat: number, state: string, uuid: string, signature: string, timestamp: number): boolean {

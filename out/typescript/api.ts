@@ -1,6 +1,9 @@
-import { Logger } from "core/modules/log/Logger";
-import { Networking } from "core/modules/net/Networking";
-import { Parser } from "core/modules/parse/Parser";
+import {
+  Logger,
+  Parser,
+  Networking,
+  TokenManager,
+} from "pubnub-core";
 import { ListingAllRegisteredChannelGroupsGet } from './endpoint/ListingAllRegisteredChannelGroupsGet';
 import { AllChannelsOfAChannelGroupGet } from './endpoint/AllChannelsOfAChannelGroupGet';
 import { DeletingAChannelGroupGet } from './endpoint/DeletingAChannelGroupGet';
@@ -54,6 +57,7 @@ export class Api {
     public net: Networking,
     public parse: Parser,
     public log: Logger,
+    public token: TokenManager,
   ) {}
 
     listingAllRegisteredChannelGroupsGet(subKey: string, uuid: string, signature: string, timestamp: number): boolean {

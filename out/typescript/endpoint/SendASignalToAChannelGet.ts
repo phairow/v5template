@@ -1,6 +1,9 @@
-import { Logger } from "core/modules/log/Logger";
-import { Networking } from "core/modules/net/Networking";
-import { Parser } from "core/modules/parse/Parser";
+import {
+  Logger,
+  Parser,
+  Networking,
+  TokenManager,
+} from "pubnub-core";
 
 export class SendASignalToAChannelGet {
   private httpMethod: string = 'get';
@@ -9,6 +12,7 @@ export class SendASignalToAChannelGet {
     public net: Networking,
     public parse: Parser,
     public log: Logger,
+    public token: TokenManager,
   ) {}
 
   static validate(pubKey: string, subKey: string, channel: string, callback: string, payload: string, uuid: string, auth: string, signature: string, timestamp: number): boolean {

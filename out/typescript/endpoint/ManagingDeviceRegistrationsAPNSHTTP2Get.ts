@@ -1,6 +1,9 @@
-import { Logger } from "core/modules/log/Logger";
-import { Networking } from "core/modules/net/Networking";
-import { Parser } from "core/modules/parse/Parser";
+import {
+  Logger,
+  Parser,
+  Networking,
+  TokenManager,
+} from "pubnub-core";
 
 export class ManagingDeviceRegistrationsAPNSHTTP2Get {
   private httpMethod: string = 'get';
@@ -9,6 +12,7 @@ export class ManagingDeviceRegistrationsAPNSHTTP2Get {
     public net: Networking,
     public parse: Parser,
     public log: Logger,
+    public token: TokenManager,
   ) {}
 
   static validate(subKey: string, devicesApns2: string, uuid: string, auth: string, list: string, add: string, remove: string, environment: string, topic: string, signature: string, timestamp: number): boolean {
