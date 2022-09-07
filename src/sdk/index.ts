@@ -1,139 +1,153 @@
 /**
- * The generator entry point. Process the inputs.
+ * The generator entry point.
  */
 
 import * as Generator from 'yeoman-generator';
-import * as SwaggerParser from 'swagger-parser';
-import { openApiParser } from "../definition/parse/openapi/openApiParser";
 import * as path from 'path';
 import * as fs from 'fs';
 import * as Mustache from 'mustache';
-import { SdkApiDefinition } from '../definition/format/SdkApiDefinition';
+import { Command } from './command.enum';
+import { Specification } from './specification.enum';
+import { processOpenApi } from './processOpenApi';
+import { SdkApiDefinition } from '../definition/format/SdkApiDefinition.js';
+import { parseOpenApiSpecs } from '../definition/parse/openapi/openApiParser.js';
+// import { processProtoBuf } from './processProtoBuf';
 
-enum Language {
-  JavaScript = 'javascript',
-  TypeScript = 'typescript',
-  Java = 'java',
-  Python = 'python',
-  Ruby = 'ruby',
-  Go = 'go',
-  CSharp = 'csharp',
-  ObjectiveC = 'objectivec',
-  CCore = 'ccore',
-  Swift = 'swift',
-  PHP = 'php',
-  Rust = 'rust',
-}
+export type ParseSpecification = (
+  generator: SdkGenerator,
+  schemaDirectory: string,
+) => Promise<SdkApiDefinition[]>;
 
-export type RenderTemplate = {
-  ejs: (template: string, context: object, fileName: string, extension: string, subDir?: string) => void;
-  mustache: (template: string, context: object, fileName: string, extension: string, subDir?: string) => void;
-}
+export type RenderTemplate = (
+  template: string,
+  context: object,
+  fileName: string,
+  extension: string,
+  subDir?: string
+) => void;
+
+// command,
+// templateInputDirectory,
+// specificationInputDirectory,
+// outputDirectory,
+// specificationType
 
 export default class SdkGenerator extends Generator {
-  public selectedLanguage: Language = Language.JavaScript;
-  public destinationDirectory: string = 'out';
-
-  public outputDir: string = '';
-  public templateDir: string = '';
+  public command: Command = Command.template;
+  public specification: Specification = Specification.openapi;
+  public templateInputDirectory: string = './';
+  public specificationInputDirectory: string = './';
+  public outputDirectory: string = 'out';
 
   public async default() {
-    if (this.options.language) {
-      this.selectedLanguage = this.options.language.toLowerCase();
+
+    if (this.options.command) {
+      this.command = this.options.command as Command;
     } else {
-      let chosenLanguage: keyof typeof Language;
-      chosenLanguage = (await this.prompt(this._promptForLanguage())).language;
-      this.selectedLanguage = Language[chosenLanguage];
+      this.command = (await this.prompt(this._promptForCommand())).command as Command;
     }
 
-    if (this.options.dest) {
-      this.destinationDirectory = this.options.dest;
+    if (this.options.specification) {
+      this.specification = this.options.specification as Specification;
     } else {
-      this.destinationDirectory = (await this.prompt(this._promptForDestination())).destination;
+      this.specification = (await this.prompt(this._promptForSpecification())).specification as Specification;
+    }
+    
+    if (this.options.templateInputDirectory) {
+      this.templateInputDirectory = this.options.templateInputDirectory;
+    } else {
+      this.templateInputDirectory = (await this.prompt(this._promptForTemplateInputDirectory())).templateInputDirectory;
+    }
+    
+    if (this.options.specificationInputDirectory) {
+      this.specificationInputDirectory = this.options.specificationInputDirectory;
+    } else {
+      this.specificationInputDirectory = (await this.prompt(this._promptForSpecificationInputDirectory())).specificationInputDirectory;
+    }
+    
+    if (this.options.outputDirectory) {
+      this.outputDirectory = this.options.outputDirectory;
+    } else {
+      this.outputDirectory = (await this.prompt(this._promptForOutputDirectory())).outputDirectory;
     }
 
-    this.outputDir = this.destinationDirectory + '/' + this.selectedLanguage.toLocaleLowerCase() + '/';
-    this.templateDir =
-      path.resolve(__dirname, '../../src/sdk/template/', this.selectedLanguage.toLowerCase()) + '/';
-
-    let processor = await import('./process/' + this.selectedLanguage.toLowerCase());
-
-    let renderTemplate: RenderTemplate = {
-      ejs: (template: string, context: object, fileName: string, fileExtension: string, subDir?: string) => {
-        let outFile = this.outputDir + (subDir ? subDir + '/' : '') + fileName + '.' + fileExtension;
-        this.fs.copyTpl(
-          this.templatePath(this.templateDir + template + '.ejs'),
-          this.destinationPath(outFile),
-          context,
-        );
-      },
-      mustache: (template: string, context: object, fileName: string, fileExtension: string, subDir?: string) => {
-        try {
-          let outFile = this.outputDir + (subDir ? subDir + '/' : '') + fileName + '.' + fileExtension;
-          let templateString = fs.readFileSync(this.templateDir + template + '.mustache', 'utf8');
-          let output = Mustache.render(templateString, context, (partialName) => { return fs.readFileSync(this.templateDir + partialName + '.mustache', 'utf8') });
-          this.fs.write(outFile, output);
-        } catch (e) {
-          console.log(e);
-        }
+    let renderTemplate: RenderTemplate = (template: string, context: object, fileName: string, fileExtension: string, subDir?: string) => {
+      try {
+        let outFile = this.outputDirectory + (subDir ? subDir + '/' : '') + fileName + '.' + fileExtension;
+        let templateString = fs.readFileSync(path.join(this.templateInputDirectory, template)  + '.mustache', 'utf8');
+        let output = Mustache.render(templateString, context, (partialName) => { return fs.readFileSync(path.join(this.templateInputDirectory, partialName) + '.mustache', 'utf8'); });
+        this.fs.write(outFile, output);
+      } catch (e) {
+        console.log(e);
       }
     }
-    
-    let apis = await this._parseOpenapiSpecs();
-    
-    processor.process(this, apis, renderTemplate);
+
+    try {
+      if (this.specification === Specification.openapi) {
+        let apis = await parseOpenApiSpecs(this, this.specificationInputDirectory);
+        await processOpenApi(this, apis, renderTemplate);
+      // } else if (this.specification === Specification.protobuf) {
+      //   await processProtoBuf(this, renderTemplate);
+      } else {
+        console.log('specification type not supported: ', this.specification);
+      }
+    } catch (e) {
+      console.log('error in process', e);
+    }
   }
 
-  private _promptForLanguage(): Generator.Questions {
+  private _promptForCommand(): Generator.Questions {
     let question: Generator.Questions = {
-      name: 'language',
+      name: 'command',
       type: 'list',
-      message: 'Select a language',
-      choices: Object.keys(Language),
-      default: this.selectedLanguage,
+      message: 'Select a command',
+      choices: Object.keys(Command),
+      default: this.command,
     };
 
     return question;
   }
 
-  private _promptForDestination(): Generator.Questions {
+  private _promptForSpecification(): Generator.Questions {
     let question: Generator.Questions = {
-      name: 'destination',
-      message: 'Enter destination path',
-      default: this.destinationDirectory,
+      name: 'specification',
+      type: 'list',
+      message: 'Select a specification type',
+      choices: Object.keys(Specification),
+      default: this.specification,
     };
 
     return question;
   }
 
-  private async _parseOpenapiSpecs(): Promise<SdkApiDefinition[]> {
-    let schemaDir = path.resolve(__dirname, '../../specifications/');
-    let specificationFiles: string[] = [];
+  private _promptForTemplateInputDirectory(): Generator.Questions {
+    let question: Generator.Questions = {
+      name: 'templateInputDirectory',
+      message: 'Enter template input directory path',
+      default: this.templateInputDirectory,
+    };
 
-    fs.readdirSync(schemaDir).forEach((file) => {
-      let schemaPath = path.join(schemaDir, file);
-      let stats = fs.statSync(schemaPath);
-
-      if (stats.isFile() && file !== 'responses.yaml' && path.extname(schemaPath) === '.yaml') {
-        specificationFiles.push(schemaPath);
-      } else if (stats.isDirectory()) {
-        let subDir = file;
-        let schemaDirSubfolder = path.resolve(__dirname, '../../specifications/', subDir);
-        fs.readdirSync(schemaDirSubfolder).forEach((subFile) => {
-          let schemaPath = path.join(schemaDir, subDir, subFile);
-          let stats = fs.statSync(schemaPath);
-    
-          if (stats.isFile() && path.extname(schemaPath) === '.yaml') {
-            specificationFiles.push(schemaPath);
-          }
-        });
-      }
-    });
-
-    let specsToProcess = specificationFiles.map(async (schemaPath) => {
-      return await openApiParser(this, schemaPath);
-    });
-
-    return await Promise.all(specsToProcess);
+    return question;
   }
+
+  private _promptForSpecificationInputDirectory(): Generator.Questions {
+    let question: Generator.Questions = {
+      name: 'specificationInputDirectory',
+      message: 'Enter specification input directory path',
+      default: this.specificationInputDirectory,
+    };
+
+    return question;
+  }
+
+  private _promptForOutputDirectory(): Generator.Questions {
+    let question: Generator.Questions = {
+      name: 'outputDirectory',
+      message: 'Enter output directory path',
+      default: this.outputDirectory,
+    };
+
+    return question;
+  }
+
 }

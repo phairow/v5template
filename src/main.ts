@@ -12,8 +12,26 @@ let done = () => {
 };
 
 export function run(margs: ParsedArgs) {
-  let language = margs._[0];
-  let dest = margs._[1];
+  // first unnamed argument is a command
+  let command = margs._[0];
+  let templateInputDirectory = margs['templatein'];
+  let specificationInputDirectory = margs['specificationin'];
+  let outputDirectory = margs['out'];
+  let specification = margs['spec'];
 
-  env.run('pub:sdk', { language, dest }, done);
+  try {
+    env.run(
+      'pub:sdk',
+      {
+        command,
+        templateInputDirectory,
+        specificationInputDirectory,
+        outputDirectory,
+        specification
+      },
+      done
+    );
+  } catch (e) {
+    console.log('error in run', e);
+  }
 }

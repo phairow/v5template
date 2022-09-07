@@ -1,18 +1,53 @@
+import * as path from 'path';
+import * as fs from 'fs';
 import { OpenAPI, OpenAPIV3 } from 'openapi-types';
 import { SdkApiDefinition } from "../../format/SdkApiDefinition";
-import { SdkEndpoint } from "../../format/SdkEndpoint";
+import { SdkRequest } from "../../format/SdkRequest";
 import { SdkParameter } from "../../format/SdkParameter";
-import SdkGenerator from '../../../sdk/index';
+import SdkGenerator, { ParseSpecification } from '../../../sdk';
 import * as _ from 'underscore.string';
 import SwaggerParser = require('swagger-parser');
 import { SdkResponse } from '../../format/SdkResponse';
 import { StringUtil } from '../../../util/string';
 
-export async function openApiParser(generator: SdkGenerator, apiPath: string): Promise<SdkApiDefinition> {
+export const parseOpenApiSpecs: ParseSpecification = (
+  generator: SdkGenerator,
+  schemaDirectory: string,
+): Promise<SdkApiDefinition[]>  => {
+  let specificationFiles: string[] = [];
+
+  fs.readdirSync(schemaDirectory).forEach((file) => {
+    let schemaPath = path.join(schemaDirectory, file);
+    let stats = fs.statSync(schemaPath);
+
+    if (stats.isFile() && file !== 'responses.yaml' && path.extname(schemaPath) === '.yaml') {
+      specificationFiles.push(schemaPath);
+    } else if (stats.isDirectory()) {
+      let subDir = file;
+      let schemaDirSubfolder = path.resolve(__dirname, '../../specifications/', subDir);
+      fs.readdirSync(schemaDirSubfolder).forEach((subFile) => {
+        let schemaPath = path.join(schemaDirectory, subDir, subFile);
+        let stats = fs.statSync(schemaPath);
+  
+        if (stats.isFile() && path.extname(schemaPath) === '.yaml') {
+          specificationFiles.push(schemaPath);
+        }
+      });
+    }
+  });
+
+  let specsToProcess = specificationFiles.map(async (schemaPath) => {
+    return await openApiParser(generator, schemaPath);
+  });
+
+  return Promise.all(specsToProcess);
+}
+
+async function openApiParser(generator: SdkGenerator, apiPath: string): Promise<SdkApiDefinition> {
   try {
     let parser = new SwaggerParser();
     let api = await parser.bundle(apiPath);
-    let sdkEndpoints: SdkEndpoint[] = [];
+    let sdkEndpoints: SdkRequest[] = [];
     let schemas: OpenAPIV3.SchemaObject[] = [];
     let parameters: OpenAPIV3.ParameterObject[] = [];
 
@@ -25,7 +60,7 @@ export async function openApiParser(generator: SdkGenerator, apiPath: string): P
         // convert and combine the endpoints for each path
         .reduce(
           (
-            allEndpoints: SdkEndpoint[],
+            allEndpoints: SdkRequest[],
             endpointOperations: OpenAPIV3.PathItemObject
           ) => {
 
@@ -51,7 +86,7 @@ export async function openApiParser(generator: SdkGenerator, apiPath: string): P
         )
         // exclude any endpoints that do not have a title
         // TODO: this filter step should not be needed in the end
-        .filter((item: SdkEndpoint) => item.title && item.title.length > 0 )
+        .filter((item: SdkRequest) => item.title && item.title.length > 0 )
       );
     } catch(e) {
       console.log('error getting operations', e);
@@ -79,7 +114,7 @@ function convertOperationToSdkDefinitionFormat(
   parameters: OpenAPIV3.ParameterObject[],
   operationKey: string,
   endpointOperations: OpenAPIV3.PathItemObject
-): SdkEndpoint {
+): SdkRequest {
 
   let sdkParameters: SdkParameter[] = [];
   let operation: OpenAPIV3.OperationObject  = (endpointOperations as any)[operationKey];
@@ -203,7 +238,7 @@ function convertOperationToSdkDefinitionFormat(
     });
   }
   
-  return new SdkEndpoint(
+  return new SdkRequest(
     operationKey,
     api.info.title || '',
     api.info.description || '',
@@ -224,3 +259,4 @@ function getName(path: string): string {
 // function resolveSchemas(path: string, schemas: OpenAPIV3.SchemaObject[]): OpenAPIV3.SchemaObject {
 
 // }
+

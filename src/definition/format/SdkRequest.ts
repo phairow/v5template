@@ -1,7 +1,7 @@
 import { SdkResponse } from "./SdkResponse";
 import { SdkParameter } from "./SdkParameter";
 
-export class SdkEndpoint {
+export class SdkRequest {
     constructor(
         public httpMethod: string,
         public apiTitle: string,

@@ -1,8 +1,8 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { SdkEndpoint } from "./SdkEndpoint";
+import { SdkRequest } from "./SdkRequest";
 
 export interface SdkApiDefinition {
-  endpoints: SdkEndpoint[];
+  endpoints: SdkRequest[];
   parameters: OpenAPIV3.ParameterObject[];
   schemas: OpenAPIV3.SchemaObject[];
 }

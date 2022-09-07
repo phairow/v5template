@@ -1,14 +1,14 @@
-import { SdkEndpoint } from "../../../definition/format/SdkEndpoint";
-import { StringUtil } from '../../../util/string';
+import { SdkRequest } from "../../definition/format/SdkRequest";
+import { StringUtil } from '../../util/string';
 import {
   comma,
   comma_separated_list,
-} from "../../../util/mustache";
+} from "../../util/mustache";
 import * as _ from 'underscore.string';
 
-export class EndpointTypescript extends SdkEndpoint {
+export class EndpointTypescript extends SdkRequest {
   constructor(
-    endpoint: SdkEndpoint,
+    endpoint: SdkRequest,
     public titlePropertyName: string
   ) {
     super(
@@ -45,7 +45,7 @@ export class EndpointTypescript extends SdkEndpoint {
   }
 }
 
-export function endpointConvert(endpoint: SdkEndpoint) {
+export function endpointConvert(endpoint: SdkRequest) {
   return new EndpointTypescript(
     endpoint,
     StringUtil.lowerFirstChar(endpoint.title)

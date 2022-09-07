@@ -1,10 +1,10 @@
 import { OpenAPIV3 } from 'openapi-types';
-import { StringUtil } from '../../../util/string';
+import { StringUtil } from '../../util/string';
 
 import {
   comma,
   comma_separated_list,
-} from "../../../util/mustache";
+} from "../../util/mustache";
 import * as _ from 'underscore.string';
 
 export class SchemaTypescript {
